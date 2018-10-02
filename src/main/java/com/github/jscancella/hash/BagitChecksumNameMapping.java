@@ -18,11 +18,11 @@ import com.github.jscancella.hash.defaults.SHA512Hasher;
  * Example:
  * {@code BagitChecksumNameMapping.add("md5", new MyNewMD5Hasher());} 
  */
-public enum BagitCheckumNameMapping {
+public enum BagitChecksumNameMapping {
   INSTANCE; //using enum to ensure singleton
   private Map<String, Hasher> map = new HashMap<>();
 
-  private BagitCheckumNameMapping() {
+  private BagitChecksumNameMapping() {
     map.put("md5", MD5Hasher.INSTANCE);
     map.put("sha1", SHA1Hasher.INSTANCE);
     map.put("sha224", SHA224Hasher.INSTANCE);

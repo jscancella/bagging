@@ -34,9 +34,11 @@ public interface Hasher {
   public void update(final byte[] bytes, final int length) throws NoSuchAlgorithmException;
   
   /**
-   * @return the checksum of the streamed file. If no file has been streamed, returns an empty string.
+   * @return the checksum of the streamed file. If no file has been streamed, returns a default hash.
+   * 
+   * @throws NoSuchAlgorithmException if there is a problem setting up the algorithm for hashing
    */
-  public String getHash();
+  public String getHash() throws NoSuchAlgorithmException;
   
   /**
    * When streaming a file, we have no way of knowing when we are done updating. This method allows for a reset of the current stream.

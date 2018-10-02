@@ -72,6 +72,13 @@ public final class Bag {
     return rootDir.resolve("data");
   }
   
+  /**
+   * @return the directory that contains the tag files
+   */
+  public Path getTagFileDir(){
+    return rootDir; //whenever .bagit comes around this will be very helpful
+  }
+  
   public Version getVersion(){
     return version;
   }
@@ -162,6 +169,9 @@ public final class Bag {
         Objects.equals(this.metadata, other.getMetadata());
   }
 
+  /**
+   * @return the root directory of a bag, usually the folder name
+   */
   public Path getRootDir() {
     return rootDir;
   }

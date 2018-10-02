@@ -32,7 +32,10 @@ public enum SHA256Hasher implements Hasher {
   }
 
   @Override
-  public String getHash(){
+  public String getHash() throws NoSuchAlgorithmException{
+    if(messageDigestInstance == null) {
+      messageDigestInstance = MessageDigest.getInstance(MESSAGE_DIGEST_NAME);
+    }
     return MessageDigestHasher.formatMessageDigest(messageDigestInstance);
   }
 

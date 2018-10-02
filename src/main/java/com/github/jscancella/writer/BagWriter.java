@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
@@ -15,9 +16,12 @@ import org.slf4j.LoggerFactory;
 
 import com.github.jscancella.domain.Bag;
 import com.github.jscancella.domain.Manifest;
-import com.github.jscancella.hash.BagitCheckumNameMapping;
+import com.github.jscancella.domain.Metadata;
+import com.github.jscancella.domain.Version;
+import com.github.jscancella.hash.BagitChecksumNameMapping;
 import com.github.jscancella.hash.Hasher;
 import com.github.jscancella.hash.PayloadOxumGenerator;
+import com.github.jscancella.writer.internal.BagCreator;
 import com.github.jscancella.writer.internal.BagitFileWriter;
 import com.github.jscancella.writer.internal.FetchWriter;
 import com.github.jscancella.writer.internal.ManifestWriter;
@@ -88,7 +92,7 @@ public enum BagWriter {; //using enum to ensure singleton
       for(final Path originalPath : tagManifest.getFileToChecksumMap().keySet()){
         final Path relativePath = bag.getRootDir().relativize(originalPath);
         final Path pathToUpdate = newBagRootDir.resolve(relativePath);
-        final Hasher hasher = BagitCheckumNameMapping.get(tagManifest.getBagitAlgorithmName());
+        final Hasher hasher = BagitChecksumNameMapping.get(tagManifest.getBagitAlgorithmName());
         final String newChecksum = hasher.hash(pathToUpdate);
         newManifest.getFileToChecksumMap().put(pathToUpdate, newChecksum);
       }
@@ -115,4 +119,41 @@ public enum BagWriter {; //using enum to ensure singleton
       }
     }
   }
+  
+  /**
+   * Creates a bag in place for {@link Version.LATEST_BAGIT_VERSION}.
+   * This method moves and creates files, thus if an error is thrown during operation it may leave the filesystem 
+   * in an unknown state of transition. Thus this is <b>not thread safe</b>
+   * 
+   * @param root the directory that will become the base of the bag and where to start searching for content
+   * @param algorithms an collection of bagit algorithm names which will be used for creating manifests
+   * @param includeHidden to include hidden files when generating the bagit files, like the manifests
+   * 
+   * @throws NoSuchAlgorithmException if {@link BagitCheckumNameMapping} can't find the algorithm
+   * @throws IOException if there is a problem writing or moving file(s)
+   * 
+   * @return a {@link Bag} object representing the newly created bagit bag
+   */
+  public static Bag bagInPlace(final Path root, final Collection<String> algorithms, final boolean includeHidden) throws NoSuchAlgorithmException, IOException{
+    return BagCreator.bagInPlace(root, algorithms, includeHidden);
+  }
+  
+  /**
+  * Creates a bag in place for version 0.97.
+  * This method moves and creates files, thus if an error is thrown during operation it may leave the filesystem 
+  * in an unknown state of transition. Thus this is <b>not thread safe</b>
+  * 
+  * @param root the directory that will become the base of the bag and where to start searching for content
+  * @param algorithms an collection of bagit algorithm names which will be used for creating manifests
+  * @param includeHidden to include hidden files when generating the bagit files, like the manifests
+  * @param metadata the metadata to include when creating the bag. Payload-Oxum and Bagging-Date will be overwritten 
+  * 
+  * @throws NoSuchAlgorithmException if {@link MessageDigest} can't find the algorithm
+  * @throws IOException if there is a problem writing or moving file(s)
+  * 
+  * @return a {@link Bag} object representing the newly created bagit bag
+  */
+ public static Bag bagInPlace(final Path root, final Collection<String> algorithms, final boolean includeHidden, final Metadata metadata) throws NoSuchAlgorithmException, IOException{
+   return BagCreator.bagInPlace(root, algorithms, includeHidden, metadata);
+ }
 }
