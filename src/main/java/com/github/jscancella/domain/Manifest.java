@@ -12,6 +12,11 @@ public final class Manifest {
   private final String bagitAlgorithmName;
   private final Map<Path, String> fileToChecksumMap;
   
+  public Manifest(final String bagitAlgorithmName) {
+    this.bagitAlgorithmName = bagitAlgorithmName;
+    this.fileToChecksumMap = new HashMap<>();
+  }
+  
   public Manifest(final String bagitAlgorithmName, final Map<Path, String> fileToChecksumMap) {
     this.bagitAlgorithmName = bagitAlgorithmName;
     this.fileToChecksumMap = new HashMap<>();

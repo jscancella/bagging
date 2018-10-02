@@ -39,6 +39,7 @@ public enum BagLinter {; //using enum to ensure singleton
    * This <strong>does not</strong> validate a bag. See {@link BagVerifier} instead.
    */
   public static Set<BagitWarning> lintBag(final Path rootDir, final Collection<BagitWarning> warningsToIgnore){
+    //TODO check number of manifests is < 50, check number of files in manifest is < 1 million?
     //TODO
     return new HashSet<>();
   }

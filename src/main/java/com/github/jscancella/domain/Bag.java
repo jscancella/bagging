@@ -65,6 +65,13 @@ public final class Bag {
     this.rootDir = bag.getRootDir();
   }
   
+  /**
+   * @return the directory that contains the payload files
+   */
+  public Path getDataDir(){
+    return rootDir.resolve("data");
+  }
+  
   public Version getVersion(){
     return version;
   }
