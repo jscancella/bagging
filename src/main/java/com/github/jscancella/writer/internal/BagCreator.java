@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.attribute.DosFileAttributes;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
@@ -25,6 +24,7 @@ import com.github.jscancella.domain.Version;
 import com.github.jscancella.hash.BagitChecksumNameMapping;
 import com.github.jscancella.hash.Hasher;
 import com.github.jscancella.hash.PayloadOxumGenerator;
+import com.github.jscancella.internal.PathUtils;
 
 /**
  * Responsible for creating a bag in place.
@@ -86,7 +86,7 @@ public enum BagCreator {; //Using Enum to enforce singleton
     Files.createDirectory(tempDir);
     try(final DirectoryStream<Path> directoryStream = Files.newDirectoryStream(bag.getRootDir())){
       for(final Path path : directoryStream){
-        if(!path.equals(tempDir) && (!isHidden(path) || includeHidden)){
+        if(!path.equals(tempDir) && (!PathUtils.isHidden(path) || includeHidden)){
           Files.move(path, tempDir.resolve(path.getFileName()));
         }
       }
@@ -139,21 +139,5 @@ public enum BagCreator {; //Using Enum to enforce singleton
     
     bag.getTagManifests().addAll(manifestToHasherMap.keySet());
     ManifestWriter.writeTagManifests(bag.getTagManifests(), bag.getTagFileDir(), bag.getRootDir(), bag.getFileEncoding());
-  }
-  
-  /**
-   * Due to the way that windows handles hidden files vs. *nix 
-   * we use this method to determine if a file or folder is really hidden
-   * @param path the file or folder to check if hidden
-   * @return if the file or folder is hidden
-   * @throws IOException if there is an error reading the file/folder
-   */
-  private static boolean isHidden(final Path path) throws IOException{
-    //cause Files.isHidden() doesn't work properly for windows if the file is a directory
-    if (System.getProperty("os.name").contains("Windows")){
-      return Files.readAttributes(path, DosFileAttributes.class).isHidden() || Files.isHidden(path);
-    }
-
-    return Files.isHidden(path);
   }
 }

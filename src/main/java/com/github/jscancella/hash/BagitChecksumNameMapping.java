@@ -35,6 +35,10 @@ public enum BagitChecksumNameMapping {
     INSTANCE.map.put(bagitAlgorithmName, implementation);
   }
   
+  public static void clear(final String bagitAlgorithmName) {
+    INSTANCE.map.remove(bagitAlgorithmName);
+  }
+  
   public static Hasher get(final String bagitAlgorithmName) throws NoSuchAlgorithmException {
     if(!INSTANCE.map.containsKey(bagitAlgorithmName)) {
       throw new NoSuchAlgorithmException("No implementation of " + bagitAlgorithmName + " was found. Did you remember to add it to " + INSTANCE.toString() + "?");

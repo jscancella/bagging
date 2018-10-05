@@ -6,7 +6,6 @@ import java.nio.charset.Charset;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.security.MessageDigest;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -18,7 +17,7 @@ import com.github.jscancella.domain.Bag;
 import com.github.jscancella.domain.Manifest;
 import com.github.jscancella.exceptions.InvalidBagitFileFormatException;
 import com.github.jscancella.exceptions.MaliciousPathException;
-import com.github.jscancella.exceptions.UnsupportedAlgorithmException;
+import com.github.jscancella.internal.PathUtils;
 
 /**
  * This class is responsible for reading and parsing manifest files on the filesystem
@@ -29,23 +28,13 @@ public enum ManifestReader {;//using enum to enforce singleton
   
   /**
    * Finds and reads all manifest files in the rootDir and adds them to the given bag.
-   * 
-   * @param nameMapping a map between BagIt algorithm names and {@link MessageDigest} names
-   * @param rootDir the directory that contain the manifest(s)
-   * @param bag to update with the manifests
-   * @param hashers the hashers to associate to the manifests. These hashers will be used for any updates to those manifests.
-   * 
-   * @throws IOException if there is a problem reading a file
-   * @throws MaliciousPathException if there is path that is referenced in the manifest that is outside the bag root directory
-   * @throws UnsupportedAlgorithmException if the manifest uses a algorithm that isn't supported
-   * @throws InvalidBagitFileFormatException if the manifest is not formatted properly
    */
   public static void readAllManifests(final Path rootDir, final Bag bag) throws IOException, MaliciousPathException, InvalidBagitFileFormatException{
     logger.info(messages.getString("attempting_read_manifests"));
     
     try(final DirectoryStream<Path> manifests = getAllManifestFiles(rootDir)){
       for (final Path path : manifests){
-        final String filename = Reader.getFilename(path);
+        final String filename = PathUtils.getFilename(path);
         
         if(filename.startsWith("tagmanifest-")){
           logger.debug(messages.getString("found_tagmanifest"), path);
@@ -67,7 +56,7 @@ public enum ManifestReader {;//using enum to enforce singleton
       @Override
       public boolean accept(final Path file) throws IOException {
         if(file == null || file.getFileName() == null){ return false;}
-        final String filename = Reader.getFilename(file);
+        final String filename = PathUtils.getFilename(file);
         return filename.startsWith("tagmanifest-") || filename.startsWith("manifest-");
       }
     };
@@ -77,21 +66,11 @@ public enum ManifestReader {;//using enum to enforce singleton
   
   /**
    * Reads a manifest file and converts it to a {@link Manifest} object.
-   * 
-   * @param nameMapping a map between BagIt algorithm names and {@link MessageDigest} names
-   * @param manifestFile a specific manifest file
-   * @param bagRootDir the root directory of the bag
-   * @param charset the encoding to use when reading the manifest file
-   * @return the converted manifest object from the file
-   * 
-   * @throws IOException if there is a problem reading a file
-   * @throws MaliciousPathException if there is path that is referenced in the manifest that is outside the bag root directory
-   * @throws InvalidBagitFileFormatException if the manifest is not formatted properly
    */
   public static Manifest readManifest(final Path manifestFile, final Path bagRootDir, final Charset charset) 
           throws IOException, MaliciousPathException, InvalidBagitFileFormatException{
     logger.debug(messages.getString("reading_manifest"), manifestFile);
-    final String algorithm = Reader.getFilename(manifestFile).split("[-\\.]")[1];
+    final String algorithm = PathUtils.getFilename(manifestFile).split("[-\\.]")[1];
     
     final Map<Path, String> fileToChecksumMap = readChecksumFileMap(manifestFile, bagRootDir, charset);
     
