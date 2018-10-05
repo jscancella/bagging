@@ -13,6 +13,7 @@ import org.slf4j.helpers.MessageFormatter;
 import com.github.jscancella.domain.Bag;
 import com.github.jscancella.exceptions.InvalidPayloadOxumException;
 import com.github.jscancella.exceptions.PayloadOxumDoesNotExistException;
+import com.github.jscancella.hash.internal.FileCountAndTotalSizeVistor;
 import com.github.jscancella.verify.BagVerifier;
 
 /**

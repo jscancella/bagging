@@ -10,7 +10,6 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.nio.file.attribute.DosFileAttributes;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -21,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.jscancella.domain.Manifest;
 import com.github.jscancella.hash.Hasher;
+import com.github.jscancella.internal.PathUtils;
 
 /**
  * An implementation of the {@link SimpleFileVisitor} class that optionally avoids hidden files.
@@ -41,7 +41,7 @@ public abstract class AbstractCreateManifestsVistor extends SimpleFileVisitor<Pa
   }
   
   public FileVisitResult abstractPreVisitDirectory(final Path dir, final String directoryToIgnore) throws IOException {
-    if(!includeHiddenFiles && isHidden(dir) && !dir.endsWith(Paths.get(".bagit"))){
+    if(!includeHiddenFiles && PathUtils.isHidden(dir) && !dir.endsWith(Paths.get(".bagit"))){
       logger.debug(messages.getString("skipping_hidden_file"), dir);
       return FileVisitResult.SKIP_SUBTREE;
     }
@@ -56,7 +56,7 @@ public abstract class AbstractCreateManifestsVistor extends SimpleFileVisitor<Pa
   @Override
   public FileVisitResult visitFile(final Path path, final BasicFileAttributes attrs)throws IOException{
     try {
-      if(!includeHiddenFiles && isHidden(path) && !path.endsWith(".keep")){
+      if(!includeHiddenFiles && PathUtils.isHidden(path) && !path.endsWith(".keep")){
         logger.debug(messages.getString("skipping_hidden_file"), path);
       }
       else{
@@ -72,22 +72,6 @@ public abstract class AbstractCreateManifestsVistor extends SimpleFileVisitor<Pa
     }
     
     return FileVisitResult.CONTINUE;
-  }
-  
-  /**
-   * Due to the way that windows handles hidden files vs. *nix 
-   * we use this method to determine if a file or folder is really hidden
-   * @param path the file or folder to check if hidden
-   * @return if the file or folder is hidden
-   * @throws IOException if there is an error reading the file/folder
-   */
-  private static boolean isHidden(final Path path) throws IOException{
-    //cause Files.isHidden() doesn't work properly for windows if the file is a directory
-    if (System.getProperty("os.name").contains("Windows")){
-      return Files.readAttributes(path, DosFileAttributes.class).isHidden() || Files.isHidden(path);
-    }
-
-    return Files.isHidden(path);
   }
   
   private void streamFile(final Path path) throws IOException {

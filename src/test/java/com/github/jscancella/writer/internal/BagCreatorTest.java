@@ -17,7 +17,7 @@ import com.github.jscancella.TestUtils;
 import com.github.jscancella.domain.Bag;
 import com.github.jscancella.domain.Manifest;
 import com.github.jscancella.domain.Version;
-import com.github.jscancella.hash.defaults.MD5Hasher;
+import com.github.jscancella.hash.StandardHasher;
 
 public class BagCreatorTest extends TempFolderTest {
   
@@ -27,7 +27,7 @@ public class BagCreatorTest extends TempFolderTest {
     Path dataFile = testFolder.resolve("data");
     Files.createFile(dataFile);
     
-    BagCreator.bagInPlace(testFolder, Arrays.asList(MD5Hasher.INSTANCE.getBagitAlgorithmName()), false);
+    BagCreator.bagInPlace(testFolder, Arrays.asList(StandardHasher.MD5.getBagitAlgorithmName()), false);
     Assertions.assertTrue(Files.exists(testFolder.resolve("data").resolve("data")));
   }
   
@@ -35,7 +35,7 @@ public class BagCreatorTest extends TempFolderTest {
   public void testBagInPlace() throws IOException, NoSuchAlgorithmException{
     TestStructure structure = createTestStructure();
     
-    Bag bag = BagCreator.bagInPlace(folder, Arrays.asList(MD5Hasher.INSTANCE.getBagitAlgorithmName()), false);
+    Bag bag = BagCreator.bagInPlace(folder, Arrays.asList(StandardHasher.MD5.getBagitAlgorithmName()), false);
     
     Assertions.assertEquals(Version.LATEST_BAGIT_VERSION(), bag.getVersion());
     
@@ -63,7 +63,7 @@ public class BagCreatorTest extends TempFolderTest {
   public void testBagInPlaceIncludingHidden() throws IOException, NoSuchAlgorithmException{
     TestStructure structure = createTestStructure();
     
-    Bag bag = BagCreator.bagInPlace(folder, Arrays.asList(MD5Hasher.INSTANCE.getBagitAlgorithmName()), true);
+    Bag bag = BagCreator.bagInPlace(folder, Arrays.asList(StandardHasher.MD5.getBagitAlgorithmName()), true);
     
     Assertions.assertEquals(Version.LATEST_BAGIT_VERSION(), bag.getVersion());
     

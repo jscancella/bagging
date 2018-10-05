@@ -1,4 +1,4 @@
-package com.github.jscancella.verify;
+package com.github.jscancella.hash;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -10,16 +10,25 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Formatter;
 
-import com.github.jscancella.hash.Hasher;
-
-public enum SHA3Hasher implements Hasher {
-  INSTANCE;// using enum to enforce singleton
+public enum StandardHasher implements Hasher {
+  MD5("MD5", "md5"),
+  SHA1("SHA-1", "sha1"),
+  SHA224("SHA-224", "sha224"),
+  SHA256("SHA-256", "sha256"),
+  SHA384("SHA-384", "sha384"),
+  SHA512("SHA-512", "sha512");
   
   private static final int _64_KB = 1024 * 64;
   private static final int CHUNK_SIZE = _64_KB;
-  private static final String MESSAGE_DIGEST_NAME = "SHA3-256";
   private MessageDigest messageDigestInstance;
-
+  private final String MESSAGE_DIGEST_NAME;
+  private final String BAGIT_ALGORITHM_NAME;
+  
+  private StandardHasher(String digestName, final String bagitAlgorithmName) {
+    MESSAGE_DIGEST_NAME = digestName;
+    BAGIT_ALGORITHM_NAME = bagitAlgorithmName;
+  }
+  
   @Override
   public String hash(Path path) throws IOException, NoSuchAlgorithmException{
     final MessageDigest messageDigest = MessageDigest.getInstance(MESSAGE_DIGEST_NAME);
@@ -28,7 +37,7 @@ public enum SHA3Hasher implements Hasher {
   }
 
   @Override
-  public void update(byte[] bytes, int length) throws NoSuchAlgorithmException{
+  public void update(byte[] bytes, final int length) throws NoSuchAlgorithmException{
     if(messageDigestInstance == null) {
       messageDigestInstance = MessageDigest.getInstance(MESSAGE_DIGEST_NAME);
     }
@@ -50,7 +59,7 @@ public enum SHA3Hasher implements Hasher {
 
   @Override
   public String getBagitAlgorithmName(){
-    return "sha3256";
+    return BAGIT_ALGORITHM_NAME;
   }
   
   private static void updateMessageDigest(final Path path, final MessageDigest messageDigest) throws IOException{

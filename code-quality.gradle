@@ -83,6 +83,7 @@ jacocoTestReport {
 
 cpdCheck {
     source = sourceSets.main.allJava
+    minimumTokenCount = 60
     reports {
         text.enabled = true
         xml.enabled = false
