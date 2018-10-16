@@ -3,7 +3,6 @@ package com.github.jscancella.verify.internal;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ResourceBundle;
@@ -27,7 +26,7 @@ abstract public class AbstractPayloadFileExistsInManifestsVistor extends SimpleF
   
   @Override
   public FileVisitResult preVisitDirectory(final Path dir, final BasicFileAttributes attrs) throws IOException {
-    if(ignoreHiddenFiles && PathUtils.isHidden(dir) || dir.endsWith(Paths.get(".bagit"))){
+    if(ignoreHiddenFiles && PathUtils.isHidden(dir)){
       logger.debug(messages.getString("skipping_hidden_file"), dir);
       return FileVisitResult.SKIP_SUBTREE;
     }

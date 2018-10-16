@@ -21,6 +21,6 @@ public final class CreatePayloadManifestsVistor extends AbstractCreateManifestsV
   
   @Override
   public FileVisitResult preVisitDirectory(final Path dir, final BasicFileAttributes attrs) throws IOException {
-    return abstractPreVisitDirectory(dir, ".bagit");
+    return abstractPreVisitDirectory(dir, null);
   }
 }

@@ -24,7 +24,7 @@ public class TestUtils {
         @Override
         public FileVisitResult preVisitDirectory(final Path dir, final BasicFileAttributes attrs) throws IOException{
           String name = dir.getFileName().toString();
-          if(name.startsWith(".") && !(name.equals(".keep") || name.equals(".bagit"))){
+          if(name.startsWith(".") && !(name.equals(".keep"))){
             Files.setAttribute(dir, "dos:hidden", Boolean.TRUE);
           }
           return FileVisitResult.CONTINUE;
@@ -33,7 +33,7 @@ public class TestUtils {
         @Override
         public FileVisitResult visitFile(final Path path, final BasicFileAttributes attrs) throws IOException {
           String name = path.getFileName().toString();
-          if(name.startsWith(".") && !(name.equals(".keep") || name.equals(".bagit"))){
+          if(name.startsWith(".") && !(name.equals(".keep"))){
             Files.setAttribute(path, "dos:hidden", Boolean.TRUE);
           }
           return FileVisitResult.CONTINUE;
