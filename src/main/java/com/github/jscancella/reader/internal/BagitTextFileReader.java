@@ -87,7 +87,7 @@ public enum BagitTextFileReader {;//using enum to enforce singleton
    * BagIt-Version: <M.N>
    * Tag-File-Character-Encoding: <ENCODING>
    */
-  private static void throwErrorIfLinesDoNotMatchStrict(final List<String> lines) throws InvalidBagitFileFormatException{
+  static void throwErrorIfLinesDoNotMatchStrict(final List<String> lines) throws InvalidBagitFileFormatException{
     if(lines.size() > 2){
       final List<String> offendingLines = lines.subList(2, lines.size()-1);
       throw new InvalidBagitFileFormatException(MessageFormatter

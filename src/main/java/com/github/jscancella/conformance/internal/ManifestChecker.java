@@ -267,4 +267,8 @@ public enum ManifestChecker {;// using enum to enforce singleton
       }
     }
   }
+
+  static String getOsFilesRegex(){
+    return OS_FILES_REGEX;
+  }
 }
