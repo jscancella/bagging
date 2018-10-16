@@ -97,7 +97,7 @@ public enum BagCreator {; //Using Enum to enforce singleton
   private static void createPayloadManifests(final Bag bag, final Collection<String> algorithms, final boolean includeHidden) throws NoSuchAlgorithmException, IOException{
     logger.info(messages.getString("creating_payload_manifests"));
     
-    Map<Manifest, Hasher> manifestToHasherMap = createManifestToHasherMap(algorithms);
+    final Map<Manifest, Hasher> manifestToHasherMap = createManifestToHasherMap(algorithms);
     
     final CreatePayloadManifestsVistor payloadVisitor = new CreatePayloadManifestsVistor(manifestToHasherMap, includeHidden);
     Files.walkFileTree(bag.getDataDir(), payloadVisitor);
@@ -123,7 +123,7 @@ public enum BagCreator {; //Using Enum to enforce singleton
   private static void createTagManifests(final Bag bag, final Collection<String> algorithms, final boolean includeHidden) throws NoSuchAlgorithmException, IOException{
     logger.info(messages.getString("creating_tag_manifests"));
     
-    Map<Manifest, Hasher> manifestToHasherMap = createManifestToHasherMap(algorithms);
+    final Map<Manifest, Hasher> manifestToHasherMap = createManifestToHasherMap(algorithms);
     final CreateTagManifestsVistor tagVistor = new CreateTagManifestsVistor(manifestToHasherMap, includeHidden);
     Files.walkFileTree(bag.getTagFileDir(), tagVistor);
     
@@ -131,10 +131,11 @@ public enum BagCreator {; //Using Enum to enforce singleton
     ManifestWriter.writeTagManifests(bag.getTagManifests(), bag.getTagFileDir(), bag.getRootDir(), bag.getFileEncoding());
   }
   
+  @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
   private static Map<Manifest, Hasher> createManifestToHasherMap(final Collection<String> algorithms) throws NoSuchAlgorithmException{
-    Map<Manifest, Hasher> manifestToHasherMap = new HashMap<>();
+    final Map<Manifest, Hasher> manifestToHasherMap = new HashMap<>();
     
-    for(String algorithm : algorithms) {
+    for(final String algorithm : algorithms) {
       final Manifest manifest = new Manifest(algorithm);
       final Hasher hasher = BagitChecksumNameMapping.get(algorithm);
       manifestToHasherMap.put(manifest, hasher);

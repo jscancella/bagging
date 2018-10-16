@@ -19,7 +19,6 @@ import com.github.jscancella.domain.Version;
  */
 public enum MetadataWriter {;//using enum to enforce singleton
   private static final Logger logger = LoggerFactory.getLogger(MetadataWriter.class);
-  private static final Version VERSION_0_95 = new Version(0, 95);
   private static final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
   
   /**
@@ -34,7 +33,7 @@ public enum MetadataWriter {;//using enum to enforce singleton
    */
   public static void writeBagMetadata(final Metadata metadata, final Version version, final Path outputDir, final Charset charsetName) throws IOException{
     Path bagInfoFilePath = outputDir.resolve("bag-info.txt");
-    if(version.isSameOrOlder(VERSION_0_95)){
+    if(version.isSameOrOlder(Version.VERSION_0_95())){
       bagInfoFilePath = outputDir.resolve("package-info.txt");
     }
     logger.debug(messages.getString("writing_metadata_to_path"), bagInfoFilePath.getFileName(), outputDir);

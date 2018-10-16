@@ -17,6 +17,7 @@ import com.github.jscancella.domain.Bag;
 import com.github.jscancella.domain.Manifest;
 import com.github.jscancella.exceptions.InvalidBagitFileFormatException;
 import com.github.jscancella.exceptions.MaliciousPathException;
+import com.github.jscancella.internal.ManifestFilter;
 import com.github.jscancella.internal.PathUtils;
 
 /**
@@ -32,7 +33,7 @@ public enum ManifestReader {;//using enum to enforce singleton
   public static void readAllManifests(final Path rootDir, final Bag bag) throws IOException, MaliciousPathException, InvalidBagitFileFormatException{
     logger.info(messages.getString("attempting_read_manifests"));
     
-    try(final DirectoryStream<Path> manifests = getAllManifestFiles(rootDir)){
+    try(final DirectoryStream<Path> manifests = Files.newDirectoryStream(rootDir, new ManifestFilter())){
       for (final Path path : manifests){
         final String filename = PathUtils.getFilename(path);
         
@@ -46,22 +47,6 @@ public enum ManifestReader {;//using enum to enforce singleton
         }
       }
     }
-  }
-  
-  /*
-   * Get a list of all the tag and payload manifests
-   */
-  private static DirectoryStream<Path> getAllManifestFiles(final Path rootDir) throws IOException{
-    final DirectoryStream.Filter<Path> filter = new DirectoryStream.Filter<Path>() {
-      @Override
-      public boolean accept(final Path file) throws IOException {
-        if(file == null || file.getFileName() == null){ return false;}
-        final String filename = PathUtils.getFilename(file);
-        return filename.startsWith("tagmanifest-") || filename.startsWith("manifest-");
-      }
-    };
-    
-    return Files.newDirectoryStream(rootDir, filter);
   }
   
   /**

@@ -22,10 +22,9 @@ public enum BagitWarning {
   TAG_FILES_ENCODING("tag_files_encoding"),
   WEAK_CHECKSUM_ALGORITHM("weak_checksum_algorithm"),
   MANIFEST_SETS_DIFFER("manifest_file_sets_differ_between_algorithms"),
-  
-  LARGE_NUMBER_OF_FILES("payload_contains_large_number_of_files"),//TODO check for this!
-  LARGE_BAG_SIZE("bag_is_very_large"),//TODO check for this!
-  LARGE_NUMBER_OF_MANIFESTS("large_number_of_manifests");//TODO check for this!
+  LARGE_NUMBER_OF_FILES("payload_contains_large_number_of_files"),
+  LARGE_BAG_SIZE("bag_is_very_large"),
+  LARGE_NUMBER_OF_MANIFESTS("large_number_of_manifests");
   
   private final String messageBundleKey;
   private static final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");

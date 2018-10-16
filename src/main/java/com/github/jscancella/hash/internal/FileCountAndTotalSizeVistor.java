@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ResourceBundle;
@@ -21,16 +20,6 @@ public class FileCountAndTotalSizeVistor extends SimpleFileVisitor<Path> {
   
   private transient long totalSize;
   private transient long count;
-
-  @Override
-  public FileVisitResult preVisitDirectory(final Path dir, final BasicFileAttributes attrs) throws IOException {
-    if(dir.endsWith(Paths.get(".bagit"))){
-      logger.debug(messages.getString("skipping_ignored_directory"), dir);
-      return FileVisitResult.SKIP_SUBTREE;
-    }
-    
-    return FileVisitResult.CONTINUE;
-  }
 
   @Override
   public FileVisitResult visitFile(final Path path, final BasicFileAttributes attrs) throws IOException{

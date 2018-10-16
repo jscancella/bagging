@@ -21,31 +21,25 @@ public enum SHA3Hasher implements Hasher {
   private MessageDigest messageDigestInstance;
 
   @Override
-  public String hash(Path path) throws IOException, NoSuchAlgorithmException{
-    final MessageDigest messageDigest = MessageDigest.getInstance(MESSAGE_DIGEST_NAME);
-    updateMessageDigest(path, messageDigest);
-    return formatMessageDigest(messageDigest);
+  public String hash(Path path) throws IOException{
+    reset();
+    updateMessageDigest(path, messageDigestInstance);
+    return formatMessageDigest(messageDigestInstance);
   }
 
   @Override
-  public void update(byte[] bytes, int length) throws NoSuchAlgorithmException{
-    if(messageDigestInstance == null) {
-      messageDigestInstance = MessageDigest.getInstance(MESSAGE_DIGEST_NAME);
-    }
+  public void update(byte[] bytes, int length){
     messageDigestInstance.update(bytes, 0, length);
   }
 
   @Override
-  public String getHash() throws NoSuchAlgorithmException{
-    if(messageDigestInstance == null) {
-      messageDigestInstance = MessageDigest.getInstance(MESSAGE_DIGEST_NAME);
-    }
+  public String getHash(){
     return formatMessageDigest(messageDigestInstance);
   }
 
   @Override
   public void reset(){
-    messageDigestInstance = null;
+    messageDigestInstance.reset();
   }
 
   @Override
@@ -73,6 +67,11 @@ public enum SHA3Hasher implements Hasher {
       
       return formatter.toString();
     }
+  }
+
+  @Override
+  public void initialize() throws NoSuchAlgorithmException{
+    messageDigestInstance = MessageDigest.getInstance(MESSAGE_DIGEST_NAME);
   }
 
 }

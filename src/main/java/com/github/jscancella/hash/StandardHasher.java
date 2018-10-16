@@ -24,37 +24,31 @@ public enum StandardHasher implements Hasher {
   private final String MESSAGE_DIGEST_NAME;
   private final String BAGIT_ALGORITHM_NAME;
   
-  private StandardHasher(String digestName, final String bagitAlgorithmName) {
+  private StandardHasher(final String digestName, final String bagitAlgorithmName) {
     MESSAGE_DIGEST_NAME = digestName;
     BAGIT_ALGORITHM_NAME = bagitAlgorithmName;
   }
   
   @Override
-  public String hash(Path path) throws IOException, NoSuchAlgorithmException{
-    final MessageDigest messageDigest = MessageDigest.getInstance(MESSAGE_DIGEST_NAME);
-    updateMessageDigest(path, messageDigest);
-    return formatMessageDigest(messageDigest);
+  public String hash(final Path path) throws IOException{
+    reset();
+    updateMessageDigest(path, messageDigestInstance);
+    return formatMessageDigest(messageDigestInstance);
   }
 
   @Override
-  public void update(byte[] bytes, final int length) throws NoSuchAlgorithmException{
-    if(messageDigestInstance == null) {
-      messageDigestInstance = MessageDigest.getInstance(MESSAGE_DIGEST_NAME);
-    }
+  public void update(final byte[] bytes, final int length){
     messageDigestInstance.update(bytes, 0, length);
   }
 
   @Override
-  public String getHash() throws NoSuchAlgorithmException{
-    if(messageDigestInstance == null) {
-      messageDigestInstance = MessageDigest.getInstance(MESSAGE_DIGEST_NAME);
-    }
+  public String getHash(){
     return formatMessageDigest(messageDigestInstance);
   }
 
   @Override
   public void reset(){
-    messageDigestInstance = null;
+    messageDigestInstance.reset();
   }
 
   @Override
@@ -82,6 +76,11 @@ public enum StandardHasher implements Hasher {
       
       return formatter.toString();
     }
+  }
+
+  @Override
+  public void initialize() throws NoSuchAlgorithmException{
+    messageDigestInstance = MessageDigest.getInstance(MESSAGE_DIGEST_NAME);
   }
 
 }

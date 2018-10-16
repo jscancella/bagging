@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import com.github.jscancella.domain.Bag;
 import com.github.jscancella.domain.Manifest;
 import com.github.jscancella.domain.Metadata;
-import com.github.jscancella.domain.Version;
 import com.github.jscancella.hash.BagitChecksumNameMapping;
 import com.github.jscancella.hash.Hasher;
 import com.github.jscancella.hash.PayloadOxumGenerator;
@@ -50,32 +49,32 @@ public enum BagWriter {; //using enum to ensure singleton
    */
   public static void write(final Bag bag, final Path outputDir) throws IOException, NoSuchAlgorithmException{
     logger.debug(messages.getString("writing_payload_files"));
-    final Path bagitDir = PayloadWriter.writeVersionDependentPayloadFiles(bag, outputDir);
+    PayloadWriter.writeVersionDependentPayloadFiles(bag, outputDir);
     
     logger.debug(messages.getString("upsert_payload_oxum"));
     final String payloadOxum = PayloadOxumGenerator.generatePayloadOxum(bag.getDataDir());
     bag.getMetadata().upsertPayloadOxum(payloadOxum);
     
     logger.debug(messages.getString("writing_bagit_file"));
-    BagitFileWriter.writeBagitFile(bag.getVersion(), bag.getFileEncoding(), bagitDir);
+    BagitFileWriter.writeBagitFile(bag.getVersion(), bag.getFileEncoding(), outputDir);
     
     logger.debug(messages.getString("writing_payload_manifests"));
-    ManifestWriter.writePayloadManifests(bag.getPayLoadManifests(), bagitDir, bag.getRootDir(), bag.getFileEncoding());
+    ManifestWriter.writePayloadManifests(bag.getPayLoadManifests(), outputDir, bag.getRootDir(), bag.getFileEncoding());
 
     if(!bag.getMetadata().isEmpty()){
       logger.debug(messages.getString("writing_bag_metadata"));
-      MetadataWriter.writeBagMetadata(bag.getMetadata(), bag.getVersion(), bagitDir, bag.getFileEncoding());
+      MetadataWriter.writeBagMetadata(bag.getMetadata(), bag.getVersion(), outputDir, bag.getFileEncoding());
     }
     if(bag.getItemsToFetch().size() > 0){
       logger.debug(messages.getString("writing_fetch_file"));
-      FetchWriter.writeFetchFile(bag.getItemsToFetch(), bagitDir, bag.getRootDir(), bag.getFileEncoding());
+      FetchWriter.writeFetchFile(bag.getItemsToFetch(), outputDir, bag.getRootDir(), bag.getFileEncoding());
     }
     if(bag.getTagManifests().size() > 0){
       logger.debug(messages.getString("writing_tag_manifests"));
-      writeTagManifestFiles(bag.getTagManifests(), bagitDir, bag.getRootDir());
+      writeTagManifestFiles(bag.getTagManifests(), outputDir, bag.getRootDir());
       final Set<Manifest> updatedTagManifests = updateTagManifests(bag, outputDir);
       bag.setTagManifests(updatedTagManifests);
-      ManifestWriter.writeTagManifests(updatedTagManifests, bagitDir, outputDir, bag.getFileEncoding());
+      ManifestWriter.writeTagManifests(updatedTagManifests, outputDir, outputDir, bag.getFileEncoding());
     }
   }
   

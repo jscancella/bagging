@@ -10,7 +10,6 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
@@ -55,20 +54,15 @@ public abstract class AbstractCreateManifestsVistor extends SimpleFileVisitor<Pa
 
   @Override
   public FileVisitResult visitFile(final Path path, final BasicFileAttributes attrs)throws IOException{
-    try {
-      if(!includeHiddenFiles && PathUtils.isHidden(path) && !path.endsWith(".keep")){
-        logger.debug(messages.getString("skipping_hidden_file"), path);
-      }
-      else{
-        streamFile(path);
-        for(Entry<Manifest, Hasher> entry : manifestToHasherMap.entrySet()) {
-          entry.getKey().getFileToChecksumMap().put(path, entry.getValue().getHash());
-          entry.getValue().reset();
-        }
-      }
+    if(!includeHiddenFiles && PathUtils.isHidden(path) && !path.endsWith(".keep")){
+      logger.debug(messages.getString("skipping_hidden_file"), path);
     }
-    catch(NoSuchAlgorithmException e) {
-      throw new IOException(e); //rethrow
+    else{
+      streamFile(path);
+      for(final Entry<Manifest, Hasher> entry : manifestToHasherMap.entrySet()) {
+        entry.getKey().getFileToChecksumMap().put(path, entry.getValue().getHash());
+        entry.getValue().reset();
+      }
     }
     
     return FileVisitResult.CONTINUE;
@@ -80,14 +74,11 @@ public abstract class AbstractCreateManifestsVistor extends SimpleFileVisitor<Pa
       int read = is.read(buffer);
 
       while(read != -1){
-        for(Hasher hasher : manifestToHasherMap.values()) {
+        for(final Hasher hasher : manifestToHasherMap.values()) {
           hasher.update(buffer, read);
         }
         read = is.read(buffer);
       }
-    } catch(NoSuchAlgorithmException e){
-      //rethrow as IO exception
-      throw new IOException(e);
     }
   }
 }

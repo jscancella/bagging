@@ -18,9 +18,15 @@ public interface Hasher {
    * @return the hash as a hex formated string
    * 
    * @throws IOException if there is a problem reading the file
-   * @throws NoSuchAlgorithmException if there is a problem setting up the algorithm for hashing
    */
-  public String hash(final Path path) throws IOException, NoSuchAlgorithmException;
+  String hash(final Path path) throws IOException;
+  
+  /**
+   * Used to do any pre hashing initialization.
+   * 
+   * @throws NoSuchAlgorithmException if there is a problem during initialization
+   */
+  void initialize() throws NoSuchAlgorithmException;
   
   /**
    * For calculating large file checksums it is more efficient to stream the file, thus the need to be able to update a checksum.
@@ -28,25 +34,21 @@ public interface Hasher {
    * 
    * @param bytes the bytes with which to update the checksum
    * @param length the number of bytes to update from the array
-   * 
-   * @throws NoSuchAlgorithmException if there is a problem setting up the algorithm for hashing
    */
-  public void update(final byte[] bytes, final int length) throws NoSuchAlgorithmException;
+  void update(final byte[] bytes, final int length);
   
   /**
    * @return the checksum of the streamed file. If no file has been streamed, returns a default hash.
-   * 
-   * @throws NoSuchAlgorithmException if there is a problem setting up the algorithm for hashing
    */
-  public String getHash() throws NoSuchAlgorithmException;
+  String getHash();
   
   /**
    * When streaming a file, we have no way of knowing when we are done updating. This method allows for a reset of the current stream.
    */
-  public void reset();
+  void reset();
   
   /**
    * @return the bagit formatted version of the algorithm name. For example if the hasher implements MD5, it would return md5 as the name. 
    */
-  public String getBagitAlgorithmName();
+  String getBagitAlgorithmName();
 }

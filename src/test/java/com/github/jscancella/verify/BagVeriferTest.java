@@ -64,16 +64,6 @@ public class BagVeriferTest extends TempFolderTest {
     Assertions.assertThrows(FileNotInManifestException.class, () -> { BagVerifier.isValid(bag, false); });
   }
   
-//  @Test
-//  public void testStandardSupportedAlgorithms() throws Exception{
-//    List<String> algorithms = Arrays.asList("md5", "sha1", "sha256", "sha512");
-//    for(String alg : algorithms){
-//      StandardSupportedAlgorithms algorithm = StandardSupportedAlgorithms.valueOf(alg.toUpperCase());
-//      Manifest manifest = new Manifest(algorithm);
-//      BagVerifier.checkHashes(manifest);
-//    }
-//  }
-  
   @Test
   public void testMD5Bag() throws Exception{
     Path bagDir = Paths.get("src", "test", "resources", "md5Bag");
@@ -149,11 +139,12 @@ public class BagVeriferTest extends TempFolderTest {
   
   @Test
   public void testAddSHA3SupportViaInterface() throws Exception{
-    BagitChecksumNameMapping.add("sha3256", SHA3Hasher.INSTANCE);
+    boolean successful = BagitChecksumNameMapping.add("sha3256", SHA3Hasher.INSTANCE);
+    Assertions.assertTrue(successful);
     
     Path sha3BagDir = Paths.get(new File("src/test/resources/sha3Bag").toURI());
     Bag bag = BagReader.read(sha3BagDir);
-    BagVerifier.isValid(bag, true);
+    Assertions.assertTrue(BagVerifier.isValid(bag, true));
   }
   
   /*
@@ -164,9 +155,10 @@ public class BagVeriferTest extends TempFolderTest {
     Path bagPath = Paths.get(new File("src/test/resources/bag-with-leading-dot-slash-in-manifest").toURI());
     Bag bag = BagReader.read(bagPath);
     
-    BagVerifier.isValid(bag, true);
+    Assertions.assertTrue(BagVerifier.isValid(bag, true));
   }
   
+  @SuppressWarnings("deprecation")
   @Test 
   public void testQuickVerify() throws Exception{
     Path passingRootDir = Paths.get(new File("src/test/resources/bags/v0_94/bag").toURI());

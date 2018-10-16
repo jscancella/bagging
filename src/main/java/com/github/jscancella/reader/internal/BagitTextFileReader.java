@@ -26,7 +26,6 @@ public enum BagitTextFileReader {;//using enum to enforce singleton
   private static final Logger logger = LoggerFactory.getLogger(BagitTextFileReader.class);
   private static final byte[] BOM = new byte[]{(byte)0xEF, (byte)0xBB, (byte)0xBF};
   private static final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
-  private static final Version VERSION_1_0 = new Version(1, 0);
   private static final String LINE1_REGEX = "(BagIt-Version: )\\d*\\.\\d*";
   private static final String LINE2_REGEX = "(Tag-File-Character-Encoding: )\\S*";
   
@@ -64,7 +63,7 @@ public enum BagitTextFileReader {;//using enum to enforce singleton
     }
     
     final Version parsedVersion = parseVersion(version);
-    if(parsedVersion.isSameOrNewer(VERSION_1_0)){
+    if(parsedVersion.isOlder(Version.VERSION_1_0())){
       final List<String> lines = Files.readAllLines(bagitFile, StandardCharsets.UTF_8);
       throwErrorIfLinesDoNotMatchStrict(lines);
     }
@@ -88,7 +87,7 @@ public enum BagitTextFileReader {;//using enum to enforce singleton
    * BagIt-Version: <M.N>
    * Tag-File-Character-Encoding: <ENCODING>
    */
-  static void throwErrorIfLinesDoNotMatchStrict(final List<String> lines) throws InvalidBagitFileFormatException{
+  private static void throwErrorIfLinesDoNotMatchStrict(final List<String> lines) throws InvalidBagitFileFormatException{
     if(lines.size() > 2){
       final List<String> offendingLines = lines.subList(2, lines.size()-1);
       throw new InvalidBagitFileFormatException(MessageFormatter

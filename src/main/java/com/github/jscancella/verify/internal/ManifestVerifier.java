@@ -19,7 +19,7 @@ import com.github.jscancella.domain.Version;
 import com.github.jscancella.exceptions.FileNotInPayloadDirectoryException;
 import com.github.jscancella.exceptions.InvalidBagitFileFormatException;
 import com.github.jscancella.exceptions.MaliciousPathException;
-import com.github.jscancella.internal.PathUtils;
+import com.github.jscancella.internal.ManifestFilter;
 import com.github.jscancella.reader.internal.ManifestReader;
 
 /**
@@ -39,7 +39,7 @@ public enum ManifestVerifier {; //using enum to enforce singleton
     final Set<Path> allFilesListedInManifests = getAllFilesListedInManifests(bag);
     checkAllFilesListedInManifestExist(allFilesListedInManifests);
 
-    if (bag.getVersion().isOlder(new Version(1, 0))) {
+    if (bag.getVersion().isOlder(Version.VERSION_1_0())) {
       checkAllFilesInPayloadDirAreListedInAtLeastOneAManifest(allFilesListedInManifests, bag.getDataDir(), ignoreHiddenFiles);
     } else {
       CheckAllFilesInPayloadDirAreListedInAllManifests(bag.getPayLoadManifests(), bag.getDataDir(), ignoreHiddenFiles);
@@ -54,14 +54,11 @@ public enum ManifestVerifier {; //using enum to enforce singleton
     
     final Set<Path> filesListedInManifests = new HashSet<>();
 
-    try(DirectoryStream<Path> directoryStream = Files.newDirectoryStream(bag.getTagFileDir())){
+    try(DirectoryStream<Path> directoryStream = Files.newDirectoryStream(bag.getTagFileDir(), new ManifestFilter())){
       for (final Path path : directoryStream) {
-        final String filename = PathUtils.getFilename(path);
-        if (filename.startsWith("tagmanifest-") || filename.startsWith("manifest-")) {
-          logger.debug(messages.getString("get_listing_in_manifest"), path);
-          final Manifest manifest = ManifestReader.readManifest(path, bag.getRootDir(),bag.getFileEncoding());
-          filesListedInManifests.addAll(manifest.getFileToChecksumMap().keySet());
-        }
+        logger.debug(messages.getString("get_listing_in_manifest"), path);
+        final Manifest manifest = ManifestReader.readManifest(path, bag.getRootDir(),bag.getFileEncoding());
+        filesListedInManifests.addAll(manifest.getFileToChecksumMap().keySet());
       }
     }
 

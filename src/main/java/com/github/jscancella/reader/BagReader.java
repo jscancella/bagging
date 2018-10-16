@@ -18,7 +18,7 @@ import com.github.jscancella.reader.internal.ManifestReader;
 import com.github.jscancella.reader.internal.MetadataReader;
 
 public enum BagReader {; //using enum to ensure singleton
-  public static Bag read(Path bagDirectory) 
+  public static Bag read(final Path bagDirectory) 
       throws InvalidBagMetadataException, IOException, UnparsableVersionException, InvalidBagitFileFormatException, MaliciousPathException {
     
     final Bag bag = new Bag();

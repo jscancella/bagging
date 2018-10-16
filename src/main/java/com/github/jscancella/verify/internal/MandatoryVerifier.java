@@ -52,7 +52,7 @@ public enum MandatoryVerifier {; //using enum to enforce singleton
    */
   public static void checkBagitFileExists(final Bag bag) throws MissingBagitFileException{
     logger.info("Checking if bagit.txt file exists");
-    Path bagitFile = bag.getTagFileDir().resolve("bagit.txt");
+    final Path bagitFile = bag.getTagFileDir().resolve("bagit.txt");
     
     if(!Files.exists(bagitFile)){
       final String formattedMessage = messages.getString("file_should_exist_error");

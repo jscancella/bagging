@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Collection;
@@ -28,6 +27,7 @@ import com.github.jscancella.conformance.exceptions.RequiredMetadataFieldNotPres
 import com.github.jscancella.conformance.exceptions.RequiredTagFileNotPresentException;
 import com.github.jscancella.conformance.internal.BagProfileChecker;
 import com.github.jscancella.conformance.internal.EncodingChecker;
+import com.github.jscancella.conformance.internal.LargeBagChecker;
 import com.github.jscancella.conformance.internal.ManifestChecker;
 import com.github.jscancella.conformance.internal.MetadataChecker;
 import com.github.jscancella.conformance.internal.VersionChecker;
@@ -45,7 +45,6 @@ public enum BagLinter {
   ; // using enum to ensure singleton
   private static final Logger logger = LoggerFactory.getLogger(BagLinter.class);
   private static final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
-  private static final Version VERSION_1_0 = new Version(1,0);
 
   /**
    * Check a bag against a bagit-profile as described by <a href=
@@ -83,17 +82,8 @@ public enum BagLinter {
    * that are allowed but discouraged. This <strong>does not</strong> validate a
    * bag. See {@link BagVerifier} instead.
    */
-  public static Set<BagitWarning> lintBag(final Path rootDir, final Collection<BagitWarning> warningsToIgnore) throws IOException, UnparsableVersionException, InvalidBagitFileFormatException, MaliciousPathException{
-    // TODO check number of manifests is < 50, check number of files in manifest is
-    // < 1 million?
-    // TODO
+  public static Set<BagitWarning> lintBag(final Path bagitDir, final Collection<BagitWarning> warningsToIgnore) throws IOException, UnparsableVersionException, InvalidBagitFileFormatException, MaliciousPathException{
     final Set<BagitWarning> warnings = new HashSet<>();
-
-    // @Incubating
-    Path bagitDir = rootDir.resolve(".bagit");
-    if (!Files.exists(bagitDir)){
-      bagitDir = rootDir;
-    }
 
     final Path bagitFile = bagitDir.resolve("bagit.txt");
     checkForExtraLines(bagitFile, warnings, warningsToIgnore);
@@ -104,9 +94,12 @@ public enum BagLinter {
 
     logger.info(messages.getString("checking_latest_version"));
     VersionChecker.checkVersion(bagitInfo.getKey(), warnings, warningsToIgnore);
+    
+    logger.info("Checking for size problems");
+    LargeBagChecker.checkForLargeBag(bagitDir, warnings, warningsToIgnore);
 
     logger.info(messages.getString("checking_manifest_problems"));
-    ManifestChecker.checkManifests(bagitInfo.getKey(), bagitDir, bagitInfo.getValue(), warnings, warningsToIgnore);
+    ManifestChecker.checkManifests(bagitDir, bagitInfo.getValue(), warnings, warningsToIgnore);
 
     logger.info(messages.getString("checking_metadata_problems"));
     MetadataChecker.checkBagMetadata(bagitDir, bagitInfo.getValue(), warnings, warningsToIgnore);
@@ -127,7 +120,7 @@ public enum BagLinter {
       if("BagIt-Version".equals(pair.getKey())){
         final Version version = BagitTextFileReader.parseVersion(pair.getValue());
         //versions before 1.0 specified it must be exactly 2 lines
-        if(pairs.size() > 2 && version.isOlder(VERSION_1_0)){
+        if(pairs.size() > 2 && version.isSameOrNewer(Version.VERSION_1_0())){
           logger.warn(messages.getString("extra_lines_warning"), pairs.size());
           warnings.add(BagitWarning.EXTRA_LINES_IN_BAGIT_FILES);
         }

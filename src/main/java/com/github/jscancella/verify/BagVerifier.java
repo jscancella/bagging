@@ -81,7 +81,7 @@ public enum BagVerifier { ;// using enum to ensure singleton
   private static boolean checkHashes(final Manifest manifest) throws CorruptChecksumException, NoSuchAlgorithmException, IOException{
     final Hasher hasher = BagitChecksumNameMapping.get(manifest.getBagitAlgorithmName());
 
-    for(Entry<Path, String> entry : manifest.getFileToChecksumMap().entrySet()){
+    for(final Entry<Path, String> entry : manifest.getFileToChecksumMap().entrySet()){
       if (Files.exists(entry.getKey())){
         logger.debug(messages.getString("checking_checksums"), entry.getKey(), entry.getValue());
 
@@ -94,7 +94,7 @@ public enum BagVerifier { ;// using enum to ensure singleton
       }
     }
 
-    return false;
+    return true;
   }
 
   /*

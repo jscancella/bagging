@@ -15,34 +15,21 @@ import org.slf4j.LoggerFactory;
 import com.github.jscancella.domain.Bag;
 import com.github.jscancella.domain.FetchItem;
 import com.github.jscancella.domain.Manifest;
-import com.github.jscancella.domain.Version;
 
 /**
  * Responsible for writing out the bag payload to the filesystem
  */
 public enum PayloadWriter {;//using enum to enforce singleton
   private static final Logger logger = LoggerFactory.getLogger(PayloadWriter.class);
-  private static final Version VERSION_2_0 = new Version(2, 0);
   private static final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
   
   /*
    * Write the payload files in the data directory or under the root directory depending on the version
    */
-  public static Path writeVersionDependentPayloadFiles(final Bag bag, final Path outputDir) throws IOException{
-    Path bagitDir = outputDir;
-    //@Incubating
-    if(bag.getVersion().isSameOrNewer(VERSION_2_0)){
-      bagitDir = outputDir.resolve(".bagit");
-      Files.createDirectories(bagitDir);
-      writePayloadFiles(bag.getPayLoadManifests(), bag.getItemsToFetch(), outputDir, bag.getRootDir());
-    }
-    else{
-      final Path dataDir = outputDir.resolve("data");
-      Files.createDirectories(dataDir);
-      writePayloadFiles(bag.getPayLoadManifests(), bag.getItemsToFetch(), dataDir, bag.getRootDir().resolve("data"));
-    }
-    
-    return bagitDir;
+  public static void writeVersionDependentPayloadFiles(final Bag bag, final Path outputDir) throws IOException{
+    final Path dataDir = outputDir.resolve("data");
+    Files.createDirectories(dataDir);
+    writePayloadFiles(bag.getPayLoadManifests(), bag.getItemsToFetch(), dataDir, bag.getRootDir().resolve("data"));
   }
   
   /**

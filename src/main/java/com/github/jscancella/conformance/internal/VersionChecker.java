@@ -16,15 +16,14 @@ import com.github.jscancella.domain.Version;
  */
 public enum VersionChecker { ;//using enum to enforce singleton
   private static final Logger logger = LoggerFactory.getLogger(VersionChecker.class);
-  private static final Version LATEST_BAGIT_VERSION = Version.LATEST_BAGIT_VERSION();
   private static final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
   
   /*
    * Check that they are using the latest version
    */
   public static void checkVersion(final Version version, final Set<BagitWarning> warnings, final Collection<BagitWarning> warningsToIgnore){
-    if(!warningsToIgnore.contains(BagitWarning.OLD_BAGIT_VERSION) && version.isOlder(LATEST_BAGIT_VERSION)){
-      logger.warn(messages.getString("old_version_warning"), version, LATEST_BAGIT_VERSION);
+    if(!warningsToIgnore.contains(BagitWarning.OLD_BAGIT_VERSION) && version.isOlder(Version.LATEST_BAGIT_VERSION())){
+      logger.warn(messages.getString("old_version_warning"), version, Version.LATEST_BAGIT_VERSION());
       warnings.add(BagitWarning.OLD_BAGIT_VERSION);
     }
   }

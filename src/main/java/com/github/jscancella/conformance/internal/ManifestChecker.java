@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.Set;
 
@@ -20,7 +21,6 @@ import org.slf4j.helpers.MessageFormatter;
 
 import com.github.jscancella.conformance.BagitWarning;
 import com.github.jscancella.domain.Manifest;
-import com.github.jscancella.domain.Version;
 import com.github.jscancella.exceptions.InvalidBagitFileFormatException;
 import com.github.jscancella.exceptions.MaliciousPathException;
 import com.github.jscancella.internal.PathUtils;
@@ -30,8 +30,8 @@ import com.github.jscancella.reader.internal.ManifestReader;
  * Part of the BagIt conformance suite. 
  * This checker checks for various problems related to the manifests in a bag.
  */
-//TODO refactor to remove PMD warnings!
-@SuppressWarnings({"PMD.UseLocaleWithCaseConversions", "PMD.TooManyMethods", "PMD.GodClass"})
+//TODO refactor to remove PMD warnings
+@SuppressWarnings({"PMD.TooManyMethods", "PMD.GodClass"})
 public enum ManifestChecker {;// using enum to enforce singleton
   private static final Logger logger = LoggerFactory.getLogger(ManifestChecker.class);
   private static final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
@@ -42,13 +42,12 @@ public enum ManifestChecker {;// using enum to enforce singleton
   private static final String TRASHES_FILE = "\\.(_.)?[Tt][Rr][Aa][Ss][Hh][Ee][Ss]";
   private static final String FS_EVENTS_FILE = "\\.[Ff][Ss][Ee][Vv][Ee][Nn][Tt][Ss][Dd]";
   private static final String OS_FILES_REGEX = ".*data/(" + THUMBS_DB_FILE + "|" + DS_STORE_FILE + "|" + SPOTLIGHT_FILE + "|" + TRASHES_FILE + "|" + FS_EVENTS_FILE + ")";
-  private static final Version VERSION_1_0 = new Version(1,0);
   
   
   /**
    * Check for all the manifest specific potential problems
    */
-  public static void checkManifests(final Version version, final Path bagitDir, final Charset encoding, final Set<BagitWarning> warnings, 
+  public static void checkManifests(final Path bagitDir, final Charset encoding, final Set<BagitWarning> warnings, 
       final Collection<BagitWarning> warningsToIgnore) throws IOException, InvalidBagitFileFormatException, MaliciousPathException{
         
     boolean missingTagManifest = true;
@@ -61,7 +60,8 @@ public enum ManifestChecker {;// using enum to enforce singleton
     }
     
     if(!warnings.contains(BagitWarning.MANIFEST_SETS_DIFFER)){
-      checkManifestSets(version, tagManifests, payloadManifests, warnings, encoding);
+      checkManifestsListSameSetOfFiles(warnings, tagManifests, encoding);
+      checkManifestsListSameSetOfFiles(warnings, payloadManifests, encoding);
     }
     
     if(!warningsToIgnore.contains(BagitWarning.MISSING_TAG_MANIFEST) && missingTagManifest){
@@ -110,7 +110,7 @@ public enum ManifestChecker {;// using enum to enforce singleton
         path = checkForManifestCreatedWithMD5SumTools(path, warnings, warningsToIgnore);
         
         checkForDifferentCase(path, paths, manifestFile, warnings, warningsToIgnore);
-        paths.add(path.toLowerCase());
+        paths.add(path.toLowerCase(Locale.ROOT));
         
         if(encoding.name().startsWith("UTF")){
           checkNormalization(path, manifestFile.getParent(), warnings, warningsToIgnore);
@@ -161,7 +161,7 @@ public enum ManifestChecker {;// using enum to enforce singleton
    */
   private static void checkForDifferentCase(final String path, final Set<String> paths, final Path manifestFile, 
       final Set<BagitWarning> warnings, final Collection<BagitWarning> warningsToIgnore){
-    if(!warningsToIgnore.contains(BagitWarning.DIFFERENT_CASE) && paths.contains(path.toLowerCase())){
+    if(!warningsToIgnore.contains(BagitWarning.DIFFERENT_CASE) && paths.contains(path.toLowerCase(Locale.ROOT))){
       logger.warn(messages.getString("different_case_warning"), manifestFile, path);
       warnings.add(BagitWarning.DIFFERENT_CASE);
     }
@@ -232,37 +232,23 @@ public enum ManifestChecker {;// using enum to enforce singleton
   }
   
   /*
-   * Check for anything weaker than SHA-512
+   * Check for anything weaker than SHA-224
    */
   static void checkAlgorthm(final String algorithm, final Set<BagitWarning> warnings, final Collection<BagitWarning> warningsToIgnore){
-    final String upperCaseAlg = algorithm.toUpperCase();
+    final String upperCaseAlg = algorithm.toUpperCase(Locale.ROOT);
     if(!warningsToIgnore.contains(BagitWarning.WEAK_CHECKSUM_ALGORITHM) && 
-        (upperCaseAlg.startsWith("MD") || upperCaseAlg.matches("SHA(1|224|256|384)?"))){
+        (upperCaseAlg.startsWith("MD") || "SHA1".equals(upperCaseAlg))){ //TODO add more known weak hashes
       logger.warn(messages.getString("weak_algorithm_warning"), algorithm);
       warnings.add(BagitWarning.WEAK_CHECKSUM_ALGORITHM);
     }
     
-    else if(!warningsToIgnore.contains(BagitWarning.NON_STANDARD_ALGORITHM) && !"SHA512".equals(upperCaseAlg)){
+    else if(!warningsToIgnore.contains(BagitWarning.NON_STANDARD_ALGORITHM) && !upperCaseAlg.matches("MD5|SHA(224|256|384|512)?")){
       logger.warn(messages.getString("non_standard_algorithm_warning"), algorithm);
       warnings.add(BagitWarning.NON_STANDARD_ALGORITHM);
     }
   }
   
-  static void checkManifestSets(final Version version, final List<Path> tagManifests, final List<Path> payloadManifests, 
-      final Set<BagitWarning> warnings, final Charset encoding) 
-          throws IOException, MaliciousPathException, InvalidBagitFileFormatException{
-  //edge case, for version 1.0+ all tag manifests SHOULD list the same set of files
-    if(tagManifests.size() > 1 && VERSION_1_0.isSameOrOlder(version)){
-      checkManifestsListSameSetOfFiles(warnings, tagManifests, encoding);
-    }
-    
-    //edge case, for version 1.0+ all payload manifests SHOULD list the same set of files
-    if(payloadManifests.size() > 1 && VERSION_1_0.isSameOrOlder(version)){
-      checkManifestsListSameSetOfFiles(warnings, payloadManifests, encoding);
-    }
-  }
-  
-  //starting with version 1.0 all manifest types (tag, payload) should list the same set of files
+  //starting with version 1.0 all manifest types (tag, payload) MUST list the same set of files, but for older versions it SHOULD list all files
   static void checkManifestsListSameSetOfFiles(final Set<BagitWarning> warnings, final List<Path> manifestPaths, final Charset charset) throws IOException, MaliciousPathException, InvalidBagitFileFormatException{
     
     Manifest compareToManifest = null;
@@ -281,10 +267,4 @@ public enum ManifestChecker {;// using enum to enforce singleton
       }
     }
   }
-
-  //for unit test only
-  static String getOsFilesRegex() {
-    return OS_FILES_REGEX;
-  }
-
 }

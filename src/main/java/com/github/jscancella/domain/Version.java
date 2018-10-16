@@ -20,6 +20,14 @@ public final class Version implements Comparable<Version>{
   public static Version LATEST_BAGIT_VERSION() {
     return new Version(1, 0);
   }
+  
+  public static Version VERSION_1_0() {
+    return new Version(1, 0);
+  }
+  
+  public static Version VERSION_0_95() {
+    return new Version(0, 95);
+  }
 
   @Override
   public String toString() {
