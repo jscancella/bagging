@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * This class is used to define elements in a bag-info.txt file used by a bagit-profile.
+ * This class is used to define elements in a bag-info.txt file used by a {@link BagitProfile}.
  */
 public class BagInfoRequirement {
   private boolean required;

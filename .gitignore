@@ -4,3 +4,4 @@
 .settings
 bin/
 build/
+hs_err_pid*

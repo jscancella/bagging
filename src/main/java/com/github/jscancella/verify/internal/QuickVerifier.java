@@ -47,8 +47,10 @@ public enum QuickVerifier {;//using enum to enforce singleton
    * @throws InvalidPayloadOxumException if either the total bytes or the number of files 
    * calculated for the payload directory of the bag is different than the supplied values
    * @throws PayloadOxumDoesNotExistException if the bag does not contain a payload-oxum.
-   * To check, run {@link BagVerifier#canQuickVerify}
+   * 
+   * @deprecated the Payload-Oxum is a hack of the bag metadata. In the future the BagIt specification should instead include this information in the bagit.txt
    */
+  @Deprecated
   public static void quicklyVerify(final Bag bag) throws IOException, InvalidPayloadOxumException, PayloadOxumDoesNotExistException{
     final String payloadOxum = getPayloadOxum(bag);
     if(payloadOxum == null || !payloadOxum.matches(PAYLOAD_OXUM_REGEX)){

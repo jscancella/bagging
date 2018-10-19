@@ -14,6 +14,10 @@ import com.github.jscancella.conformance.BagitWarning;
 import com.github.jscancella.hash.internal.FileCountAndTotalSizeVistor;
 import com.github.jscancella.internal.ManifestFilter;
 
+/**
+ * Part of the BagIt conformance suite. 
+ * Responsible for checking if a bag is "large". 
+ */
 public enum LargeBagChecker { ; //using enum to enforce singleton
   private static final Logger logger = LoggerFactory.getLogger(LargeBagChecker.class);
 //  private static final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");

@@ -29,6 +29,13 @@ public enum ManifestReader {;//using enum to enforce singleton
   
   /**
    * Finds and reads all manifest files in the rootDir and adds them to the given bag.
+   * 
+   * @param rootDir the directory that contains the tag files of a bag
+   * @param bag the bag to add the manifests to
+   * 
+   * @throws IOException if there is a problem reading a file
+   * @throws MaliciousPathException if a path in the manifest points outside the bag
+   * @throws InvalidBagitFileFormatException if one of the bagit files is not formatted correctly
    */
   public static void readAllManifests(final Path rootDir, final Bag bag) throws IOException, MaliciousPathException, InvalidBagitFileFormatException{
     logger.info(messages.getString("attempting_read_manifests"));
@@ -51,6 +58,16 @@ public enum ManifestReader {;//using enum to enforce singleton
   
   /**
    * Reads a manifest file and converts it to a {@link Manifest} object.
+   * 
+   * @param manifestFile the path to the manifest file to read
+   * @param bagRootDir the root directory of the bag
+   * @param charset what encoding to use when reading the manifest file
+   * 
+   * @return a manifest
+   * 
+   * @throws IOException if there is a problem reading a file
+   * @throws MaliciousPathException if the manifest has a path that is outside the bag
+   * @throws InvalidBagitFileFormatException if the manifest is not formatted correctly
    */
   public static Manifest readManifest(final Path manifestFile, final Path bagRootDir, final Charset charset) 
           throws IOException, MaliciousPathException, InvalidBagitFileFormatException{

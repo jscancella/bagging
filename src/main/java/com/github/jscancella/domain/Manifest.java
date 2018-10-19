@@ -4,9 +4,10 @@ package com.github.jscancella.domain;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
- * A manifest is a list of files and their corresponding checksum with the {@link hasher} used to generate that checksum
+ * A manifest is a list of files and their corresponding checksum with the {@link com.github.jscancella.hash.Hasher} used to generate that checksum
  */
 public final class Manifest {
   private final String bagitAlgorithmName;
@@ -31,34 +32,30 @@ public final class Manifest {
     return bagitAlgorithmName;
   }
   
-//  public Hasher getHasher(){
-//    return hasher;
-//  }
+  @Override
+  public String toString() {
+    return "Manifest [algorithm=" + getBagitAlgorithmName() + ", fileToChecksumMap=" + fileToChecksumMap + "]";
+  }
+  
+  @Override
+  public int hashCode() {
+    return Objects.hash(bagitAlgorithmName) + fileToChecksumMap.hashCode();
+  }
 
-//  @Override
-//  public String toString() {
-//    return "Manifest [algorithm=" + hasher.getBagitAlgorithmName() + ", fileToChecksumMap=" + fileToChecksumMap + "]";
-//  }
-//  
-//  @Override
-//  public int hashCode() {
-//    return Objects.hash(hasher) + fileToChecksumMap.hashCode();
-//  }
-//
-//  @Override
-//  public boolean equals(final Object obj) {
-//    if (this == obj){
-//      return true;
-//    }
-//    if (obj == null){
-//      return false;
-//    }
-//    if (!(obj instanceof Manifest)){
-//      return false;
-//    }
-//    
-//    final Manifest other = (Manifest) obj;
-//    
-//    return Objects.equals(hasher, other.hasher) && fileToChecksumMap.equals(other.getFileToChecksumMap()); 
-//  }
+  @Override
+  public boolean equals(final Object obj) {
+    if (this == obj){
+      return true;
+    }
+    if (obj == null){
+      return false;
+    }
+    if (!(obj instanceof Manifest)){
+      return false;
+    }
+    
+    final Manifest other = (Manifest) obj;
+    
+    return Objects.equals(bagitAlgorithmName, other.getBagitAlgorithmName()) && fileToChecksumMap.equals(other.getFileToChecksumMap()); 
+  }
 }

@@ -5,8 +5,7 @@ import java.nio.file.Path;
 import java.security.NoSuchAlgorithmException;
 
 /**
- * The interface that any supported checksum algorithm must implement. 
- * It is assumed that the implementation is a singleton and thread safe.
+ * The interface that any supported checksum algorithm must implement.
  */
 public interface Hasher {
 

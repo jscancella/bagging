@@ -102,9 +102,15 @@ public enum BagitTextFileReader {;//using enum to enforce singleton
           .format(messages.getString("strict_second_line_error"), lines.get(0)).getMessage());
     }
   }
-  
-  /*
+
+  /**
    * parses the version string into a {@link Version} object
+   * 
+   * @param version string to parse
+   * 
+   * @return a {@link Version} object if successful
+   * 
+   * @throws UnparsableVersionException if not successful in parsing version
    */
   public static Version parseVersion(final String version) throws UnparsableVersionException{
     if(!version.contains(".")){

@@ -120,7 +120,7 @@ public enum BagWriter {; //using enum to ensure singleton
   }
   
   /**
-   * Creates a bag in place for {@link Version.LATEST_BAGIT_VERSION}.
+   * Creates a bag in place for {@link com.github.jscancella.domain.Version#LATEST_BAGIT_VERSION}.
    * This method moves and creates files, thus if an error is thrown during operation it may leave the filesystem 
    * in an unknown state of transition. Thus this is <b>not thread safe</b>
    * 
@@ -128,10 +128,10 @@ public enum BagWriter {; //using enum to ensure singleton
    * @param algorithms an collection of bagit algorithm names which will be used for creating manifests
    * @param includeHidden to include hidden files when generating the bagit files, like the manifests
    * 
-   * @throws NoSuchAlgorithmException if {@link BagitCheckumNameMapping} can't find the algorithm
+   * @throws NoSuchAlgorithmException if {@link com.github.jscancella.hash.BagitChecksumNameMapping} can't find the algorithm
    * @throws IOException if there is a problem writing or moving file(s)
    * 
-   * @return a {@link Bag} object representing the newly created bagit bag
+   * @return a {@link com.github.jscancella.domain.Bag} object representing the newly created bagit bag
    */
   public static Bag bagInPlace(final Path root, final Collection<String> algorithms, final boolean includeHidden) throws NoSuchAlgorithmException, IOException{
     return BagCreator.bagInPlace(root, algorithms, includeHidden);
@@ -150,7 +150,7 @@ public enum BagWriter {; //using enum to ensure singleton
   * @throws NoSuchAlgorithmException if {@link MessageDigest} can't find the algorithm
   * @throws IOException if there is a problem writing or moving file(s)
   * 
-  * @return a {@link Bag} object representing the newly created bagit bag
+  * @return a {@link com.github.jscancella.domain.Bag} object representing the newly created bagit bag
   */
  public static Bag bagInPlace(final Path root, final Collection<String> algorithms, final boolean includeHidden, final Metadata metadata) throws NoSuchAlgorithmException, IOException{
    return BagCreator.bagInPlace(root, algorithms, includeHidden, metadata);

@@ -61,6 +61,9 @@ public enum KeyValueReader {;//using enum to enforce singleton
     return keyValues;
   }
   
+  /*
+   * If a line is indented, it actually belongs with the previous line so we need to merge them together
+   */
   private static void mergeIndentedLine(final String line, final List<SimpleImmutableEntry<String, String>> keyValues){
     final SimpleImmutableEntry<String, String> oldKeyValue = keyValues.remove(keyValues.size() -1);
     final SimpleImmutableEntry<String, String> newKeyValue = new SimpleImmutableEntry<>(oldKeyValue.getKey(), oldKeyValue.getValue() + System.lineSeparator() +line);

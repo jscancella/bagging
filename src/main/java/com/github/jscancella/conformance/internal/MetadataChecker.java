@@ -24,10 +24,6 @@ public enum MetadataChecker { ;// using enum to enforce singleton
   private static final Logger logger = LoggerFactory.getLogger(MetadataChecker.class);
   private static final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
   
-  private MetadataChecker(){
-    //intentionally left empty
-  }
-  
   public static void checkBagMetadata(final Path bagitDir, final Charset encoding, final Set<BagitWarning> warnings, 
       final Collection<BagitWarning> warningsToIgnore) throws IOException, InvalidBagMetadataException{
     checkForPayloadOxumMetadata(bagitDir, encoding, warnings, warningsToIgnore);

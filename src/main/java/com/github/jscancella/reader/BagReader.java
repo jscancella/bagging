@@ -17,7 +17,24 @@ import com.github.jscancella.reader.internal.FetchReader;
 import com.github.jscancella.reader.internal.ManifestReader;
 import com.github.jscancella.reader.internal.MetadataReader;
 
+/**
+ * Responsible for reading a bag from the filesystem.
+ */
 public enum BagReader {; //using enum to ensure singleton
+  
+  /**
+   * Reads the filesystem and creates a {@link Bag} object
+   * 
+   * @param bagDirectory the base directory of a bag on a filesystem
+   * 
+   * @return {@link Bag} object or throws an exception
+   * 
+   * @throws InvalidBagMetadataException If the metadata in the bag is improperly formatted
+   * @throws IOException If there was a problem reading from the filesystem
+   * @throws UnparsableVersionException If there was a problem parsing the version
+   * @throws InvalidBagitFileFormatException If one of the files are formatted incorrectly
+   * @throws MaliciousPathException If a manifest is trying to access a file outside the bag
+   */
   public static Bag read(final Path bagDirectory) 
       throws InvalidBagMetadataException, IOException, UnparsableVersionException, InvalidBagitFileFormatException, MaliciousPathException {
     

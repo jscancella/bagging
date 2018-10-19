@@ -31,6 +31,7 @@ import com.github.jscancella.conformance.internal.LargeBagChecker;
 import com.github.jscancella.conformance.internal.ManifestChecker;
 import com.github.jscancella.conformance.internal.MetadataChecker;
 import com.github.jscancella.conformance.internal.VersionChecker;
+import com.github.jscancella.conformance.profile.BagitProfile;
 import com.github.jscancella.domain.Bag;
 import com.github.jscancella.domain.Version;
 import com.github.jscancella.exceptions.InvalidBagMetadataException;
@@ -52,6 +53,24 @@ public enum BagLinter {
    * <br>
    * Note: <b> This implementation does not check the Serialization part of the
    * profile!</b>
+   * 
+   * 
+   * @param jsonProfile the conformance profile to check the bag against
+   * @param bag the bag to check against the conformance profile
+   * 
+   * @return true if the bag meets the conformance profile
+   * 
+   * @throws JsonParseException if there is an error parsing the conformance profile
+   * @throws JsonMappingException if there is an error mapping the parsed profile to a {@link BagitProfile}
+   * @throws IOException If there is an error while reading the bag
+   * 
+   * @throws FetchFileNotAllowedException If the bag contains a fetch file but the profile forbids it
+   * @throws RequiredMetadataFieldNotPresentException If the bag is missing a required metadata field
+   * @throws MetatdataValueIsNotAcceptableException if the metadata value present in the bag is not in the list of acceptable values from the profile
+   * @throws RequiredManifestNotPresentException if the manifest present doesn't use the required checksum algorithm from the profile
+   * @throws BagitVersionIsNotAcceptableException if the bag is too old
+   * @throws RequiredTagFileNotPresentException if a tag file is missing
+   * @throws MetatdataValueIsNotRepeatableException if there is a repeat of metadata in the bag
    */
   public static boolean checkAgainstProfile(final InputStream jsonProfile, final Bag bag)
       throws JsonParseException, JsonMappingException, IOException, FetchFileNotAllowedException,
@@ -70,6 +89,14 @@ public enum BagLinter {
    * that are allowed but discouraged. This <strong>does not</strong> validate a
    * bag. See {@link BagVerifier} instead.
    * 
+   * @param rootDir the directory that contains a bag
+   * 
+   * @return a set of warnings that were found in the bag
+   * 
+   * @throws IOException if there was a problem reading a bag file
+   * @throws UnparsableVersionException if there was a problem parsing the version of the bag
+   * @throws InvalidBagitFileFormatException if a file is not formatted correctly
+   * @throws MaliciousPathException if the bag is trying to be malicious
    */
   public static Set<BagitWarning> lintBag(final Path rootDir) throws IOException, UnparsableVersionException, InvalidBagitFileFormatException, MaliciousPathException{
     return lintBag(rootDir, Collections.emptyList());
@@ -81,6 +108,16 @@ public enum BagLinter {
    * discouraged. This method checks a bag for potential problems, or other items
    * that are allowed but discouraged. This <strong>does not</strong> validate a
    * bag. See {@link BagVerifier} instead.
+   * 
+   * @param bagitDir the firectory that contains a bag
+   * @param warningsToIgnore a collection of warnings you would like the linter to ignore
+   * 
+   * @return a set of warnings that were found in the bag
+   * 
+   * @throws IOException if there was a problem reading a bag file
+   * @throws UnparsableVersionException if there was a problem parsing the version of the bag
+   * @throws InvalidBagitFileFormatException if a file is not formatted correctly
+   * @throws MaliciousPathException if the bag is trying to be maliciou
    */
   public static Set<BagitWarning> lintBag(final Path bagitDir, final Collection<BagitWarning> warningsToIgnore) throws IOException, UnparsableVersionException, InvalidBagitFileFormatException, MaliciousPathException{
     final Set<BagitWarning> warnings = new HashSet<>();
@@ -107,6 +144,9 @@ public enum BagLinter {
     return warnings;
   }
   
+  /*
+   * After version 1.0 the specification read that the bagit.txt MUST contain EXACTLY 2 lines
+   */
   private static void checkForExtraLines(final Path bagitFile, final Collection<BagitWarning> warnings, final Collection<BagitWarning> warningsToIgnore) throws InvalidBagMetadataException, IOException, UnparsableVersionException {
     if(warningsToIgnore.contains(BagitWarning.EXTRA_LINES_IN_BAGIT_FILES)){
       logger.debug(messages.getString("skipping_check_extra_lines"));
@@ -119,7 +159,7 @@ public enum BagLinter {
     for(final SimpleImmutableEntry<String, String> pair : pairs){
       if("BagIt-Version".equals(pair.getKey())){
         final Version version = BagitTextFileReader.parseVersion(pair.getValue());
-        //versions before 1.0 specified it must be exactly 2 lines
+        //versions after 1.0 specified it must be exactly 2 lines
         if(pairs.size() > 2 && version.isSameOrNewer(Version.VERSION_1_0())){
           logger.warn(messages.getString("extra_lines_warning"), pairs.size());
           warnings.add(BagitWarning.EXTRA_LINES_IN_BAGIT_FILES);

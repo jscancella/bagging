@@ -38,12 +38,12 @@ public class FetchReaderTest extends TempFolderTest {
     List<FetchItem> returnedItems = FetchReader.readFetch(fetchFile, StandardCharsets.UTF_8, fetchFile.getParent());
     
     for(FetchItem item : returnedItems){
-      Assertions.assertNotNull(item.url);
-      Assertions.assertTrue(urls.contains(item.url));
+      Assertions.assertNotNull(item.getUrl());
+      Assertions.assertTrue(urls.contains(item.getUrl()));
       
-      Assertions.assertEquals(Long.valueOf(-1), item.length);
+      Assertions.assertEquals(Long.valueOf(-1), item.getLength());
       
-      Assertions.assertNotNull(item.path);
+      Assertions.assertNotNull(item.getPath());
     }
   }
   
@@ -53,12 +53,12 @@ public class FetchReaderTest extends TempFolderTest {
     List<FetchItem> returnedItems = FetchReader.readFetch(fetchFile, StandardCharsets.UTF_8, Paths.get("/foo"));
     
     for(FetchItem item : returnedItems){
-      Assertions.assertNotNull(item.url);
-      Assertions.assertTrue(urls.contains(item.url));
+      Assertions.assertNotNull(item.getUrl());
+      Assertions.assertTrue(urls.contains(item.getUrl()));
       
-      Assertions.assertTrue(item.length > 0);
+      Assertions.assertTrue(item.getLength() > 0);
       
-      Assertions.assertNotNull(item.path);
+      Assertions.assertNotNull(item.getPath());
     }
   }
   

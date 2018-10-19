@@ -17,6 +17,9 @@ public final class Version implements Comparable<Version>{
     this.cachedToString = major + "." + minor;
   }
   
+  /**
+   * @return the latest version of the BagIt specification
+   */
   public static Version LATEST_BAGIT_VERSION() {
     return new Version(1, 0);
   }

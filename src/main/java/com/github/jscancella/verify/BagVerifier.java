@@ -27,6 +27,9 @@ import com.github.jscancella.verify.internal.MandatoryVerifier;
 import com.github.jscancella.verify.internal.ManifestVerifier;
 import com.github.jscancella.verify.internal.QuickVerifier;
 
+/**
+ * Responsible for verifying a bag is complete and correct.
+ */
 public enum BagVerifier { ;// using enum to ensure singleton
   private static final Logger logger = LoggerFactory.getLogger(QuickVerifier.class);
   private static final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
@@ -34,6 +37,8 @@ public enum BagVerifier { ;// using enum to ensure singleton
   /**
    * Quickly verify by comparing the number of files and the total number of bytes
    * expected. Returns false if unable to quickly verify.
+   * 
+   * @param bag the bag you want to quickly verify
    * 
    * @throws IOException if there is an error reading a file
    * @throws InvalidPayloadOxumException if either the total bytes or the number of files 
@@ -48,17 +53,31 @@ public enum BagVerifier { ;// using enum to ensure singleton
     QuickVerifier.quicklyVerify(bag);
   }
 
-  /*
+  /**
    * See <a href=
    * "https://tools.ietf.org/html/draft-kunze-bagit#section-3">https://tools.ietf.org/html/draft-kunze-bagit#section-3</a><br>
    * A bag is <b>valid</b> if the bag is complete and every checksum has been
    * verified against the contents of its corresponding file.
    * 
+   * @param bag the bag to check
+   * @param ignoreHiddenFiles to include hidden files when checking
+   * 
+   * @return true if the bag is valid or throws an exception
+   * 
+   * @throws FileNotInPayloadDirectoryException if a file is in a manifest but is not in the payload directory
+   * @throws MissingBagitFileException if the bag is missing a bagit file
+   * @throws MissingPayloadDirectoryException if the bag is missing a payload directory
+   * @throws MissingPayloadManifestException if the bag is missing a payload manifest
+   * @throws IOException if there is a problem reading a file from the filesystem
+   * @throws MaliciousPathException if a bag is trying to access a file outside the bag
+   * @throws InvalidBagitFileFormatException if a bagit file is not formatted correctly
+   * @throws NoSuchAlgorithmException if there is no mapping in the {@link BagitChecksumNameMapping}
+   * @throws CorruptChecksumException if the file has been changed
    */
-  public static boolean isValid(final Bag bag, final boolean ignoreHiddenFiles)
-      throws FileNotInPayloadDirectoryException, MissingBagitFileException, MissingPayloadDirectoryException,
-      MissingPayloadManifestException, IOException, MaliciousPathException,
-      InvalidBagitFileFormatException, NoSuchAlgorithmException, CorruptChecksumException{
+  public static boolean isValid(final Bag bag, final boolean ignoreHiddenFiles) 
+      throws FileNotInPayloadDirectoryException, MissingBagitFileException, MissingPayloadDirectoryException, 
+      MissingPayloadManifestException, IOException, MaliciousPathException, InvalidBagitFileFormatException, 
+      NoSuchAlgorithmException, CorruptChecksumException {
 
     boolean isValid = true;
 
@@ -97,7 +116,7 @@ public enum BagVerifier { ;// using enum to ensure singleton
     return true;
   }
 
-  /*
+  /**
    * See <a href=
    * "https://tools.ietf.org/html/draft-kunze-bagit#section-3">https://tools.ietf.org/html/draft-kunze-bagit#section-3</a><br>
    * A bag is <b>complete</b> if <br>
@@ -110,11 +129,21 @@ public enum BagVerifier { ;// using enum to ensure singleton
    * manifest
    * <li>each element must comply with the bagit spec
    * </ul>
+   * 
+   * @param bag the bag to check
+   * @param ignoreHiddenFiles when checking to ignore hidden files
+   * 
+   * @return true or throws an exception
+   * 
+   * @throws FileNotInPayloadDirectoryException if a file is in a manifest but is not in the payload directory
+   * @throws MissingBagitFileException if the bag is missing a bagit file
+   * @throws MissingPayloadDirectoryException if the bag is missing a payload directory
+   * @throws MissingPayloadManifestException if the bag is missing a payload manifest
+   * @throws IOException if there is a problem reading a file from the filesystem
+   * @throws MaliciousPathException if a bag is trying to access a file outside the bag
+   * @throws InvalidBagitFileFormatException if a bagit file is not formatted correctly
    */
-  public static boolean isComplete(final Bag bag, final boolean ignoreHiddenFiles)
-      throws FileNotInPayloadDirectoryException, MissingBagitFileException, MissingPayloadDirectoryException,
-      MissingPayloadManifestException, IOException, MaliciousPathException,
-      InvalidBagitFileFormatException{
+  public static boolean isComplete(final Bag bag, final boolean ignoreHiddenFiles) throws FileNotInPayloadDirectoryException, MissingBagitFileException, MissingPayloadDirectoryException, MissingPayloadManifestException, IOException, MaliciousPathException, InvalidBagitFileFormatException{
 
     logger.info(messages.getString("checking_bag_is_complete"), bag.getRootDir());
 

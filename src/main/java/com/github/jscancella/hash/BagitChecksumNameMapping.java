@@ -28,7 +28,7 @@ public enum BagitChecksumNameMapping {
         map.put(hasher.getBagitAlgorithmName(), hasher);
       }
       catch(NoSuchAlgorithmException e) {
-        logger.error("Failed to initialize {} hasher", StandardHasher.MD5.getBagitAlgorithmName(), e );
+        logger.error("Failed to initialize {} hasher", hasher.getBagitAlgorithmName(), e);
       }
     }
   }

@@ -46,6 +46,15 @@ public enum ManifestChecker {;// using enum to enforce singleton
   
   /**
    * Check for all the manifest specific potential problems
+   * 
+   * @param bagitDir the directory containing a bag
+   * @param encoding the encoding of the manifest
+   * @param warnings The set of warnings to add to if any are found
+   * @param warningsToIgnore the collection of warnings to ignore
+   * 
+   * @throws IOException if there is a problem reading a file
+   * @throws InvalidBagitFileFormatException if a bag file is not formatted correctly
+   * @throws MaliciousPathException if the bag is trying to access a file outside the bag
    */
   public static void checkManifests(final Path bagitDir, final Charset encoding, final Set<BagitWarning> warnings, 
       final Collection<BagitWarning> warningsToIgnore) throws IOException, InvalidBagitFileFormatException, MaliciousPathException{

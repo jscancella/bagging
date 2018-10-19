@@ -5,6 +5,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.DosFileAttributes;
 
+/**
+ * Responsible for providing some very basic functionality across multiple packages.
+ */
 public interface PathUtils {
   /**
    * Needed to get rid of findbugs "dodgy code warnings" in regards to getting the filename of a path as a string

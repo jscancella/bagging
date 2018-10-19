@@ -31,12 +31,13 @@ public enum MandatoryVerifier {; //using enum to enforce singleton
    * 
    * @param items the items that needed to be fetched for the bag to be complete
    * @param bagDir the root directory of the bag
+   * 
    * @throws FileNotInPayloadDirectoryException if one or more of the fetch items don't exist
    */
   public static void checkFetchItemsExist(final List<FetchItem> items, final Path bagDir) throws FileNotInPayloadDirectoryException{
     logger.info(messages.getString("checking_fetch_items_exist"), items.size(), bagDir);
     for(final FetchItem item : items){
-      if(!Files.exists(item.path)){
+      if(!Files.exists(item.getPath())){
         final String formattedMessage = messages.getString("fetch_item_missing_error");
         throw new FileNotInPayloadDirectoryException(MessageFormatter.format(formattedMessage, item).getMessage());
       }
@@ -47,7 +48,6 @@ public enum MandatoryVerifier {; //using enum to enforce singleton
    * make sure the bagit.txt file exists
    * 
    * @param bag the bag to check
-   * @param version the version of the bag
    * @throws MissingBagitFileException if the bag does not contain the bagit.txt file as required by the bagit specification
    */
   public static void checkBagitFileExists(final Bag bag) throws MissingBagitFileException{
@@ -64,6 +64,7 @@ public enum MandatoryVerifier {; //using enum to enforce singleton
    * Make sure the payload directory exists
    * 
    * @param bag the bag to check
+   * 
    * @throws MissingPayloadDirectoryException if the bag does not contain the payload directory
    */
   public static void checkPayloadDirectoryExists(final Bag bag) throws MissingPayloadDirectoryException{
@@ -75,15 +76,12 @@ public enum MandatoryVerifier {; //using enum to enforce singleton
     }
   }
   
-  /*
-   * Must have at least one manifest-<ALGORITHM>.txt file
-   */
   /**
    * Check to make sure the bag has at least one payload manifest
    * (manifest-[ALGORITHM].txt)
    * 
    * @param bag the bag to check
-   * @param version the version of the bag
+   * 
    * @throws MissingPayloadManifestException if there are no payload manifests in the bag
    * @throws IOException if there was an error reading a file
    */

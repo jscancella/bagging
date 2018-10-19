@@ -12,17 +12,17 @@ public final class FetchItem {
   /**
    * The url from which the item can be downloaded
    */
-  public final URL url;
+  private final URL url;
   
   /**
    * The length of the file in octets
    */
-  public final Long length; 
+  private final Long length; 
   
   /**
    * The path where the fetched item should be put
    */
-  public final Path path;
+  private final Path path;
   
   private transient String cachedString;
   

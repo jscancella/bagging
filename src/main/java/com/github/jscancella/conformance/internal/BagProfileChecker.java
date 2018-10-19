@@ -35,15 +35,12 @@ import com.github.jscancella.domain.Manifest;
 import com.github.jscancella.domain.Metadata;
 
 /**
+ * Part of the BagIt conformance suite. 
  * Responsible for checking a bag against a profile
  */
 public enum BagProfileChecker {;//using enum to enforce singleton
   private static final Logger logger = LoggerFactory.getLogger(BagProfileChecker.class);
   private static final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
-
-  private BagProfileChecker(){
-    //intentionally left empty
-  }
   
   /**
    * Check a bag against a bagit-profile as described by 

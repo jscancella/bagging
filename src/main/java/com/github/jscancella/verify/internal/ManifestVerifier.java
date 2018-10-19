@@ -32,6 +32,14 @@ public enum ManifestVerifier {; //using enum to enforce singleton
   /**
    * Verify that all the files in the payload directory are listed in the payload manifest and 
    * all files listed in all manifests exist.
+   * 
+   * @param bag the bag which contains the manifests to check
+   * @param ignoreHiddenFiles to include hidden files when checking
+   * 
+   * @throws IOException if there is an error while reading a file from the filesystem
+   * @throws MaliciousPathException if a path is outside the bag
+   * @throws InvalidBagitFileFormatException if a manifest is not formatted correctly
+   * @throws FileNotInPayloadDirectoryException if a file listed in a manifest is not in the payload directory
    */
   public static void verifyManifests(final Bag bag, final boolean ignoreHiddenFiles)
       throws IOException, MaliciousPathException, InvalidBagitFileFormatException, FileNotInPayloadDirectoryException {
