@@ -59,6 +59,7 @@ There are three kinds of validations
 boolean ignoreHiddenFiles = true;
 BagVerifier.isComplete(bag, ignoreHiddenFiles);
 ```
+
 ##### Verify Valid (both complete and correct)
 ```java
 boolean ignoreHiddenFiles = true;
@@ -196,7 +197,7 @@ The short answer, no. The long answer is that having a java command line utility
 You don't because in order to generate a checksum of the tag file it can't change. Thus if you try to add a line for the tag-manifest containing a checksum, that checksum will change and no longer be valid.
 
 #### how do I check/create a compressed (zip, gz, etc) bag using this library?
-The specific functionality for checking or creating a bag while it is still compressed is not supported as it is beyond the scope of this project. I would recommend you use your favorite application to compress/decompress and then work with the bag as normal. 
+The specific functionality for checking or creating a bag while it is still compressed is not supported and there are not plans to support it in the future. I would recommend you use your favorite application to compress/decompress and then work with the bag as normal. 
 
 #### is BagIt good for archiving?
 Maybe, it really depends on what you are trying to achieve. 
