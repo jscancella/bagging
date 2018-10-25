@@ -4,6 +4,13 @@
 This is a software library intended to support the creation, manipulation, and validation of "bags" from the [bagit specification](https://tools.ietf.org/html/draft-kunze-bagit). 
 It currently supports version 0.93 through 1.0.
 
+## Badges
+|            |                                                    |
+|------------|----------------------------------------------------|
+|Build Status|[![CircleCI](https://img.shields.io/circleci/project/github/jscancella/bagging/master.svg?label=CircleCi&maxAge=600)](https://circleci.com/gh/jscancella/bagging)|
+|Metrics|[![Coverage Status](https://coveralls.io/repos/github/jscancella/bagging/badge.svg?branch=master)](https://coveralls.io/github/jscancella/bagging?branch=master) [![Github Latest Release Downloads](https://img.shields.io/github/downloads/jscancella/bagging/latest/total.svg?maxAge=600)]()|
+|Documentation|[![javadoc.io](https://img.shields.io/badge/javadoc.io-latest-blue.svg?maxAge=31556926)](http://www.javadoc.io/doc/gov.loc/bagit)|
+
 ## Requirements
 * Java 8
 * gradle (for development only)
