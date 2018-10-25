@@ -22,6 +22,9 @@ jobs:
           keys:
             - dependency-cache
       - run:
+          name: chmod permissions
+          command: chmod +x ./gradlew
+      - run:
           name: run tests
           command: ./gradlew check dependencyCheckUpdate dependencyCheckAnalyze --no-daemon
           environment: 
