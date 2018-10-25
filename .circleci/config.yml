@@ -17,21 +17,21 @@ jobs:
       TERM: dumb
     
     steps:
-      - checkout
-
-      # Download and cache dependencies
+      - checkout #checks out your code to your working directory
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "build.gradle" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
-
-      - run: ./gradlew dependencies
-
+            - dependency-cache
+      - run:
+          name: run tests
+          command: ./gradlew check dependencyCheckUpdate dependencyCheckAnalyze --no-daemon
+          environment: 
+            GRADLE_OPTS: "-Xmx1024m -Dorg.gradle.jvmargs='-Xmx1024m'"
+      - run: mkdir -p $CIRCLE_TEST_REPORTS/junit
+      - run: find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
+      - store_test_results:
+          path: /tmp/circleci-test-results
+      # Save dependency cache
       - save_cache:
+          key: dependency-cache
           paths:
             - ~/.gradle
-          key: v1-dependencies-{{ checksum "build.gradle" }}
-        
-      # run code quality checks
-      - run: ./gradlew check
