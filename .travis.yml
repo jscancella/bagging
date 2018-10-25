@@ -20,7 +20,9 @@ cache:
     - $HOME/.gradle/wrapper/
 
 #include the conformance suite repo
-before_install: "git clone --depth 1 https://github.com/loc-rdc/bagit-conformance-suite.git"
+before_install: 
+  - "git clone --depth 1 https://github.com/loc-rdc/bagit-conformance-suite.git"
+  - chmod +x gradlew
 install: true #skip having travis-ci trying te run assemble
 script: "./gradlew clean check dependencyCheckUpdate dependencyCheckAnalyze"
 after_success: "./gradlew coveralls"
