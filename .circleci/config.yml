@@ -26,7 +26,7 @@ jobs:
           command: chmod +x ./gradlew
       - run:
           name: run tests
-          command: ./gradlew check dependencyCheckUpdate dependencyCheckAnalyze --no-daemon
+          command: ./gradlew check coveralls dependencyCheckUpdate dependencyCheckAnalyze --no-daemon
           environment: 
             GRADLE_OPTS: "-Xmx1024m -Dorg.gradle.jvmargs='-Xmx1024m'"
       - run: mkdir -p $CIRCLE_TEST_REPORTS/junit
