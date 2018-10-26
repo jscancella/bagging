@@ -1,0 +1,107 @@
+//This build file is for all the configuration specifics of building and deploying to jcenter (bintray)
+apply plugin: "maven"
+apply plugin: "maven-publish"
+apply plugin: "java-library"
+
+if(!project.hasProperty("bintrayUser")){ //so CI doesn't break
+  project.ext.bintrayUser = "foo"
+  project.ext.bintrayApiKey = "foo"
+}
+
+if(!project.hasProperty("ossrhUsername")){ //so CI doesn't break
+  project.ext.ossrhUsername = "foo"
+  project.ext.ossrhPassword = "foo"
+}
+
+task javadocJar(type: Jar) {
+  group "Build"
+  description "Create the jar that contains all the class documentation (javadoc)."
+  classifier = 'javadoc'
+  from javadoc
+}
+
+task sourcesJar(type: Jar) {
+  group "Build"
+  description "Create the jar that contains all the .class files."
+  classifier = 'sources'
+  from sourceSets.main.allSource
+}
+
+bintray {
+  user = project.ext.bintrayUser
+  key = project.ext.bintrayApiKey
+
+  publications = ['BagitPublication']
+
+  publish = false //Whether version should be auto published after an upload
+
+  pkg {
+    repo = "com.github.jscancella"
+    name = "bagging"
+    userOrg = user
+    desc = "This is a software library intended to support the creation, manipulation, and validation of 'bags' from the bagit specification. It currently supports version 0.93 through 1.0."
+    websiteUrl = "https://github.com/jscancella/bagging"
+    issueTrackerUrl = "https://github.com/jscancella/bagging/issues"
+    licenses = ["AGPL-V3"]
+    vcsUrl = "https://github.com/jscancella/bagging"
+    labels = ["bagit", "bagging"]
+    publicDownloadNumbers = true
+    githubRepo = 'jscancella/bagging'
+    githubReleaseNotesFile = 'README.md'
+
+    version{
+      name = project.version
+      vcsTag = 'v' + project.version
+//      mavenCentralSync{
+//        user = ossrhUsername
+//        password = ossrhPassword
+//        close = '0' //release the version manually on Maven Central
+//      }
+    }
+  }
+}
+
+def pomConfig = {
+  licenses {
+    license {
+      name 'AGPL-V3'
+      url 'https://github.com/jscancella/bagging/blob/master/LICENSE.txt'
+    }
+  }
+
+  developers {
+    developer {
+      id 'jscancella'
+      name 'John Scancella'
+      email 'john.scancella@gmail.com'
+    }
+  }
+
+  scm {
+    connection 'scm:git:https://github.com/jscancella/bagging'
+    developerConnection 'scm:git:ssh://github.com/jscancella/bagging'
+    url 'https://github.com/jscancella/bagging'
+  }
+}
+
+publishing {
+    publications {
+        BagitPublication(MavenPublication) {
+            from components.java
+            artifact sourcesJar //needed for syncing with maven central
+            artifact javadocJar //needed for syncing with maven central
+            
+            groupId 'com.github.jscancella'
+            artifactId 'bagging'
+            version project.version
+
+            pom.withXml{
+              def root = asNode()
+              root.appendNode('description', 'This is a software library intended to support the creation, manipulation, and validation of "bags" from the bagit specification. It currently supports version 0.93 through 1.0.')
+              root.appendNode('name', 'bagging')
+              root.appendNode('url', 'https://github.com/jscancella/bagging')
+              root.children().last() + pomConfig
+            }
+        }
+    }
+}

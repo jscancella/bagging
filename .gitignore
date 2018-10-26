@@ -6,3 +6,4 @@ bin/
 build/
 hs_err_pid*
 bagit-conformance-suite/
+gradle.properties
