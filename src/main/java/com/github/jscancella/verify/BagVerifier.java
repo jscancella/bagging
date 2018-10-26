@@ -23,6 +23,7 @@ import com.github.jscancella.exceptions.MissingPayloadManifestException;
 import com.github.jscancella.exceptions.PayloadOxumDoesNotExistException;
 import com.github.jscancella.hash.BagitChecksumNameMapping;
 import com.github.jscancella.hash.Hasher;
+import com.github.jscancella.verify.internal.BagitTextFileVerifier;
 import com.github.jscancella.verify.internal.MandatoryVerifier;
 import com.github.jscancella.verify.internal.ManifestVerifier;
 import com.github.jscancella.verify.internal.QuickVerifier;
@@ -80,6 +81,8 @@ public enum BagVerifier { ;// using enum to ensure singleton
       NoSuchAlgorithmException, CorruptChecksumException {
 
     boolean isValid = true;
+    
+    BagitTextFileVerifier.checkBagitTextFile(bag);
 
     logger.info(messages.getString("checking_bag_is_valid"), bag.getRootDir());
     isValid = isComplete(bag, ignoreHiddenFiles) && isValid;
