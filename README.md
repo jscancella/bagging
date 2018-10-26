@@ -182,7 +182,8 @@ All public interfaces/classes have javadocs detailing what the class's responsib
 TODO - add link to http://www.javadoc.io/doc
 
 #### code coverage
-TODO - add link to https://coveralls.io
+To see a nice view of what code is covered by the various tests, check out [coveralls.io](https://coveralls.io/github/jscancella/bagging)
+We strive to try and maintain 90% or better code coverage knowing that testing language specifics (like getters and setters) are not helpful. Ideally we also have 100% coverage of each branch condition, but again this is more an ideal than a hard requirement.
 
 #### testing (conformance-suite)
 Because there are many test cases for using the BagIt specification correctly, the Library of Congress decided to create a suite of known issues as well as cononical basic bags for each specification version. These test cases are stored in a git repository and can be found at https://github.com/libraryofcongress/bagit-conformance-suite.git
