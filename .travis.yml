@@ -1,0 +1,28 @@
+matrix:
+  include:
+    - os: linux
+      jdk: openjdk8
+      dist: trusty
+      
+language: java
+
+#we don't care about having that much git history when building
+git:
+  depth: 1
+
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+
+#include the conformance suite repo
+before_install: 
+  - "git clone --depth 1 https://github.com/loc-rdc/bagit-conformance-suite.git"
+  - chmod +x gradlew
+install: true #skip having travis-ci trying te run assemble
+script: "./gradlew clean check dependencyCheckUpdate dependencyCheckAnalyze"
+after_success: "./gradlew coveralls"
