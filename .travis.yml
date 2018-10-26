@@ -26,3 +26,6 @@ before_install:
 install: true #skip having travis-ci trying te run assemble
 script: "./gradlew clean check dependencyCheckUpdate dependencyCheckAnalyze"
 after_success: "./gradlew coveralls"
+env:
+  global:
+    - COVERALLS_REPO_TOKEN=1Gyayb09A9R3qkxcXwq7D6BDPmRWCvKfN
