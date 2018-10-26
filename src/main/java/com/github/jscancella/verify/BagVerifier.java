@@ -108,7 +108,7 @@ public enum BagVerifier { ;// using enum to ensure singleton
         logger.debug(messages.getString("checking_checksums"), entry.getKey(), entry.getValue());
 
         final String hash = hasher.hash(entry.getKey());
-        logger.debug("computed hash [{}] for file [{}]", hash, entry.getKey());
+        logger.debug(messages.getString("computed_hash"), hash, entry.getKey());
         if (!hash.equals(entry.getValue())){
           throw new CorruptChecksumException(messages.getString("corrupt_checksum_error"), entry.getKey(),
               manifest.getBagitAlgorithmName(), entry.getValue(), hash);

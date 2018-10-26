@@ -3,9 +3,11 @@ package com.github.jscancella.hash;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.helpers.MessageFormatter;
 
 /**
  * Responsible for mapping between the bagit algorithm name and the actual implementation of that checksum.
@@ -28,7 +30,8 @@ public enum BagitChecksumNameMapping {
         map.put(hasher.getBagitAlgorithmName(), hasher);
       }
       catch(NoSuchAlgorithmException e) {
-        logger.error("Failed to initialize {} hasher", hasher.getBagitAlgorithmName(), e);
+        final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
+        logger.error(messages.getString("failed_to_init_hasher"), hasher.getBagitAlgorithmName(), e);
       }
     }
   }
@@ -41,7 +44,8 @@ public enum BagitChecksumNameMapping {
     }
     catch(NoSuchAlgorithmException e) {
       final Logger logger = LoggerFactory.getLogger(BagitChecksumNameMapping.class);
-      logger.error("Could not setup hasher for {}", implementation.getBagitAlgorithmName(), e);
+      final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
+      logger.error(messages.getString("hasher_setup"), implementation.getBagitAlgorithmName(), e);
     }
     return false;
   }
@@ -52,7 +56,9 @@ public enum BagitChecksumNameMapping {
   
   public static Hasher get(final String bagitAlgorithmName) throws NoSuchAlgorithmException {
     if(!INSTANCE.map.containsKey(bagitAlgorithmName)) {
-      throw new NoSuchAlgorithmException("No implementation of " + bagitAlgorithmName + " was found. Did you remember to add it to " + INSTANCE.toString() + "?");
+      final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
+      final String message = MessageFormatter.format(messages.getString("no_implementation_error"), bagitAlgorithmName, INSTANCE.toString()).getMessage();
+      throw new NoSuchAlgorithmException(message);
     }
     return INSTANCE.map.get(bagitAlgorithmName);
   }

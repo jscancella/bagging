@@ -51,7 +51,7 @@ public enum MandatoryVerifier {; //using enum to enforce singleton
    * @throws MissingBagitFileException if the bag does not contain the bagit.txt file as required by the bagit specification
    */
   public static void checkBagitFileExists(final Bag bag) throws MissingBagitFileException{
-    logger.info("Checking if bagit.txt file exists");
+    logger.info(messages.getString("checking_bagit_text_file_exists"));
     final Path bagitFile = bag.getTagFileDir().resolve("bagit.txt");
     
     if(!Files.exists(bagitFile)){
@@ -86,7 +86,7 @@ public enum MandatoryVerifier {; //using enum to enforce singleton
    * @throws IOException if there was an error reading a file
    */
   public static void checkIfAtLeastOnePayloadManifestsExist(final Bag bag) throws MissingPayloadManifestException, IOException{
-    logger.info("Checking if there is at least one payload manifest in [{}]", bag.getRootDir());
+    logger.info(messages.getString("checking_payload_manifest_count"), bag.getRootDir());
     
     try(DirectoryStream<Path> directoryStream = Files.newDirectoryStream(bag.getTagFileDir())){
       for(final Path path : directoryStream){

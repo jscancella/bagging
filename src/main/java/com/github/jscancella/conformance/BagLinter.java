@@ -132,7 +132,7 @@ public enum BagLinter {
     logger.info(messages.getString("checking_latest_version"));
     VersionChecker.checkVersion(bagitInfo.getKey(), warnings, warningsToIgnore);
     
-    logger.info("Checking for size problems");
+    logger.info(messages.getString("checking_size"));
     LargeBagChecker.checkForLargeBag(bagitDir, warnings, warningsToIgnore);
 
     logger.info(messages.getString("checking_manifest_problems"));
