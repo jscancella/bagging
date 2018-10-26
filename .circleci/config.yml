@@ -25,10 +25,13 @@ jobs:
           name: chmod permissions
           command: chmod +x ./gradlew
       - run:
-          name: run tests
+          name: run checks
           command: ./gradlew check dependencyCheckUpdate dependencyCheckAnalyze --no-daemon
           environment: 
             GRADLE_OPTS: "-Xmx1024m -Dorg.gradle.jvmargs='-Xmx1024m'"
+      - run:
+          name: upload code coverage
+          command: ./gradlew coveralls --no-daemon
       - run:
           name: Save test results
           command: |
