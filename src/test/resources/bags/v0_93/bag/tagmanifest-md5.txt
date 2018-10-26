@@ -1,3 +1,3 @@
-c2c70ecfa536ee2a0eebbe45b5c361ea  bagit.txt
-19c527d20b8ec8e12dcfb76600ce5653  package-info.txt
-dbefd260bb5aecda99dc32266fdda4bc  manifest-md5.txt
+d2b65443b741977f2f600a166848fd06  bagit.txt
+c93e6974b82e257034ca7e1e1c2ce975  package-info.txt
+02f8870d6cb484ac14f7680b688bf308  manifest-md5.txt
