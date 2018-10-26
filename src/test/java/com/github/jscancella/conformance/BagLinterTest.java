@@ -63,7 +63,7 @@ public class BagLinterTest {
   
   @Test
   public void testMD5SumGeneratedManifest() throws Exception {
-    Set<BagitWarning> warnings =  BagLinter.lintBag(rootDir.resolve("MD5SumGenerateredManifest"), Arrays.asList(BagitWarning.WEAK_CHECKSUM_ALGORITHM));
+    Set<BagitWarning> warnings =  BagLinter.lintBag(rootDir.resolve("MD5sumGenerateredManifest"), Arrays.asList(BagitWarning.WEAK_CHECKSUM_ALGORITHM));
     Assertions.assertTrue(warnings.contains(BagitWarning.MD5SUM_TOOL_GENERATED_MANIFEST));    
     Assertions.assertTrue(warnings.size() == 1);
   }
