@@ -9,7 +9,7 @@ branches:
   - crowdin_translations
 
 build_script:
-- cmd: ./gradlew.bat check dependencyCheckUpdate dependencyCheckAnalyze --no-daemon
+- cmd: ./gradlew.bat check --no-daemon
 
 shallow_clone: true
 
