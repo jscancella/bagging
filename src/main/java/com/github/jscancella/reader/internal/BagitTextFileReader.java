@@ -26,8 +26,6 @@ public enum BagitTextFileReader {;//using enum to enforce singleton
   private static final Logger logger = LoggerFactory.getLogger(BagitTextFileReader.class);
   private static final byte[] BOM = new byte[]{(byte)0xEF, (byte)0xBB, (byte)0xBF};
   private static final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
-  private static final String LINE1_REGEX = "(BagIt-Version: )\\d*\\.\\d*";
-  private static final String LINE2_REGEX = "(Tag-File-Character-Encoding: )\\S*";
   
   /**
    * Read the bagit.txt file and return the version and encoding.
@@ -63,10 +61,6 @@ public enum BagitTextFileReader {;//using enum to enforce singleton
     }
     
     final Version parsedVersion = parseVersion(version);
-    if(parsedVersion.isOlder(Version.VERSION_1_0())){
-      final List<String> lines = Files.readAllLines(bagitFile, StandardCharsets.UTF_8);
-      throwErrorIfLinesDoNotMatchStrict(lines);
-    }
     
     return new SimpleImmutableEntry<>(parsedVersion, encoding);
   }
@@ -79,27 +73,6 @@ public enum BagitTextFileReader {;//using enum to enforce singleton
     if(Arrays.equals(BOM, firstFewBytesInFile)){
       final String formattedMessage = messages.getString("bom_present_error");
       throw new InvalidBagitFileFormatException(MessageFormatter.format(formattedMessage, bagitFile).getMessage());
-    }
-  }
-  
-  /*
-   * As per the specification, if version is 1.0+ it must only contain 2 lines of the form
-   * BagIt-Version: <M.N>
-   * Tag-File-Character-Encoding: <ENCODING>
-   */
-  static void throwErrorIfLinesDoNotMatchStrict(final List<String> lines) throws InvalidBagitFileFormatException{
-    if(lines.size() > 2){
-      final List<String> offendingLines = lines.subList(2, lines.size()-1);
-      throw new InvalidBagitFileFormatException(MessageFormatter
-          .format(messages.getString("strict_only_two_lines_error"), offendingLines).getMessage());
-    }
-    if(!lines.get(0).matches(LINE1_REGEX)){
-      throw new InvalidBagitFileFormatException(MessageFormatter
-          .format(messages.getString("strict_first_line_error"), lines.get(0)).getMessage());
-    }
-    if(!lines.get(1).matches(LINE2_REGEX)){
-      throw new InvalidBagitFileFormatException(MessageFormatter
-          .format(messages.getString("strict_second_line_error"), lines.get(0)).getMessage());
     }
   }
 

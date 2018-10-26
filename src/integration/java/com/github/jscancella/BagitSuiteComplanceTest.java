@@ -73,7 +73,7 @@ public class BagitSuiteComplanceTest extends TempFolderTest {
       try{
         bag = BagReader.read(invalidBagDir);
         BagVerifier.isValid(bag, true);
-        System.err.println(bag.getRootDir() + " should have failed but didn't!");
+        Assertions.fail(bag.getRootDir() + " should have failed but didn't!");
       }catch(IOException | UnparsableVersionException | InvalidBagitFileFormatException | MaliciousPathException | 
           NoSuchAlgorithmException | FileNotInPayloadDirectoryException | MissingBagitFileException | 
           MissingPayloadDirectoryException | MissingPayloadManifestException | CorruptChecksumException e){
