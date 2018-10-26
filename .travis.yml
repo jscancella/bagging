@@ -23,8 +23,8 @@ cache:
 before_install: 
   - "git clone --depth 1 https://github.com/loc-rdc/bagit-conformance-suite.git"
   - chmod +x gradlew
-install: true #skip having travis-ci trying te run assemble
-script: "./gradlew clean check dependencyCheckUpdate dependencyCheckAnalyze --no-daemon"
+install: true #skip having travis-ci trying to run assemble
+script: "./gradlew check dependencyCheckUpdate dependencyCheckAnalyze --no-daemon"
 after_success: "./gradlew coveralls"
 env:
   global:
