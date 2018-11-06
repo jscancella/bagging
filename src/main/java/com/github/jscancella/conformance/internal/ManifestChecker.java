@@ -64,7 +64,8 @@ public enum ManifestChecker {;// using enum to enforce singleton
     final List<Path> tagManifests = new ArrayList<>();
     try(final DirectoryStream<Path> files = Files.newDirectoryStream(bagitDir)){
       for(final Path file : files){
-        missingTagManifest = missingTagManifest && checkManifest(file, payloadManifests, tagManifests, encoding, warnings, warningsToIgnore);
+        final boolean manifestCheck = checkManifest(file, payloadManifests, tagManifests, encoding, warnings, warningsToIgnore); //prevent java lazy execution
+        missingTagManifest = missingTagManifest && manifestCheck;
       }
     }
     
