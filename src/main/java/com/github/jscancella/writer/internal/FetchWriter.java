@@ -1,5 +1,6 @@
 package com.github.jscancella.writer.internal;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -34,10 +35,12 @@ public enum FetchWriter {;//using enum to enforce singleton
     logger.debug(messages.getString("writing_fetch_file_to_path"), outputDir);
     final Path fetchFilePath = outputDir.resolve("fetch.txt");
     
-    for(final FetchItem item : itemsToFetch){
-      final String line = formatFetchLine(item, bagitRootDir);
-      logger.debug(messages.getString("writing_line_to_file"), line, fetchFilePath);
-      Files.write(fetchFilePath, line.getBytes(charsetName), StandardOpenOption.APPEND, StandardOpenOption.CREATE);
+    try(BufferedWriter writer = Files.newBufferedWriter(fetchFilePath, charsetName, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE)){
+      for(final FetchItem item : itemsToFetch){
+        final String line = formatFetchLine(item, bagitRootDir);
+        logger.debug(messages.getString("writing_line_to_file"), line, fetchFilePath);
+        writer.write(line);
+      }
     }
   }
   

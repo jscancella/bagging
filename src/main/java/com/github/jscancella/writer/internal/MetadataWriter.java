@@ -1,5 +1,6 @@
 package com.github.jscancella.writer.internal;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -38,16 +39,12 @@ public enum MetadataWriter {;//using enum to enforce singleton
     }
     logger.debug(messages.getString("writing_metadata_to_path"), bagInfoFilePath.getFileName(), outputDir);
 
-    Files.deleteIfExists(bagInfoFilePath);
-    final StringBuilder lines = new StringBuilder();
-    
-    for(final SimpleImmutableEntry<String, String> entry : metadata.getAll()){
-      final String line = entry.getKey() + ": " + entry.getValue() + System.lineSeparator();
-      lines.append(line);
+    try(BufferedWriter writer = Files.newBufferedWriter(bagInfoFilePath, charsetName, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE)){
+      for(final SimpleImmutableEntry<String, String> entry : metadata.getAll()){
+        final String line = entry.getKey() + ": " + entry.getValue() + System.lineSeparator();
+        logger.debug(messages.getString("writing_line_to_file"), line, bagInfoFilePath);
+        writer.append(line);
+      }
     }
-    
-    logger.debug(messages.getString("writing_line_to_file"), lines.toString(), bagInfoFilePath);
-    Files.write(bagInfoFilePath, lines.toString().getBytes(charsetName), 
-        StandardOpenOption.APPEND, StandardOpenOption.CREATE);
   }
 }
