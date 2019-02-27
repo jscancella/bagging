@@ -24,7 +24,7 @@ Editors and grammer aficionados are welcome and encouraged to edit this content 
 A "bag" is a way to transfer files from one location to another and verify that the files sent are complete (you received exactly what you were supposed to receive), and that they are correct (none of the bits have changed). While many people use "bags" for other purposes, they are tangential to the purpose of file transfer. 
 
 #### What is a typical use case for a bag?
-Typically you need to send files out of band(i.e. not using the internet) and you need to ensure that all the files are received correctly. Usually this is due to the amount of files being transfered is very large, the internet connection is too slow or unreliable, or there is no physical connection to the internet.
+Typically you need to send files out of band (i.e. not using the internet) and you need to ensure that all the files are received correctly. Usually this is due to the amount of files being transfered is very large, the internet connection is too slow or unreliable, or there is no physical connection to the internet.
 
 #### What is fetching?
 To save on transferring all the files (or multiple copies of the same file) you can use a fetch.txt file. This special file lists where those other files are located on the internet. This library does not handle trying to retrieve these files due to the complicated nature of retrieving files over the internet.
@@ -36,26 +36,26 @@ There is a special file called bag-info.txt (or package-info.txt for older versi
 The BagIt specification was first created by the Library of Congress because it needed a way to verify that donated material on hard drives was correct and complete.
 
 ### How-to guides
-#### how to read a bag
+#### How to read a bag?
 ```java
 Path rootDir = Paths.get("RootDirectoryOfExistingBag");
 Bag bag = BagReader.read(rootDir);
 ```
 
-#### how to write a bag
+#### How to write a bag?
 ```java
 Path outputDir = Paths.get("WhereYouWantToWriteTheBagTo");
 BagWriter.write(bag, outputDir); //where bag is a Bag object
 ```
 
-#### how to create a bag from a directory
+#### How to create a bag from a directory?
 ```java
 Path folder = Paths.get("FolderYouWantToBag");
 boolean includeHiddenFiles = false;
 Bag bag = BagWriter.bagInPlace(folder, Arrays.asList("sha512"), includeHiddenFiles);
 ```
 
-#### how to validate a bag
+#### How to validate a bag?
 There are three kinds of validations:
 1. Verify a bag is complete.
 2. Verify a bag is correct.
@@ -80,13 +80,13 @@ This may be removed in the future since it is mostly a hack of the bag metadata
 BagVerifier.quicklyVerify(bag); //where bag is a Bag object
 ```
 
-#### How to lint a bag (check for potential issues)
+#### How to lint a bag (check for potential issues)?
 ```java
 Path folder = Paths.get("BagYouWantToCheck");
 Set<BagitWarning> warnings = BagLinter(folder);
 ```
 
-#### How to verify against a profile
+#### How to verify against a profile?
 ```java
 Path rootDir = Paths.get("RootDirectoryOfExistingBag");
 Bag bag = BagReader.read(rootDir);
@@ -94,8 +94,8 @@ InputStream jsonProfile = new URL("https://github.com/bagit-profiles/bagit-profi
 assert BagLinter.checkAgainstProfile(jsonProfile, bag) == true;
 ```
 
-#### How to include a new checksum algorithm
-The [StandardHasher](https://github.com/jscancella/bagging/blob/master/src/main/java/com/github/jscancella/hash/StandardHasher.java) contains many well known checksum algorithm implementations. However, there will be times when you want(or must) use a different algorithm. The [BagitChecksumNameMapping](https://github.com/jscancella/bagging/blob/master/src/main/java/com/github/jscancella/hash/BagitChecksumNameMapping.java) contains the mapping between bagit checksum names and their implementation and is the only place you need to modify to change which implementation you would like to use.
+#### How to include a new checksum algorithm?
+The [StandardHasher](https://github.com/jscancella/bagging/blob/master/src/main/java/com/github/jscancella/hash/StandardHasher.java) contains many well known checksum algorithm implementations. However, there will be times when you want (or must) use a different algorithm. The [BagitChecksumNameMapping](https://github.com/jscancella/bagging/blob/master/src/main/java/com/github/jscancella/hash/BagitChecksumNameMapping.java) contains the mapping between bagit checksum names and their implementation and is the only place you need to modify to change which implementation you would like to use.
 
 ```java
 public enum SHA3Hasher implements Hasher {
