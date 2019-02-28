@@ -17,14 +17,14 @@ It currently supports version 0.93 through 1.0.
 
 ## Documentation
 We strive to have great documentation! Thus this file follows recommendations from https://www.divio.com/blog/documentation/
-Editors and grammer aficionados are welcome and encouraged to edit this content to make it even better! See "Helping Contribute" below.
+Editors and grammar aficionados are welcome and encouraged to edit this content to make it even better! See "Helping Contribute" below.
 
 ### Explanation
 #### What is a "bag"?
 A "bag" is a way to transfer files from one location to another and verify that the files sent are complete (you received exactly what you were supposed to receive), and that they are correct (none of the bits have changed). While many people use "bags" for other purposes, they are tangential to the purpose of file transfer. 
 
 #### What is a typical use case for a bag?
-Typically you need to send files out of band (i.e. not using the internet) and you need to ensure that all the files are received correctly. Usually this is due to the amount of files being transfered is very large, the internet connection is too slow or unreliable, or there is no physical connection to the internet.
+Typically you need to send files out of band (i.e. not using the internet) and you need to ensure that all the files are received correctly. Usually this is due to the amount of files being transferred is very large, the internet connection is too slow or unreliable, or there is no physical connection to the internet.
 
 #### What is fetching?
 To save on transferring all the files (or multiple copies of the same file) you can use a fetch.txt file. This special file lists where those other files are located on the internet. This library does not handle trying to retrieve these files due to the complicated nature of retrieving files over the internet.
@@ -178,15 +178,14 @@ There are many classes that were not designed to be used outside this project, t
 * If a class is final, that class was not designed to be extended by users outside this project.
 
 #### Javadocs
-All public interfaces/classes have javadocs detailing what the class's responsibilities are and, what the methods do and are used for. 
-TODO - add link to http://www.javadoc.io/doc
+All public interfaces/classes have javadocs detailing what the class's responsibilities are and, what the methods do and are used for  (http://www.javadoc.io/doc).
 
 #### Code coverage
 To see a nice view of what code is covered by the various tests, check out [coveralls.io](https://coveralls.io/github/jscancella/bagging).
 We strive to try and maintain 90% or better code coverage knowing that testing language specifics (like getters and setters) are not helpful. Ideally we also have 100% coverage of each branch condition, but again this is more an ideal than a hard requirement.
 
 #### Testing (conformance-suite)
-Because there are many test cases for using the BagIt specification correctly, the Library of Congress decided to create a suite of known issues as well as cononical basic bags for each specification version. These test cases are stored in a git repository and can be found at https://github.com/libraryofcongress/bagit-conformance-suite.git
+Because there are many test cases for using the BagIt specification correctly, the Library of Congress decided to create a suite of known issues as well as canonical basic bags for each specification version. These test cases are stored in a git repository and can be found at https://github.com/libraryofcongress/bagit-conformance-suite.git
 We use these test cases to ensure we are correctly adhering to the BagIt specification.  
 
 ## Frequently asked questions (FAQ)
@@ -248,6 +247,6 @@ From the start Bagging was built knowing that not all people speak English. If y
 There is a very active community around digital archiving. One of which is The Digital Curation Google Group (https://groups.google.com/d/forum/digital-curation) which  is an open discussion list that reaches many of the contributors to and users of this project.
 
 ## Roadmap for this library
-* Maintain interoperability with the [BagIt specification](https://tools.ietf.org/html/draft-kunze-bagit).
+* Maintain interoperability with the [BagIt specification](https://tools.ietf.org/html/rfc8493).
 * Fix bugs/issues reported (on going).
 * Translate to various languages (on going).
