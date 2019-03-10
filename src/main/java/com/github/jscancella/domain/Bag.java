@@ -4,6 +4,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -20,13 +21,13 @@ public final class Bag {
   private Charset fileEncoding = StandardCharsets.UTF_8;
   
   //equivalent to the manifest-<ALG>.txt files
-  private Set<Manifest> payLoadManifests = new HashSet<>();
+  private Set<Manifest> payLoadManifests = Collections.unmodifiableSet(new HashSet<>());
   
   //equivalent to the tagmanifest-<ALG>.txt  files
-  private Set<Manifest> tagManifests = new HashSet<>();
+  private Set<Manifest> tagManifests = Collections.unmodifiableSet(new HashSet<>());
   
   //equivalent to the fetch.txt
-  private List<FetchItem> itemsToFetch = new ArrayList<>();
+  private List<FetchItem> itemsToFetch = Collections.unmodifiableList(new ArrayList<>());
   
   //equivalent to the bag-info.txt 
   private Metadata metadata = new Metadata();
