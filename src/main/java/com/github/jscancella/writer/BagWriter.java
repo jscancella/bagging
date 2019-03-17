@@ -73,8 +73,10 @@ public enum BagWriter {; //using enum to ensure singleton
       logger.debug(messages.getString("writing_tag_manifests"));
       writeTagManifestFiles(bag.getTagManifests(), outputDir, bag.getRootDir());
       final Set<Manifest> updatedTagManifests = updateTagManifests(bag, outputDir);
-      bag.setTagManifests(updatedTagManifests);
-      ManifestWriter.writeTagManifests(updatedTagManifests, outputDir, outputDir, bag.getFileEncoding());
+      
+      Bag updatedBag = new Bag.Builder().version(bag.getVersion()).fileEncoding(bag.getFileEncoding()).payLoadManifests(bag.getPayLoadManifests()).tagManifests(updatedTagManifests).itemsToFetch(bag.getItemsToFetch()).metaData(bag.getMetadata()).rootDirectory(bag.getRootDir()).build();
+      
+      ManifestWriter.writeTagManifests(updatedTagManifests, outputDir, outputDir, updatedBag.getFileEncoding());
     }
   }
   
@@ -153,6 +155,6 @@ public enum BagWriter {; //using enum to ensure singleton
   * @return a {@link com.github.jscancella.domain.Bag} object representing the newly created bagit bag
   */
  public static Bag bagInPlace(final Path root, final Collection<String> algorithms, final boolean includeHidden, final Metadata metadata) throws NoSuchAlgorithmException, IOException{
-   return BagCreator.bagInPlace(root, algorithms, includeHidden, metadata);
- }
+		return BagCreator.bagInPlace(root, algorithms, includeHidden, metadata);
+	}
 }

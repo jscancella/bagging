@@ -38,12 +38,9 @@ public enum BagReader {; //using enum to ensure singleton
   public static Bag read(final Path bagDirectory) 
       throws InvalidBagMetadataException, IOException, UnparsableVersionException, InvalidBagitFileFormatException, MaliciousPathException {
     
-    final Bag bag = new Bag();
     final Path bagitFile = bagDirectory.resolve("bagit.txt");
     final SimpleImmutableEntry<Version, Charset> bagitInfo = BagitTextFileReader.readBagitTextFile(bagitFile);
-    bag.setVersion(bagitInfo.getKey());
-    bag.setFileEncoding(bagitInfo.getValue());
-    bag.setRootDir(bagDirectory);
+    final Bag bag = new Bag.Builder().version(bagitInfo.getKey()).fileEncoding(bagitInfo.getValue()).rootDirectory(bagDirectory).build();
     
     ManifestReader.readAllManifests(bagDirectory, bag);
     

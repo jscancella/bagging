@@ -184,8 +184,8 @@ public class BagWriterTest extends TempFolderTest {
   
   @Test
   public void testWriteEmptyBagStillCreatesDataDir() throws Exception{
-    Bag bag = new Bag();
-    bag.setRootDir(createDirectory("emptyBag"));
+	Bag bag = new Bag.Builder().rootDirectory(createDirectory("emptyBag")).build();
+		  
     Path dataDir = bag.getRootDir().resolve("data");
     
     BagWriter.write(bag, bag.getRootDir());

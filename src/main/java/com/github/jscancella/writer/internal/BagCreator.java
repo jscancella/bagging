@@ -68,9 +68,9 @@ public enum BagCreator {; //Using Enum to enforce singleton
    * @return a {@link com.github.jscancella.domain.Bag} object representing the newly created bagit bag
    */
   public static Bag bagInPlace(final Path root, final Collection<String> algorithms, final boolean includeHidden, final Metadata metadata) throws NoSuchAlgorithmException, IOException{
-    final Bag bag = new Bag(Version.LATEST_BAGIT_VERSION());
+   
+	final Bag bag = new Bag.Builder().version(Version.LATEST_BAGIT_VERSION()).rootDirectory(root).build();
     logger.info(messages.getString("creating_bag"), bag.getVersion(), root);
-    bag.setRootDir(root);
     
     movePayloadFilesToDataDir(bag, includeHidden);
     BagitFileWriter.writeBagitFile(bag.getVersion(), bag.getFileEncoding(), bag.getRootDir()); //create the bagit.txt file
@@ -107,17 +107,17 @@ public enum BagCreator {; //Using Enum to enforce singleton
   }
   
   private static void createMetadataFile(final Bag bag, final Metadata metadata) throws IOException{
-    bag.setMetadata(metadata);
+	Bag updatedBag = new Bag.Builder().version(bag.getVersion()).fileEncoding(bag.getFileEncoding()).payLoadManifests(bag.getPayLoadManifests()).tagManifests(bag.getTagManifests()).itemsToFetch(bag.getItemsToFetch()).metaData(metadata).rootDirectory(bag.getRootDir()).build();
+	     
+    logger.debug(messages.getString("calculating_payload_oxum"), updatedBag.getDataDir());
+    final String payloadOxum = PayloadOxumGenerator.generatePayloadOxum(updatedBag.getDataDir());
+    updatedBag.getMetadata().upsertPayloadOxum(payloadOxum);
     
-    logger.debug(messages.getString("calculating_payload_oxum"), bag.getDataDir());
-    final String payloadOxum = PayloadOxumGenerator.generatePayloadOxum(bag.getDataDir());
-    bag.getMetadata().upsertPayloadOxum(payloadOxum);
-    
-    bag.getMetadata().remove("Bagging-Date"); //remove the old bagging date if it exists so that there is only one
-    bag.getMetadata().add("Bagging-Date", new SimpleDateFormat(DATE_FORMAT, Locale.ENGLISH).format(new Date()));
+    updatedBag.getMetadata().remove("Bagging-Date"); //remove the old bagging date if it exists so that there is only one
+    updatedBag.getMetadata().add("Bagging-Date", new SimpleDateFormat(DATE_FORMAT, Locale.ENGLISH).format(new Date()));
     
     logger.info(messages.getString("creating_metadata_file"));
-    MetadataWriter.writeBagMetadata(bag.getMetadata(), bag.getVersion(), bag.getRootDir(), bag.getFileEncoding());
+    MetadataWriter.writeBagMetadata(updatedBag.getMetadata(), updatedBag.getVersion(), updatedBag.getRootDir(), updatedBag.getFileEncoding());
   }
   
   private static void createTagManifests(final Bag bag, final Collection<String> algorithms, final boolean includeHidden) throws NoSuchAlgorithmException, IOException{
