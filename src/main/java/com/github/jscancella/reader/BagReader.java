@@ -40,17 +40,17 @@ public enum BagReader {; //using enum to ensure singleton
     
     final Path bagitFile = bagDirectory.resolve("bagit.txt");
     final SimpleImmutableEntry<Version, Charset> bagitInfo = BagitTextFileReader.readBagitTextFile(bagitFile);
-    final Bag bag = new Bag.Builder().version(bagitInfo.getKey()).fileEncoding(bagitInfo.getValue()).rootDirectory(bagDirectory).build();
+    final Bag.Builder bagBuilder = new Bag.Builder().version(bagitInfo.getKey()).fileEncoding(bagitInfo.getValue()).rootDirectory(bagDirectory);
     
-    ManifestReader.readAllManifests(bagDirectory, bag);
+    ManifestReader.readAllManifests(bagDirectory, bagBuilder);
     
-    bag.getMetadata().addAll(MetadataReader.readBagMetadata(bagDirectory, bag.getFileEncoding()));
+    bagBuilder.build().getMetadata().addAll(MetadataReader.readBagMetadata(bagDirectory, bagBuilder.build().getFileEncoding()));
     
     final Path fetchFile = bagDirectory.resolve("fetch.txt");
     if(Files.exists(fetchFile)){
-      bag.getItemsToFetch().addAll(FetchReader.readFetch(fetchFile, bag.getFileEncoding(), bag.getRootDir()));
+      bagBuilder.build().getItemsToFetch().addAll(FetchReader.readFetch(fetchFile, bagBuilder.build().getFileEncoding(), bagBuilder.build().getRootDir()));
     }
     
-    return bag;
+    return bagBuilder.build();
   }
 }

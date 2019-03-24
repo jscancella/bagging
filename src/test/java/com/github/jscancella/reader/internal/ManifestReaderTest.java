@@ -20,10 +20,10 @@ public class ManifestReaderTest extends TempFolderTest {
   public void testReadAllManifests() throws Exception{
     Path rootBag = Paths.get(getClass().getClassLoader().getResource("bags/v0_97/bag").toURI());
     
-    Bag bag = new Bag.Builder().rootDirectory(rootBag).build();
-    ManifestReader.readAllManifests(rootBag, bag);
-    Assertions.assertEquals(1, bag.getPayLoadManifests().size());
-    Assertions.assertEquals(1, bag.getTagManifests().size());
+    Bag.Builder bagBuilder = new Bag.Builder().rootDirectory(rootBag);
+    ManifestReader.readAllManifests(rootBag, bagBuilder);
+    Assertions.assertEquals(1, bagBuilder.build().getPayLoadManifests().size());
+    Assertions.assertEquals(1, bagBuilder.build().getTagManifests().size());
   }
   
   @Test

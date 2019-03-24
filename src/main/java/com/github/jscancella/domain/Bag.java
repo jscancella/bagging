@@ -113,6 +113,10 @@ public final class Bag {
   public Path getRootDir() {
     return rootDirectory;
   }
+  
+  public static Builder instanceOfBuilder() {
+	  return new Builder();
+  }
 
   public static class Builder{
 	  private Version version = new Version(-1, -1);
@@ -206,9 +210,9 @@ public final class Bag {
 	  }
 	  
 	  /**
-	   * Bag with the specified root directory.
+	   * Creates a new Builder with the specified {@code Bag} information..
 	   * 
-	   * @param rootDirectory the root directory of the bag
+	   * @param bag the bag that contains information
 	   */
 	  public Builder bag(final Bag bag) {
 		  this.version = bag.getVersion();

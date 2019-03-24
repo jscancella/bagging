@@ -9,11 +9,13 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.jscancella.domain.Bag;
+import com.github.jscancella.domain.Bag.Builder;
 import com.github.jscancella.domain.Manifest;
 import com.github.jscancella.exceptions.InvalidBagitFileFormatException;
 import com.github.jscancella.exceptions.MaliciousPathException;
@@ -37,8 +39,9 @@ public enum ManifestReader {;//using enum to enforce singleton
    * @throws MaliciousPathException if a path in the manifest points outside the bag
    * @throws InvalidBagitFileFormatException if one of the bagit files is not formatted correctly
    */
-  public static void readAllManifests(final Path rootDir, final Bag bag) throws IOException, MaliciousPathException, InvalidBagitFileFormatException{
+  public static void readAllManifests(final Path rootDir, final Bag.Builder bagBuilder) throws IOException, MaliciousPathException, InvalidBagitFileFormatException{
     logger.info(messages.getString("attempting_read_manifests"));
+    
     
     try(final DirectoryStream<Path> manifests = Files.newDirectoryStream(rootDir, new ManifestFilter())){
       for (final Path path : manifests){
@@ -46,11 +49,20 @@ public enum ManifestReader {;//using enum to enforce singleton
         
         if(filename.startsWith("tagmanifest-")){
           logger.debug(messages.getString("found_tagmanifest"), path);
-          bag.getTagManifests().add(readManifest(path, bag.getRootDir(), bag.getFileEncoding()));
+          
+          Manifest manifest = readManifest(path, bagBuilder.build().getRootDir(), bagBuilder.build().getFileEncoding());
+          Set<Manifest> currentManifests = bagBuilder.build().getTagManifests();
+          currentManifests.add(manifest);
+          bagBuilder.tagManifests(currentManifests);
+          
         }
         else if(filename.startsWith("manifest-")){
           logger.debug(messages.getString("found_payload_manifest"), path);
-          bag.getPayLoadManifests().add(readManifest(path, bag.getRootDir(), bag.getFileEncoding()));
+          
+          Manifest manifest = readManifest(path, bagBuilder.build().getRootDir(), bagBuilder.build().getFileEncoding());
+          Set<Manifest> currentManifests = bagBuilder.build().getPayLoadManifests();
+          currentManifests.add(manifest);
+          bagBuilder.tagManifests(currentManifests);
         }
       }
     }
