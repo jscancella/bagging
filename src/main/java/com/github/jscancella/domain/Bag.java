@@ -114,6 +114,9 @@ public final class Bag {
     return rootDirectory;
   }
   
+  /**
+   * @return a new Builder object
+   */
   public static Builder instanceOfBuilder() {
 	  return new Builder();
   }

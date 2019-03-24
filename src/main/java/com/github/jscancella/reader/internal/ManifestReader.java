@@ -7,6 +7,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -15,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.jscancella.domain.Bag;
-import com.github.jscancella.domain.Bag.Builder;
 import com.github.jscancella.domain.Manifest;
 import com.github.jscancella.exceptions.InvalidBagitFileFormatException;
 import com.github.jscancella.exceptions.MaliciousPathException;
@@ -33,7 +33,7 @@ public enum ManifestReader {;//using enum to enforce singleton
    * Finds and reads all manifest files in the rootDir and adds them to the given bag.
    * 
    * @param rootDir the directory that contains the tag files of a bag
-   * @param bag the bag to add the manifests to
+   * @param bagBuilder the builder to add the manifests to
    * 
    * @throws IOException if there is a problem reading a file
    * @throws MaliciousPathException if a path in the manifest points outside the bag
@@ -51,7 +51,7 @@ public enum ManifestReader {;//using enum to enforce singleton
           logger.debug(messages.getString("found_tagmanifest"), path);
           
           Manifest manifest = readManifest(path, bagBuilder.build().getRootDir(), bagBuilder.build().getFileEncoding());
-          Set<Manifest> currentManifests = bagBuilder.build().getTagManifests();
+          Set<Manifest> currentManifests = new HashSet<Manifest>(bagBuilder.build().getTagManifests());
           currentManifests.add(manifest);
           bagBuilder.tagManifests(currentManifests);
           
@@ -60,7 +60,7 @@ public enum ManifestReader {;//using enum to enforce singleton
           logger.debug(messages.getString("found_payload_manifest"), path);
           
           Manifest manifest = readManifest(path, bagBuilder.build().getRootDir(), bagBuilder.build().getFileEncoding());
-          Set<Manifest> currentManifests = bagBuilder.build().getPayLoadManifests();
+          Set<Manifest> currentManifests = new HashSet<Manifest>(bagBuilder.build().getPayLoadManifests());
           currentManifests.add(manifest);
           bagBuilder.tagManifests(currentManifests);
         }
