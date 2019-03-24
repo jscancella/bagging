@@ -5,8 +5,11 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.AbstractMap.SimpleImmutableEntry;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.github.jscancella.domain.Bag;
+import com.github.jscancella.domain.FetchItem;
 import com.github.jscancella.domain.Version;
 import com.github.jscancella.exceptions.InvalidBagMetadataException;
 import com.github.jscancella.exceptions.InvalidBagitFileFormatException;
@@ -48,7 +51,9 @@ public enum BagReader {; //using enum to ensure singleton
     
     final Path fetchFile = bagDirectory.resolve("fetch.txt");
     if(Files.exists(fetchFile)){
-      bagBuilder.build().getItemsToFetch().addAll(FetchReader.readFetch(fetchFile, bagBuilder.build().getFileEncoding(), bagBuilder.build().getRootDir()));
+      List<FetchItem> currentFetchItems = new ArrayList<FetchItem>( bagBuilder.build().getItemsToFetch());
+      currentFetchItems.addAll(FetchReader.readFetch(fetchFile, bagBuilder.build().getFileEncoding(), bagBuilder.build().getRootDir()));
+      bagBuilder.itemsToFetch(currentFetchItems);
     }
     
     return bagBuilder.build();
