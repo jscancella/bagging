@@ -54,6 +54,10 @@ public enum BagitChecksumNameMapping {
     INSTANCE.map.remove(bagitAlgorithmName);
   }
   
+  public static boolean isSupported(final String bagitAlgorithmName) {
+    return INSTANCE.map.containsKey(bagitAlgorithmName);
+  }
+  
   public static Hasher get(final String bagitAlgorithmName) throws NoSuchAlgorithmException {
     if(!INSTANCE.map.containsKey(bagitAlgorithmName)) {
       final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");

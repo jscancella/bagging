@@ -1,6 +1,6 @@
 package com.github.jscancella.domain;
 
-import java.net.URL;
+import java.net.URI;
 import java.nio.file.Path;
 import java.util.Objects;
 
@@ -10,9 +10,9 @@ import java.util.Objects;
  */
 public final class FetchItem {
   /**
-   * The url from which the item can be downloaded
+   * The uri from which the item can be downloaded
    */
-  private final URL url;
+  private final URI uri;
   
   /**
    * The length of the file in octets
@@ -24,23 +24,24 @@ public final class FetchItem {
    */
   private final Path path;
   
-  private transient String cachedString;
+  private final String cachedString;
   
   /**
    * 
-   * @param url the {@link URL} of the file
+   * @param uri the {@link URI} of the file
    * @param length the file length in bytes, -1 or null to not specify the length
    * @param path the path in the bag where the file belongs
    */
-  public FetchItem(final URL url, final Long length, final Path path){
-    this.url = url;
+  public FetchItem(final URI uri, final Long length, final Path path){
+    this.uri = URI.create(uri.toString());
     this.length = length;
     this.path = path;
+    this.cachedString = internalToString();
   }
   
   private String internalToString() {
     final StringBuilder sb = new StringBuilder();
-    sb.append(url).append(' ');
+    sb.append(uri).append(' ');
     
     if(length == null || length < 0){
       sb.append("- ");
@@ -56,15 +57,11 @@ public final class FetchItem {
 
   @Override
   public String toString() {
-    if(cachedString == null){
-      cachedString = internalToString();
-    }
-    
     return cachedString;
   }
 
-  public URL getUrl() {
-    return url;
+  public URI getUri() {
+    return uri;
   }
 
   public Long getLength() {
@@ -77,7 +74,7 @@ public final class FetchItem {
   
   @Override
   public int hashCode() {
-    return Objects.hash(url) + Objects.hash(length) + Objects.hash(path);
+    return Objects.hash(uri) + Objects.hash(length) + Objects.hash(path);
   }
 
   @Override
@@ -94,6 +91,6 @@ public final class FetchItem {
     
     final FetchItem other = (FetchItem) obj;
     
-    return Objects.equals(url, other.getUrl()) && Objects.equals(length, other.getLength()) && Objects.equals(path, other.getPath()); 
+    return Objects.equals(uri, other.getUri()) && Objects.equals(length, other.getLength()) && Objects.equals(path, other.getPath()); 
   }
 }

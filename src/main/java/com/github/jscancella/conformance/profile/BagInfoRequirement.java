@@ -32,9 +32,10 @@ public class BagInfoRequirement {
     //intentionally left empty
   }
   
-  public BagInfoRequirement(final boolean required, final List<String> acceptableValues){
+  public BagInfoRequirement(final boolean required, final List<String> acceptableValues, final boolean repeatable){
     this.required = required;
     this.acceptableValues = acceptableValues;
+    this.repeatable = repeatable;
   }
   
   @Override

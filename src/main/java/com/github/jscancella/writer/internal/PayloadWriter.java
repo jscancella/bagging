@@ -23,9 +23,19 @@ public enum PayloadWriter {;//using enum to enforce singleton
   private static final Logger logger = LoggerFactory.getLogger(PayloadWriter.class);
   private static final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
   
+  public static void writePayloadFiles(final List<Path> payloadFiles, final Path outputDir) throws IOException {
+    final Path dataDir = outputDir.resolve("data");
+    Files.createDirectories(dataDir);
+    
+    
+  }
+  
+  
+  
   /*
    * Write the payload files in the data directory or under the root directory depending on the version
    */
+  @Deprecated
   public static void writeVersionDependentPayloadFiles(final Bag bag, final Path outputDir) throws IOException{
     final Path dataDir = outputDir.resolve("data");
     Files.createDirectories(dataDir);
@@ -42,6 +52,7 @@ public enum PayloadWriter {;//using enum to enforce singleton
   * 
   * @throws IOException if there was a problem writing a file
   */
+  @Deprecated
  public static void writePayloadFiles(final Set<Manifest> payloadManifests, final List<FetchItem> fetchItems, final Path outputDir, final Path bagDataDir) throws IOException{
    logger.info(messages.getString("writing_payload_files"));
    final Set<Path> fetchPaths = getFetchPaths(fetchItems, bagDataDir);

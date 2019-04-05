@@ -32,7 +32,7 @@ public enum MetadataWriter {;//using enum to enforce singleton
    * 
    * @throws IOException if there was a problem writing a file
    */
-  public static void writeBagMetadata(final Metadata metadata, final Version version, final Path outputDir, final Charset charsetName) throws IOException{
+  public static Path writeBagMetadata(final Metadata metadata, final Version version, final Path outputDir, final Charset charsetName) throws IOException{
     Path bagInfoFilePath = outputDir.resolve("bag-info.txt");
     if(version.isSameOrOlder(Version.VERSION_0_95())){
       bagInfoFilePath = outputDir.resolve("package-info.txt");
@@ -46,5 +46,7 @@ public enum MetadataWriter {;//using enum to enforce singleton
         writer.append(line);
       }
     }
+    
+    return bagInfoFilePath;
   }
 }

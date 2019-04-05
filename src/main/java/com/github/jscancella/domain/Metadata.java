@@ -1,8 +1,10 @@
 package com.github.jscancella.domain;
 
 import java.util.AbstractMap.SimpleImmutableEntry;
+import java.util.stream.Collectors;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,14 +14,21 @@ import java.util.Objects;
  * A class to represent the bag-info.txt (and package-info.txt in older versions)
  */
 @SuppressWarnings({"PMD.UseLocaleWithCaseConversions"})
-public class Metadata {
+public final class Metadata {
   private static final String PAYLOAD_OXUM = "Payload-Oxum";
-  private Map<String, List<String>> map = new HashMap<>();
-  private List<SimpleImmutableEntry<String, String>> list = new ArrayList<>();
+  private final Map<String, List<String>> map;
+  private final List<SimpleImmutableEntry<String, String>> list;
+  private final String cachedString;
+  
+  private Metadata(final Map<String, List<String>> map, final List<SimpleImmutableEntry<String, String>> list) {
+    this.map = Collections.unmodifiableMap(map);
+    this.list = Collections.unmodifiableList(list);
+    cachedString = String.join(",", list.stream().map(o -> o.toString()).collect(Collectors.toList()));
+  }
   
   @Override
   public String toString() {
-    return list.toString();
+    return cachedString;
   }
 
   @Override
@@ -58,45 +67,6 @@ public class Metadata {
   }
   
   /**
-   * add a entry into the metadata or append a value if the label already exists
-   * 
-   * @param key the label
-   * @param value the value of the label
-   * 
-   * @return <tt>true</tt> (as specified by {@link Collection#add})
-   */
-  public boolean add(final String key, final String value){
-    if(PAYLOAD_OXUM.equalsIgnoreCase(key)){
-      this.remove(PAYLOAD_OXUM);
-    }
-    
-    final String upperCaseKey = key.toUpperCase();
-    if(map.get(upperCaseKey) == null){
-      map.put(upperCaseKey, new ArrayList<>());
-    }
-    map.get(upperCaseKey).add(value);
-    
-    return list.add(new SimpleImmutableEntry<>(key, value));
-  }
-  
-  /**
-   * remove the label and all its values
-   * 
-   * @param key the label to remove along with its value(s)
-   */
-  public void remove(final String key){
-    map.remove(key.toUpperCase());
-    final List<SimpleImmutableEntry<String, String>> newList = new ArrayList<>();
-    
-    for(final SimpleImmutableEntry<String, String> entry : list){
-      if(!entry.getKey().equalsIgnoreCase(key)){
-        newList.add(entry);
-      }
-    }
-    list = newList;
-  }
-  
-  /**
    * check if the metadata contains a particular label(key)
    * 
    * @param key the label to check
@@ -107,58 +77,80 @@ public class Metadata {
   }
   
   /**
-   * add multiple metadata entries
-   * 
-   * @param data the metadata to add
-   */
-  public void addAll(final List<SimpleImmutableEntry<String, String>> data){
-    for(final SimpleImmutableEntry<String, String> entry : data){
-      this.add(entry.getKey(), entry.getValue());
-    }
-  }
-  
-  /**
-   * payload oxum is a special case where it makes no sense to have multiple values so instead of just appending we upsert (insert or update)
-   * @param payloadOxumValue the value payload-oxum should be set to
-   * 
-   * @return <tt>true</tt> (as specified by {@link Collection#add})
-   */
-  public boolean upsertPayloadOxum(final String payloadOxumValue){
-    map.remove(PAYLOAD_OXUM.toUpperCase());
-    SimpleImmutableEntry<String, String> entryToRemove = null;
-    for(final SimpleImmutableEntry<String, String> entry : list){
-      if(PAYLOAD_OXUM.equalsIgnoreCase(entry.getKey())){
-        entryToRemove = entry;
-        continue;
-      }
-    }
-    if(entryToRemove != null){
-      list.remove(entryToRemove);
-    }
-    
-    return this.add(PAYLOAD_OXUM, payloadOxumValue);
-  }
-  
-  /**
    * @return true if this metadata contains no entries
    */
   public boolean isEmpty(){
     return list.isEmpty();
   }
-
-  protected Map<String, List<String>> getMap() {
-    return map;
-  }
-
-  protected void setMap(final Map<String, List<String>> map) {
-    this.map = map;
-  }
-
-  protected List<SimpleImmutableEntry<String, String>> getList() {
-    return list;
-  }
-
-  protected void setList(final List<SimpleImmutableEntry<String, String>> list) {
-    this.list = list;
+  
+  public static final class MetadataBuilder {
+    private Map<String, List<String>> map = new HashMap<>();
+    private List<SimpleImmutableEntry<String, String>> list = new ArrayList<>();
+    
+    public MetadataBuilder() {
+      //intentionally left empty
+    }
+    
+    public MetadataBuilder(final Metadata metadata) {
+      this.addAll(metadata.getAll());
+    }
+    /**
+     * remove the label and all its values
+     * 
+     * @param key the label to remove along with its value(s)
+     */
+    public MetadataBuilder remove(final String key){
+      map.remove(key.toUpperCase());
+      final List<SimpleImmutableEntry<String, String>> newList = new ArrayList<>();
+      
+      for(final SimpleImmutableEntry<String, String> entry : list){
+        if(!entry.getKey().equalsIgnoreCase(key)){
+          newList.add(entry);
+        }
+      }
+      list = newList;
+      
+      return this;
+    }
+    
+    /**
+     * add a entry into the metadata or append a value if the label already exists
+     * 
+     * @param key the label
+     * @param value the value of the label
+     * 
+     * @return <tt>true</tt> (as specified by {@link Collection#add})
+     */
+    public MetadataBuilder add(final String key, final String value){
+      if(PAYLOAD_OXUM.equalsIgnoreCase(key)){
+        this.remove(PAYLOAD_OXUM);
+      }
+      
+      final String upperCaseKey = key.toUpperCase();
+      if(map.get(upperCaseKey) == null){
+        map.put(upperCaseKey, new ArrayList<>());
+      }
+      map.get(upperCaseKey).add(value);
+      list.add(new SimpleImmutableEntry<>(key, value));
+      
+      return this;
+    }
+    
+    /**
+     * add multiple metadata entries
+     * 
+     * @param data the metadata to add
+     */
+    public MetadataBuilder addAll(final List<SimpleImmutableEntry<String, String>> data){
+      for(final SimpleImmutableEntry<String, String> entry : data){
+        this.add(entry.getKey(), entry.getValue());
+      }
+      
+      return this;
+    }
+    
+    public Metadata build() {
+      return new Metadata(map, list);
+    }
   }
 }

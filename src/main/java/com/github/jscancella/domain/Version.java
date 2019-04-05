@@ -8,8 +8,7 @@ import java.util.Objects;
 public final class Version implements Comparable<Version>{
   public final int major;
   public final int minor;
-  
-  private transient final String cachedToString;
+  private final String cachedToString;
   
   public Version(final int major, final int minor){
     this.major = major;
@@ -21,7 +20,7 @@ public final class Version implements Comparable<Version>{
    * @return the latest version of the BagIt specification
    */
   public static Version LATEST_BAGIT_VERSION() {
-    return new Version(1, 0);
+    return Version.VERSION_1_0();
   }
   
   public static Version VERSION_1_0() {

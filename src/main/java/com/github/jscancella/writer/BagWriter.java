@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import com.github.jscancella.domain.Bag;
 import com.github.jscancella.domain.Manifest;
 import com.github.jscancella.domain.Metadata;
+import com.github.jscancella.domain.Bag.BagBuilder;
 import com.github.jscancella.hash.BagitChecksumNameMapping;
 import com.github.jscancella.hash.Hasher;
 import com.github.jscancella.hash.PayloadOxumGenerator;
@@ -34,6 +35,9 @@ public enum BagWriter {; //using enum to ensure singleton
   private static final Logger logger = LoggerFactory.getLogger(BagWriter.class);
   private static final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
 
+  public static void write(final BagBuilder bagBuilder) {
+    //TODO
+  }
   
   /**
    * Write the bag out to the specified directory. 
@@ -47,13 +51,10 @@ public enum BagWriter {; //using enum to ensure singleton
    * @throws IOException if there is a problem writing a file
    * @throws NoSuchAlgorithmException when trying to generate a {@link MessageDigest} which is used during update.
    */
+  @Deprecated
   public static void write(final Bag bag, final Path outputDir) throws IOException, NoSuchAlgorithmException{
     logger.debug(messages.getString("writing_payload_files"));
     PayloadWriter.writeVersionDependentPayloadFiles(bag, outputDir);
-    
-    logger.debug(messages.getString("upsert_payload_oxum"));
-    final String payloadOxum = PayloadOxumGenerator.generatePayloadOxum(bag.getDataDir());
-    bag.getMetadata().upsertPayloadOxum(payloadOxum);
     
     logger.debug(messages.getString("writing_bagit_file"));
     BagitFileWriter.writeBagitFile(bag.getVersion(), bag.getFileEncoding(), outputDir);

@@ -34,7 +34,7 @@ public enum BagitFileWriter {
    * @throws IOException
    *           if there was a problem writing the file
    */
-  public static void writeBagitFile(final Version version, final Charset encoding, final Path outputDir)
+  public static Path writeBagitFile(final Version version, final Charset encoding, final Path outputDir)
       throws IOException{
     final Path bagitPath = outputDir.resolve("bagit.txt");
     logger.debug(messages.getString("write_bagit_file_to_path"), outputDir);
@@ -48,5 +48,7 @@ public enum BagitFileWriter {
       logger.debug(messages.getString("writing_line_to_file"), secondLine, bagitPath);
       writer.append(secondLine);
     }
+    
+    return bagitPath;
   }
 }
