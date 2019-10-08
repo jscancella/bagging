@@ -16,6 +16,7 @@ import com.github.jscancella.exceptions.MaliciousPathException;
 /**
  * Convenience class for reading tag files from the filesystem
  */
+@SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
 public enum TagFileReader {;//using enum to enforce singleton
   private static final Logger logger = LoggerFactory.getLogger(TagFileReader.class);
   private static final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
@@ -33,42 +34,39 @@ public enum TagFileReader {;//using enum to enforce singleton
    * @throws InvalidBagitFileFormatException if the path is invalid
    */
   public static Path createFileFromManifest(final Path bagRootDir, final String path) throws MaliciousPathException, InvalidBagitFileFormatException{
-    String fixedPath = path;
-    if(path.charAt(0) == '*'){
-      logger.warn(messages.getString("removing_asterisk"));
-      fixedPath = path.substring(1); //remove the * from the path
-    }
+    checkPathSeparator(path);
+    checkTildaMaliciousPath(path);
+
+    String fixedPath = removeAsteriskIfExists(path);
+
+    fixedPath = decodeFilname(fixedPath);
+    final Path file = createPath(fixedPath, bagRootDir);
     
+    checkNormalizedPathIsInBag(file, bagRootDir);
+
+    return file;
+  }
+
+  private static void checkPathSeparator(final String path) throws InvalidBagitFileFormatException{
     if(path.contains("\\")){
       final String formattedMessage = messages.getString("blackslash_used_as_path_separator_error");
       throw new InvalidBagitFileFormatException(MessageFormatter.format(formattedMessage, path).getMessage());
     }
-    
+  }
+
+  private static void checkTildaMaliciousPath(final String path) throws MaliciousPathException{
     if(path.contains("~/")){
       final String formattedMessage = messages.getString("malicious_path_error");
       throw new MaliciousPathException(MessageFormatter.format(formattedMessage, path).getMessage());
     }
+  }
 
-    fixedPath = decodeFilname(fixedPath);
-    Path file;
-    if(fixedPath.startsWith("file://")){
-      try {
-        file = Paths.get(new URI(fixedPath));
-      } catch (URISyntaxException e) {
-        final String formattedMessage = messages.getString("invalid_url_format_error");
-        throw new InvalidBagitFileFormatException(MessageFormatter.format(formattedMessage, path).getMessage(), e);
-      }
+  private static String removeAsteriskIfExists(final String path){
+    if(path.charAt(0) == '*'){
+      logger.warn(messages.getString("removing_asterisk"));
+      return  path.substring(1); //remove the * from the path
     }
-    else{
-      file = bagRootDir.resolve(fixedPath).normalize();
-    }
-    
-    if(!file.normalize().startsWith(bagRootDir)){
-      final String formattedMessage = messages.getString("malicious_path_error");
-      throw new MaliciousPathException(MessageFormatter.format(formattedMessage, file).getMessage());
-    }
-    
-    return file;
+    return path;
   }
   
   /*
@@ -76,5 +74,26 @@ public enum TagFileReader {;//using enum to enforce singleton
    */
   private static String decodeFilname(final String encoded){
     return encoded.replaceAll("%0A", "\n").replaceAll("%0D", "\r");
+  }
+
+  private static Path createPath(final String path, final Path bagRootDir) throws InvalidBagitFileFormatException{
+    if(path.startsWith("file://")){
+      try {
+        return Paths.get(new URI(path));
+      } catch (URISyntaxException e) {
+        final String formattedMessage = messages.getString("invalid_url_format_error");
+        throw new InvalidBagitFileFormatException(MessageFormatter.format(formattedMessage, path).getMessage(), e);
+      }
+    }
+    else{
+      return bagRootDir.resolve(path).normalize();
+    }
+  }
+
+  private static void checkNormalizedPathIsInBag(final Path file, final Path bagRootDir) throws MaliciousPathException{
+    if(!file.normalize().startsWith(bagRootDir)){
+      final String formattedMessage = messages.getString("malicious_path_error");
+      throw new MaliciousPathException(MessageFormatter.format(formattedMessage, file).getMessage());
+    }
   }
 }

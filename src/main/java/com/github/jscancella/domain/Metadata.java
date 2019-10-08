@@ -11,7 +11,7 @@ import java.util.Objects;
 /**
  * A class to represent the bag-info.txt (and package-info.txt in older versions)
  */
-@SuppressWarnings({"PMD.UseLocaleWithCaseConversions"})
+@SuppressWarnings({"PMD.UseLocaleWithCaseConversions", "PMD.UseConcurrentHashMap"})
 public class Metadata {
   private static final String PAYLOAD_OXUM = "Payload-Oxum";
   private Map<String, List<String>> map = new HashMap<>();

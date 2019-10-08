@@ -42,7 +42,7 @@ public enum ManifestChecker {;// using enum to enforce singleton
   private static final String TRASHES_FILE = "\\.(_.)?[Tt][Rr][Aa][Ss][Hh][Ee][Ss]";
   private static final String FS_EVENTS_FILE = "\\.[Ff][Ss][Ee][Vv][Ee][Nn][Tt][Ss][Dd]";
   private static final String OS_FILES_REGEX = ".*data/(" + THUMBS_DB_FILE + "|" + DS_STORE_FILE + "|" + SPOTLIGHT_FILE + "|" + TRASHES_FILE + "|" + FS_EVENTS_FILE + ")";
-  
+  private static final int PARSED_PATH_PARTS = 2; //all manifests should have the form <hash> <path> (thus 2) when parsed  
   
   /**
    * Check for all the manifest specific potential problems
@@ -62,7 +62,7 @@ public enum ManifestChecker {;// using enum to enforce singleton
     boolean missingTagManifest = true;
     final List<Path> payloadManifests = new ArrayList<>();
     final List<Path> tagManifests = new ArrayList<>();
-    try(final DirectoryStream<Path> files = Files.newDirectoryStream(bagitDir)){
+    try(DirectoryStream<Path> files = Files.newDirectoryStream(bagitDir)){
       for(final Path file : files){
         final boolean manifestCheck = checkManifest(file, payloadManifests, tagManifests, encoding, warnings, warningsToIgnore); //prevent java lazy execution
         missingTagManifest = missingTagManifest && manifestCheck;
@@ -110,7 +110,7 @@ public enum ManifestChecker {;// using enum to enforce singleton
       final Collection<BagitWarning> warningsToIgnore, final boolean isPayloadManifest) 
           throws IOException, InvalidBagitFileFormatException{
     
-    try(final BufferedReader reader = Files.newBufferedReader(manifestFile, encoding)){
+    try(BufferedReader reader = Files.newBufferedReader(manifestFile, encoding)){
       final Set<String> paths = new HashSet<>();
       
       String line = reader.readLine();
@@ -139,7 +139,7 @@ public enum ManifestChecker {;// using enum to enforce singleton
    */
   static String parsePath(final String line) throws InvalidBagitFileFormatException{
     final String[] parts = line.split("\\s+", 2);
-    if(parts.length < 2){
+    if(parts.length < PARSED_PATH_PARTS){
       final String formattedMessage = messages.getString("manifest_line_violated_spec_error");
       throw new InvalidBagitFileFormatException(MessageFormatter.format(formattedMessage, line).getMessage());
     }
@@ -191,7 +191,7 @@ public enum ManifestChecker {;// using enum to enforce singleton
       }
       final String normalizedFileToCheck = normalizePathToNFD(fileToCheck);
       
-      try(final DirectoryStream<Path> files = Files.newDirectoryStream(dirToCheck)){
+      try(DirectoryStream<Path> files = Files.newDirectoryStream(dirToCheck)){
         for(final Path file : files){
           final String normalizedFile = normalizePathToNFD(file);
           

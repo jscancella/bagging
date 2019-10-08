@@ -2,12 +2,12 @@ package com.github.jscancella.conformance.profile;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,7 +96,7 @@ public class BagitProfileDeserializer extends StdDeserializer<BagitProfile> {
   private static Map<String, BagInfoRequirement> parseBagInfo(final JsonNode rootNode){
     final JsonNode bagInfoNode = rootNode.get("Bag-Info");
     logger.debug(messages.getString("parsing_bag_info"));
-    final Map<String, BagInfoRequirement>  bagInfo = new HashMap<>();
+    final Map<String, BagInfoRequirement>  bagInfo = new ConcurrentHashMap<>();
     
     final Iterator<Entry<String, JsonNode>> nodes = bagInfoNode.fields(); //stuck in java 6...
     

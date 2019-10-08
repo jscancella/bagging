@@ -10,6 +10,7 @@ import java.util.Objects;
  * POJO for all the bagit profile fields. 
  * A bagit profile is used to ensure the bag metadata contains all required elements and optional elements follow allowed values
  */
+@SuppressWarnings("PMD.UseConcurrentHashMap")
 public class BagitProfile {
   private String bagitProfileIdentifier = "";
   private String sourceOrganization = "";

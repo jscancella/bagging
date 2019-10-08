@@ -45,26 +45,12 @@ pmdIntegrationTest.enabled = false
 pmdTest.enabled = false
 
 pmd {
-  toolVersion = "5.5.4"
   ruleSets = [
-    "java-basic", 
-    "java-braces",
-    "java-clone",
-    "java-codesize",
-    "java-design",
-    "java-empty",
-    "java-finalizers",
-    "java-imports",
-    "java-j2ee",
-    "java-javabeans",
-    "java-optimizations",
-    "java-strictexception",
-    "java-strings",
-    "java-sunsecure",
-    "java-typeresolution",
-    "java-unnecessary",
-    "java-unusedcode"
+//    "category/java/errorprone.xml", 
+//    "category/java/bestpractices.xml"
   ]
+  ruleSetConfig = resources.text.fromFile("config/pmd/ruleset.xml")
+  
 }
 
 jacocoTestReport {

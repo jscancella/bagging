@@ -24,7 +24,7 @@ import com.github.jscancella.exceptions.UnparsableVersionException;
  */
 public enum BagitTextFileReader {;//using enum to enforce singleton
   private static final Logger logger = LoggerFactory.getLogger(BagitTextFileReader.class);
-  private static final byte[] BOM = new byte[]{(byte)0xEF, (byte)0xBB, (byte)0xBF};
+  private static final byte[] BOM = {(byte)0xEF, (byte)0xBB, (byte)0xBF};
   private static final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
   
   /**

@@ -34,6 +34,7 @@ public abstract class AbstractCreateManifestsVistor extends SimpleFileVisitor<Pa
   protected transient final boolean includeHiddenFiles;
   
   public AbstractCreateManifestsVistor(final Map<Manifest, Hasher> manifestToHasherMap, final boolean includeHiddenFiles){
+    super();
     this.manifestToHasherMap = manifestToHasherMap;
     this.includeHiddenFiles = includeHiddenFiles;
   }
@@ -68,7 +69,7 @@ public abstract class AbstractCreateManifestsVistor extends SimpleFileVisitor<Pa
   }
   
   private void streamFile(final Path path) throws IOException {
-    try(final InputStream is = new BufferedInputStream(Files.newInputStream(path, StandardOpenOption.READ))){
+    try(InputStream is = new BufferedInputStream(Files.newInputStream(path, StandardOpenOption.READ))){
       final byte[] buffer = new byte[CHUNK_SIZE];
       int read = is.read(buffer);
 

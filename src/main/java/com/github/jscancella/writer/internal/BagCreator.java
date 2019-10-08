@@ -9,7 +9,7 @@ import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -84,7 +84,7 @@ public enum BagCreator {; //Using Enum to enforce singleton
   private static void movePayloadFilesToDataDir(final Bag bag, final boolean includeHidden) throws IOException {
     final Path tempDir = bag.getRootDir().resolve(System.currentTimeMillis() + ".temp");
     Files.createDirectory(tempDir);
-    try(final DirectoryStream<Path> directoryStream = Files.newDirectoryStream(bag.getRootDir())){
+    try(DirectoryStream<Path> directoryStream = Files.newDirectoryStream(bag.getRootDir())){
       for(final Path path : directoryStream){
         if(!path.equals(tempDir) && (!PathUtils.isHidden(path) || includeHidden)){
           Files.move(path, tempDir.resolve(path.getFileName()));
@@ -133,7 +133,7 @@ public enum BagCreator {; //Using Enum to enforce singleton
   
   @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
   private static Map<Manifest, Hasher> createManifestToHasherMap(final Collection<String> algorithms) throws NoSuchAlgorithmException{
-    final Map<Manifest, Hasher> manifestToHasherMap = new HashMap<>();
+    final Map<Manifest, Hasher> manifestToHasherMap = new ConcurrentHashMap<>();
     
     for(final String algorithm : algorithms) {
       final Manifest manifest = new Manifest(algorithm);

@@ -60,8 +60,6 @@ public enum QuickVerifier {;//using enum to enforce singleton
     final String[] parts = payloadOxum.split("\\.");
     logger.debug(messages.getString("parse_size_in_bytes"), parts[0]);
     final long totalSize = Long.parseLong(parts[0]);
-    logger.debug(messages.getString("parse_number_of_files"), parts[1]);
-    final long numberOfFiles = Long.parseLong(parts[1]);
     
     final Path payloadDir = bag.getDataDir();
     final FileCountAndTotalSizeVistor vistor = new FileCountAndTotalSizeVistor();
@@ -72,6 +70,9 @@ public enum QuickVerifier {;//using enum to enforce singleton
       final String formattedMessage = messages.getString("invalid_total_size_error");
       throw new InvalidPayloadOxumException(MessageFormatter.format(formattedMessage, totalSize, vistor.getTotalSize()).getMessage());
     }
+
+    logger.debug(messages.getString("parse_number_of_files"), parts[1]);
+    final long numberOfFiles = Long.parseLong(parts[1]);
     if(numberOfFiles != vistor.getCount()){
       final String formattedMessage = messages.getString("invalid_file_cound_error");
       throw new InvalidPayloadOxumException(MessageFormatter.format(formattedMessage, numberOfFiles, vistor.getCount()).getMessage());

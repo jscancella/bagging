@@ -40,7 +40,7 @@ public enum ManifestReader {;//using enum to enforce singleton
   public static void readAllManifests(final Path rootDir, final Bag bag) throws IOException, MaliciousPathException, InvalidBagitFileFormatException{
     logger.info(messages.getString("attempting_read_manifests"));
     
-    try(final DirectoryStream<Path> manifests = Files.newDirectoryStream(rootDir, new ManifestFilter())){
+    try(DirectoryStream<Path> manifests = Files.newDirectoryStream(rootDir, new ManifestFilter())){
       for (final Path path : manifests){
         final String filename = PathUtils.getFilename(path);
         
@@ -84,7 +84,7 @@ public enum ManifestReader {;//using enum to enforce singleton
    */
   static Map<Path, String> readChecksumFileMap(final Path manifestFile, final Path bagRootDir, final Charset charset) throws IOException, MaliciousPathException, InvalidBagitFileFormatException{
     final HashMap<Path, String> map = new HashMap<>();
-    try(final BufferedReader br = Files.newBufferedReader(manifestFile, charset)){
+    try(BufferedReader br = Files.newBufferedReader(manifestFile, charset)){
       String line = br.readLine();
       while(line != null){
         final String[] parts = line.split("\\s+", 2);
