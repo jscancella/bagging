@@ -45,12 +45,8 @@ pmdIntegrationTest.enabled = false
 pmdTest.enabled = false
 
 pmd {
-  ruleSets = [
-//    "category/java/errorprone.xml", 
-//    "category/java/bestpractices.xml"
-  ]
+  ruleSets = [] //specifically set this to be empty, otherwise gradle includes the defaults in addition to our custom ruleset! 
   ruleSetConfig = resources.text.fromFile("config/pmd/ruleset.xml")
-  
 }
 
 jacocoTestReport {
