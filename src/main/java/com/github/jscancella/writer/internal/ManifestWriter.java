@@ -67,8 +67,8 @@ public enum ManifestWriter{;//using enum to enforce singleton
           final String line = entry.getValue() + "  " + RelativePathWriter.formatRelativePathString(relativeTo, entry.getKey());
           logger.debug(messages.getString("writing_line_to_file"), line, manifestPath);
           writer.write(line);
+          }
         }
       }
     }
   }
-}

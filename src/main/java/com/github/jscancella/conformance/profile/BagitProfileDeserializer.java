@@ -72,8 +72,8 @@ public class BagitProfileDeserializer extends StdDeserializer<BagitProfile> {
   }
 
   /**
-   * Parse required tags due to specification defined at
-   * {@link https://github.com/bagit-profiles/bagit-profiles}
+   * Parse required tags due to specification version 1.1.0 defined at
+   * {@link https://github.com/bagit-profiles/bagit-profiles-specification/tree/1.1.0}
    * Note: If one of the tags is missing, a NullPointerException is thrown.
    *
    * @param bagitProfileInfoNode Root node of the bagit profile info section.
@@ -84,7 +84,7 @@ public class BagitProfileDeserializer extends StdDeserializer<BagitProfile> {
     
     
     // Read required tags
-    // due to specification defined at https://github.com/bagit-profiles/bagit-profiles
+    // due to specification defined at https://github.com/bagit-profiles/bagit-profiles-specification/tree/1.1.0
     final String profileIdentifier = bagitProfileInfoNode.get("BagIt-Profile-Identifier").asText();
     logger.debug(messages.getString("identifier"), profileIdentifier);
     profile.setBagitProfileIdentifier(profileIdentifier);
@@ -103,8 +103,8 @@ public class BagitProfileDeserializer extends StdDeserializer<BagitProfile> {
   }
 
   /**
-   * Parse optional tags due to specification defined at
-   * {@link https://github.com/bagit-profiles/bagit-profiles}
+   * Parse optional tags due to examples at specification version 1.1.0 defined at
+   * {@link https://github.com/bagit-profiles/bagit-profiles-specification/tree/1.1.0}
    *
    * @param bagitProfileInfoNode Root node of the bagit profile info section.
    * @param profile Representation of bagit profile .
@@ -133,7 +133,11 @@ public class BagitProfileDeserializer extends StdDeserializer<BagitProfile> {
       profile.setContactPhone(contactPhone);
     }
   }
-  
+  /**
+   * Parse Bag Info section of profile.
+   * @param rootNode Root node of the profile.
+   * @return Map containing all entries of the Bag-Info node.
+   */
   @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
   private static Map<String, BagInfoRequirement> parseBagInfo(final JsonNode rootNode){
     final JsonNode bagInfoNode = rootNode.get("Bag-Info");
@@ -146,12 +150,12 @@ public class BagitProfileDeserializer extends StdDeserializer<BagitProfile> {
       final Entry<String, JsonNode> node = nodes.next();
       
       final BagInfoRequirement entry = new BagInfoRequirement();
-      // due to specification required is false by default.
+
       final JsonNode requiredNode = node.getValue().get("required");
       if (requiredNode != null) {
         entry.setRequired(requiredNode.asBoolean());
       }
-      // due to specification required is false by default.
+
       final JsonNode repeatableNode = node.getValue().get("repeatable");
       if (repeatableNode != null) {
         entry.setRepeatable(repeatableNode.asBoolean());
