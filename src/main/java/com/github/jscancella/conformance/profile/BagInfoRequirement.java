@@ -7,8 +7,8 @@ import java.util.Objects;
 /**
  * This class is used to define elements in a bag-info.txt file used by a
  * {@link BagitProfile}. Due to specification in version 1.1.0 all entries are
- * required=false and repeatable=true by default. See Bag-Info
- * {@link https://github.com/bagit-profiles/bagit-profiles-specification/tree/1.1.0#implementation-details}
+ * required=false and repeatable=true by default. 
+ * @see <a href="https://github.com/bagit-profiles/bagit-profiles-specification/tree/1.1.0#implementation-details">BagIt Profiles Specification</a>
  */
 public class BagInfoRequirement {
 
@@ -35,9 +35,6 @@ public class BagInfoRequirement {
   /**
    * Constructs a new BagInfoRequirement setting {@link #repeatable} to true
    * (default) and {@link #required} to false (default).
-   *
-   * @param required Indicates whether or not the tag is required.
-   * @param acceptableValues List of acceptable values.
    */
   public BagInfoRequirement() {
     //intentionally left empty
