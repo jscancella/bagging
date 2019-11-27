@@ -1,70 +1,55 @@
 package com.github.jscancella.conformance.profile;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Type;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.lang.reflect.Field;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class BagitProfileTest extends AbstractBagitProfileTest {
-
+	
   @Test
-  public void testEquals() {
-    // define parameters
-    String asString = "foo";
-    List<String> asList = Arrays.asList(asString);
-    boolean asBoolean = true;
-    Serialization asSerialization = Serialization.required;
+  public void testLogicallySameObjectsAreEqual() {
+    BagitProfile profile = createExpectedProfile();
+    BagitProfile identicalProfile = createExpectedProfile();
+    Assertions.assertTrue(profile.equals(identicalProfile));
+  }
 
-    try {
-      BagitProfile profile = createExpectedProfile();
-
-      Assertions.assertFalse(profile.equals(null));
-
-      BagitProfile identicalProfile = createExpectedProfile();
-      Assertions.assertTrue(profile.equals(identicalProfile));
-
-      Class testModelClass = BagitProfile.class;
-      Method[] methods = testModelClass.getDeclaredMethods();
-      for (Method method
-              : methods) {
-        BagitProfile otherProfile = createExpectedProfile();
-
-        if (method.getName().startsWith("set")) {
-          Type[] pType = method.getGenericParameterTypes();
-          if (pType.length == 0) {
-            continue;
-          }
-          /**
-           * Create array for parameters
-           */
-          Object[] params = new Object[pType.length];
-
-          for (int i = 0; i < pType.length; i++) {
-            if (pType[i].equals(String.class)) {
-              params[i] = asString;
-
-            } else if (pType[i].getTypeName().equals("java.util.List<java.lang.String>")) {
-              params[i] = asList;
-            } else if (pType[i].equals(boolean.class)) {
-              params[i] = asBoolean;
-            } else if (pType[i].equals(Serialization.class)) {
-              params[i] = asSerialization;
-            }
-
-          }
-          method.setAccessible(true);
-          method.invoke(otherProfile, params);
-
-          Assertions.assertFalse(otherProfile.equals(profile));
-        }
+  /*
+   * We test that the .equals() method uses all fields for comparing
+   * by using reflection to change the set field.
+   */
+  @Test
+  public void testEveryVariableIsIncludedInEqualsMethod1() throws Exception {
+    BagitProfile sut = createExpectedProfile();
+    
+    Class<BagitProfile> testModelClass = BagitProfile.class;
+    Field[] fields = testModelClass.getDeclaredFields();
+    for(Field field : fields) {
+      BagitProfile otherProfile = createExpectedProfile();
+      field.setAccessible(true);
+      
+      if(String.class.isAssignableFrom(field.getType())) {
+        field.set(otherProfile, "");
       }
-    } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-      Assertions.assertFalse(true);
+      else if(Map.class.isAssignableFrom(field.getType())) {
+        field.set(otherProfile, Collections.emptyMap());
+      }
+      else if(boolean.class.isAssignableFrom(field.getType())) {
+        field.set(otherProfile, !field.getBoolean(sut));
+      }
+      else if(List.class.isAssignableFrom(field.getType())) {
+        field.set(otherProfile, Collections.emptyList());
+      }
+      else if(Serialization.class.isAssignableFrom(field.getType())) {
+        field.set(otherProfile, Serialization.optional);
+      }
+      else {
+        Assertions.fail("This test does not account for field type: " + field.getType() + " of variable: " + field.getName());
+      }
+      Assertions.assertNotEquals(sut, otherProfile);
     }
   }
 }

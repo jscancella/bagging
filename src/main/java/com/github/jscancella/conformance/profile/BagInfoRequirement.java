@@ -41,17 +41,6 @@ public class BagInfoRequirement {
   }
 
   /**
-   * Constructs a new BagInfoRequirement setting {@link #repeatable} to true
-   * (default).
-   *
-   * @param required Indicates whether or not the tag is required.
-   * @param acceptableValues List of acceptable values.
-   */
-  public BagInfoRequirement(final boolean required, final List<String> acceptableValues) {
-    this(required, acceptableValues, true);
-  }
-
-  /**
    * Constructs a new BagInfoRequirement.
    *
    * @param required Indicates whether or not the tag is required.
