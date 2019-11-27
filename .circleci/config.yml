@@ -4,7 +4,7 @@
 #
 version: 2
 jobs:
-  build:
+  build-java8:
     docker:
       # specify the version you desire here
       - image: circleci/openjdk:8-jdk
@@ -47,3 +47,90 @@ jobs:
           key: dependency-cache
           paths:
             - ~/.gradle
+
+  build-java9:
+    docker:
+      # specify the version you desire here
+      - image: circleci/openjdk:9-jdk
+
+    working_directory: ~/repo
+
+    environment:
+      # Customize the JVM maximum heap limit
+      JVM_OPTS: -Xmx1048m
+      TERM: dumb
+    
+    steps:
+      - checkout #checks out your code to your working directory
+      - restore_cache:
+          keys:
+            - dependency-cache
+      - run:
+          name: chmod permissions
+          command: chmod +x ./gradlew
+      - run:
+          name: run checks
+          command: ./gradlew check dependencyCheckUpdate dependencyCheckAnalyze --no-daemon
+          environment: 
+            GRADLE_OPTS: "-Xmx1024m -Dorg.gradle.jvmargs='-Xmx1024m'"
+            
+  build-java10:
+    docker:
+      # specify the version you desire here
+      - image: circleci/openjdk:10-jdk
+
+    working_directory: ~/repo
+
+    environment:
+      # Customize the JVM maximum heap limit
+      JVM_OPTS: -Xmx1048m
+      TERM: dumb
+    
+    steps:
+      - checkout #checks out your code to your working directory
+      - restore_cache:
+          keys:
+            - dependency-cache
+      - run:
+          name: chmod permissions
+          command: chmod +x ./gradlew
+      - run:
+          name: run checks
+          command: ./gradlew check dependencyCheckUpdate dependencyCheckAnalyze --no-daemon
+          environment: 
+            GRADLE_OPTS: "-Xmx1024m -Dorg.gradle.jvmargs='-Xmx1024m'"
+
+  build-java11:
+    docker:
+      # specify the version you desire here
+      - image: circleci/openjdk:111-jdk
+
+    working_directory: ~/repo
+
+    environment:
+      # Customize the JVM maximum heap limit
+      JVM_OPTS: -Xmx1048m
+      TERM: dumb
+    
+    steps:
+      - checkout #checks out your code to your working directory
+      - restore_cache:
+          keys:
+            - dependency-cache
+      - run:
+          name: chmod permissions
+          command: chmod +x ./gradlew
+      - run:
+          name: run checks
+          command: ./gradlew check dependencyCheckUpdate dependencyCheckAnalyze --no-daemon
+          environment: 
+            GRADLE_OPTS: "-Xmx1024m -Dorg.gradle.jvmargs='-Xmx1024m'"
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build-java8
+      - build-java9
+      - build-java10
+      - build-java11
