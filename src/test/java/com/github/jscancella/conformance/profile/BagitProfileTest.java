@@ -46,6 +46,10 @@ public class BagitProfileTest extends AbstractBagitProfileTest {
       else if(Serialization.class.isAssignableFrom(field.getType())) {
         field.set(otherProfile, Serialization.optional);
       }
+      else if(field.getName().equalsIgnoreCase("$jacocoData")) {
+        //skip as this is only applicable during testing time
+        continue;
+      }
       else {
         Assertions.fail("This test does not account for field type: " + field.getType() + " of variable: " + field.getName());
       }
