@@ -103,7 +103,7 @@ jobs:
   build-java11:
     docker:
       # specify the version you desire here
-      - image: circleci/openjdk:111-jdk
+      - image: circleci/openjdk:11-jdk
 
     working_directory: ~/repo
 
