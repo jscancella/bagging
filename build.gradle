@@ -39,6 +39,8 @@ dependencies {
     'org.kamranzafar:jtar:2.3'
 
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
+  
+  spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.10.0'
 }
 
 test { 
