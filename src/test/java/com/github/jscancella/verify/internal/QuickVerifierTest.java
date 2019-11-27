@@ -19,6 +19,7 @@ public class QuickVerifierTest extends TempFolderTest {
   private Path rootDir = Paths.get(new File("src/test/resources/bags/v0_97/bag").toURI());
   
   @Test 
+  @SuppressWarnings("deprecation")
   public void testQuickVerify() throws Exception{
     Path passingRootDir = Paths.get(new File("src/test/resources/bags/v0_94/bag").toURI());
     Bag bag = BagReader.read(passingRootDir);
@@ -27,6 +28,7 @@ public class QuickVerifierTest extends TempFolderTest {
   }
   
   @Test
+  @SuppressWarnings("deprecation")
   public void testExceptionIsThrownWhenPayloadOxumDoesntExist() throws Exception{
     Bag bag = BagReader.read(rootDir);
     Assertions.assertThrows(PayloadOxumDoesNotExistException.class, 
@@ -34,6 +36,7 @@ public class QuickVerifierTest extends TempFolderTest {
   }
   
   @Test
+  @SuppressWarnings("deprecation")
   public void testInvalidByteSizeForQuickVerify() throws Exception{
     Path badRootDir = Paths.get(new File("src/test/resources/badPayloadOxumByteSize/bag").toURI());
     Bag bag = BagReader.read(badRootDir);
@@ -43,6 +46,7 @@ public class QuickVerifierTest extends TempFolderTest {
   }
   
   @Test
+  @SuppressWarnings("deprecation")
   public void testInvalidFileCountForQuickVerify() throws Exception{
     Path badRootDir = Paths.get(new File("src/test/resources/badPayloadOxumFileCount/bag").toURI());
     Bag bag = BagReader.read(badRootDir);

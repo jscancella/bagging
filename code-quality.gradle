@@ -13,8 +13,8 @@ sourceSets {
 }
 
 configurations {
-  integrationTestCompile.extendsFrom testCompile
-  integrationTestRuntime.extendsFrom testRuntime
+  integrationTestCompile.extendsFrom testImplementation
+  integrationTestRuntime.extendsFrom testRuntimeOnly
 }
 
 task integrationTest(type: Test, dependsOn: "cloneConformanceSuite") {
@@ -55,7 +55,7 @@ jacocoTestReport {
       html.enabled = true
   }
   afterEvaluate {
-    classDirectories = files(classDirectories.files.collect {
+    classDirectories.from = files(classDirectories.files.collect {
         fileTree(dir: it, exclude: ['com/github/jscancella/domain/**',
           'com/github/jscancella/exceptions/**',
           'com/github/jscancella/conformance/exceptions/**',
