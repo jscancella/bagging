@@ -35,7 +35,7 @@ dependencies {
     
   testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.2', 
     'org.springframework.boot:spring-boot-starter-logging:2.1.9.RELEASE',
-    'org.bouncycastle:bcprov-jdk15on:1.63',
+    'org.bouncycastle:bcprov-jdk15on:1.64',
     'org.kamranzafar:jtar:2.3'
 
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
