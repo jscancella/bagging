@@ -1,6 +1,5 @@
 package com.github.jscancella.writer.internal;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -14,34 +13,40 @@ import org.junit.jupiter.api.Test;
 
 import com.github.jscancella.TempFolderTest;
 import com.github.jscancella.domain.Manifest;
+import com.github.jscancella.domain.Manifest.ManifestBuilder;
+import com.github.jscancella.domain.ManifestEntry;
 
 public class ManifestWriterTest extends TempFolderTest {
   
   @Test
-  public void testWriteTagManifests() throws IOException{
+  public void testWriteTagManifests() throws Exception{
     Set<Manifest> tagManifests = new HashSet<>();
-    Manifest manifest = new Manifest("md5");
-    manifest.getFileToChecksumMap().put(Paths.get("/foo/bar/ham/data/one/two/buckleMyShoe.txt"), "someHashValue");
+    ManifestBuilder builder = new ManifestBuilder("md5");
+    builder.addEntry(new ManifestEntry(Paths.get("/foo/bar/ham/data/one/two/buckleMyShoe.txt"), Paths.get("buckleMyShoe.txt"), "someHashValue"));
+    
+    Manifest manifest = builder.build();
     tagManifests.add(manifest);
     Path outputDir = createDirectory("tagManifests");
     Path tagManifest = outputDir.resolve("tagmanifest-md5.txt");
     
     Assertions.assertFalse(Files.exists(tagManifest));
-    ManifestWriter.writeTagManifests(tagManifests, outputDir, Paths.get("/foo/bar/ham"), StandardCharsets.UTF_8);
+    ManifestWriter.writeTagManifests(tagManifests, outputDir, StandardCharsets.UTF_8);
     Assertions.assertTrue(Files.exists(tagManifest));
   }
   
   @Test
-  public void testManifestsDontContainWindowsFilePathSeparator() throws IOException{
+  public void testManifestsDontContainWindowsFilePathSeparator() throws Exception{
     Set<Manifest> tagManifests = new HashSet<>();
-    Manifest manifest = new Manifest("md5");
-    manifest.getFileToChecksumMap().put(Paths.get("/foo/bar/ham/data/one/two/buckleMyShoe.txt"), "someHashValue");
+    ManifestBuilder builder = new ManifestBuilder("md5");
+    builder.addEntry(new ManifestEntry(Paths.get("/foo/bar/ham/data/one/two/buckleMyShoe.txt"), Paths.get("buckleMyShoe.txt"), "someHashValue"));
+    
+    Manifest manifest = builder.build();
     tagManifests.add(manifest);
     Path outputDir = createDirectory("noWindowsPathSeparator");
     Path tagManifest = outputDir.resolve("tagmanifest-md5.txt");
     
     Assertions.assertFalse(Files.exists(tagManifest));
-    ManifestWriter.writeTagManifests(tagManifests, outputDir, Paths.get("/foo/bar/ham"), StandardCharsets.UTF_8);
+    ManifestWriter.writeTagManifests(tagManifests, outputDir, StandardCharsets.UTF_8);
     
     List<String> lines = Files.readAllLines(tagManifest);
     for(String line : lines){

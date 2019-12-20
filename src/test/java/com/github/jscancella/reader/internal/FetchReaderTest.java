@@ -1,7 +1,6 @@
 package com.github.jscancella.reader.internal;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -21,15 +20,15 @@ import com.github.jscancella.exceptions.MaliciousPathException;
 
 public class FetchReaderTest extends TempFolderTest {
 
-  private static List<URL> urls;
+  private static List<URI> uris;
   
   @BeforeAll
-  public static void setup() throws MalformedURLException{
-    urls = Arrays.asList(new URL("http://localhost/foo/data/dir1/test3.txt"), 
-        new URL("http://localhost/foo/data/dir2/dir3/test5.txt"),
-        new URL("http://localhost/foo/data/dir2/test4.txt"),
-        new URL("http://localhost/foo/data/test%201.txt"),
-        new URL("http://localhost/foo/data/test2.txt"));
+  public static void setup(){
+    uris = Arrays.asList(URI.create("http://localhost/foo/data/dir1/test3.txt"), 
+        URI.create("http://localhost/foo/data/dir2/dir3/test5.txt"),
+        URI.create("http://localhost/foo/data/dir2/test4.txt"),
+        URI.create("http://localhost/foo/data/test%201.txt"),
+        URI.create("http://localhost/foo/data/test2.txt"));
   }
   
   @Test
@@ -38,8 +37,8 @@ public class FetchReaderTest extends TempFolderTest {
     List<FetchItem> returnedItems = FetchReader.readFetch(fetchFile, StandardCharsets.UTF_8, fetchFile.getParent());
     
     for(FetchItem item : returnedItems){
-      Assertions.assertNotNull(item.getUrl());
-      Assertions.assertTrue(urls.contains(item.getUrl()));
+      Assertions.assertNotNull(item.getUri());
+      Assertions.assertTrue(uris.contains(item.getUri()));
       
       Assertions.assertEquals(Long.valueOf(-1), item.getLength());
       
@@ -53,8 +52,8 @@ public class FetchReaderTest extends TempFolderTest {
     List<FetchItem> returnedItems = FetchReader.readFetch(fetchFile, StandardCharsets.UTF_8, Paths.get("/foo"));
     
     for(FetchItem item : returnedItems){
-      Assertions.assertNotNull(item.getUrl());
-      Assertions.assertTrue(urls.contains(item.getUrl()));
+      Assertions.assertNotNull(item.getUri());
+      Assertions.assertTrue(uris.contains(item.getUri()));
       
       Assertions.assertTrue(item.getLength() > 0);
       

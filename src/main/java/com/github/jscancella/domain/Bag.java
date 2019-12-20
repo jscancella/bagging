@@ -192,7 +192,7 @@ public final class Bag {
     boolean isValid = true;
     
     BagitTextFileVerifier.checkBagitTextFile(this);
-    isValid = isComplete(this, ignoreHiddenFiles) && isValid;
+    isValid = isComplete(ignoreHiddenFiles) && isValid;
     
     for(final Manifest payloadManifest : payLoadManifests){
       isValid = checkHashes(payloadManifest) && isValid;
@@ -240,13 +240,13 @@ public final class Bag {
    * 
    * @return true or throws an exception
    */
-  public boolean isComplete(final Bag bag, final boolean ignoreHiddenFiles) throws FileNotInPayloadDirectoryException, MissingBagitFileException, MissingPayloadDirectoryException, MissingPayloadManifestException, IOException, MaliciousPathException, InvalidBagitFileFormatException, NoSuchAlgorithmException {
-    MandatoryVerifier.checkFetchItemsExist(bag.getItemsToFetch(), bag.getRootDir());
-    MandatoryVerifier.checkBagitFileExists(bag);
-    MandatoryVerifier.checkPayloadDirectoryExists(bag);
-    MandatoryVerifier.checkIfAtLeastOnePayloadManifestsExist(bag);
+  public boolean isComplete(final boolean ignoreHiddenFiles) throws FileNotInPayloadDirectoryException, MissingBagitFileException, MissingPayloadDirectoryException, MissingPayloadManifestException, IOException, MaliciousPathException, InvalidBagitFileFormatException, NoSuchAlgorithmException {
+    MandatoryVerifier.checkFetchItemsExist(itemsToFetch, rootDir);
+    MandatoryVerifier.checkBagitFileExists(this);
+    MandatoryVerifier.checkPayloadDirectoryExists(this);
+    MandatoryVerifier.checkIfAtLeastOnePayloadManifestsExist(this);
 
-    ManifestVerifier.verifyManifests(bag, ignoreHiddenFiles);
+    ManifestVerifier.verifyManifests(this, ignoreHiddenFiles);
     
     return true;
   }

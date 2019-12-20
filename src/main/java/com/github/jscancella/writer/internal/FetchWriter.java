@@ -69,7 +69,7 @@ public enum FetchWriter {;//using enum to enforce singleton
    * 
    * @return the relative path with only unix path separator
    */
-  private static String formatRelativePathString(final Path relativeTo, final Path entry){
+  static String formatRelativePathString(final Path relativeTo, final Path entry){
     final String encodedPath = encodeFilename(relativeTo.toAbsolutePath().relativize(entry.toAbsolutePath()));
     return encodedPath.replace('\\', '/') + System.lineSeparator();
   }

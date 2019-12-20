@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import com.github.jscancella.conformance.BagLinter;
 import com.github.jscancella.conformance.BagitWarning;
 import com.github.jscancella.domain.Bag;
+import com.github.jscancella.domain.Bag.BagBuilder;
 import com.github.jscancella.domain.Version;
 import com.github.jscancella.exceptions.CorruptChecksumException;
 import com.github.jscancella.exceptions.FileNotInPayloadDirectoryException;
@@ -32,9 +33,6 @@ import com.github.jscancella.exceptions.MissingBagitFileException;
 import com.github.jscancella.exceptions.MissingPayloadDirectoryException;
 import com.github.jscancella.exceptions.MissingPayloadManifestException;
 import com.github.jscancella.exceptions.UnparsableVersionException;
-import com.github.jscancella.reader.BagReader;
-import com.github.jscancella.verify.BagVerifier;
-import com.github.jscancella.writer.BagWriter;
 
 /**
  * This class assumes that the compliance test suite repo has been cloned and is available locally
@@ -58,8 +56,8 @@ public class BagitSuiteComplanceTest extends TempFolderTest {
     Bag bag;
     
     for(final Path bagDir : visitor.getValidTestCases()){
-      bag = BagReader.read(bagDir);
-      BagVerifier.isValid(bag, true);
+      bag = new BagBuilder().read(bagDir);
+      bag.isValid(true);
     }
   }
   
@@ -71,8 +69,8 @@ public class BagitSuiteComplanceTest extends TempFolderTest {
     
     for(Path invalidBagDir : visitor.getInvalidTestCases()){
       try{
-        bag = BagReader.read(invalidBagDir);
-        BagVerifier.isValid(bag, true);
+        bag = new BagBuilder().read(invalidBagDir);
+        bag.isValid(true);
         Assertions.fail(bag.getRootDir() + " should have failed but didn't!");
       }catch(IOException | UnparsableVersionException | InvalidBagitFileFormatException | MaliciousPathException | 
           NoSuchAlgorithmException | FileNotInPayloadDirectoryException | MissingBagitFileException | 
@@ -102,8 +100,8 @@ public class BagitSuiteComplanceTest extends TempFolderTest {
     
     for(Path invalidBagDir : osSpecificInvalidPaths){
       try{
-        bag = BagReader.read(invalidBagDir);
-        BagVerifier.isValid(bag, true);
+        bag = new BagBuilder().read(invalidBagDir);
+        bag.isValid(true);
       }catch(IOException | UnparsableVersionException | InvalidBagitFileFormatException | 
           MaliciousPathException | NoSuchAlgorithmException | FileNotInPayloadDirectoryException | 
           MissingBagitFileException | MissingPayloadDirectoryException | MissingPayloadManifestException | CorruptChecksumException e){
@@ -136,8 +134,10 @@ public class BagitSuiteComplanceTest extends TempFolderTest {
     
     for(final Path bagDir : visitor.getValidTestCases()){
       newBagDir = folder.resolve("readWriteProducesSameBag");
-      bag = BagReader.read(bagDir);
-      BagWriter.write(bag, newBagDir);
+      BagBuilder bagBuilder = new BagBuilder();
+      bag = bagBuilder.read(bagDir);
+      bagBuilder.rootDir(newBagDir);
+      bagBuilder.write();
       
       testTagFileContents(bag, newBagDir);
       

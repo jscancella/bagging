@@ -1,9 +1,10 @@
 package com.github.jscancella.writer.internal;
 
-import java.net.URL;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -20,13 +21,13 @@ public class FetchWriterTest extends TempFolderTest {
   public void testWriteFetchFile() throws Exception{
     Path rootPath = createDirectory("fetchTest");
     Path fetch = rootPath.resolve("fetch.txt");
-    URL url = new URL("http://localhost:/foo/bar");
-    List<FetchItem> itemsToFetch = Arrays.asList(new FetchItem(url, -1l, rootPath.resolve("/data/foo/bar")),
-        new FetchItem(url, 100l, rootPath.resolve("/data/foo/bar")));
+    URI uri = URI.create("http://localhost:/foo/bar");
+    List<FetchItem> itemsToFetch = Arrays.asList(new FetchItem(uri, -1l, rootPath.resolve("/data/foo/bar")),
+        new FetchItem(uri, 100l, rootPath.resolve("/data/foo/bar")));
     
     
     Assertions.assertFalse(Files.exists(fetch));
-    FetchWriter.writeFetchFile(itemsToFetch, rootPath, rootPath, StandardCharsets.UTF_8);
+    FetchWriter.writeFetchFile(itemsToFetch, rootPath, StandardCharsets.UTF_8);
     Assertions.assertTrue(Files.exists(fetch));
   }
   
@@ -36,13 +37,13 @@ public class FetchWriterTest extends TempFolderTest {
     Path fetch = rootPath.resolve("fetch.txt");
     List<FetchItem> itemsToFetch = new ArrayList<>();
     
-    itemsToFetch.add(new FetchItem(new URL("http://localhost:8989/bags/v0_96/holey-bag/data/dir1/test3.txt"), null, rootPath.resolve("data/dir1/test3.txt")));
-    itemsToFetch.add(new FetchItem(new URL("http://localhost:8989/bags/v0_96/holey-bag/data/dir2/dir3/test5.txt"), null, rootPath.resolve("data/dir2/dir3/test5.txt")));
-    itemsToFetch.add(new FetchItem(new URL("http://localhost:8989/bags/v0_96/holey-bag/data/dir2/test4.txt"), null, rootPath.resolve("data/dir2/test4.txt")));
-    itemsToFetch.add(new FetchItem(new URL("http://localhost:8989/bags/v0_96/holey-bag/data/test%201.txt"), null, rootPath.resolve("data/test 1.txt")));
-    itemsToFetch.add(new FetchItem(new URL("http://localhost:8989/bags/v0_96/holey-bag/data/test2.txt"), null, rootPath.resolve("data/test2.txt")));
+    itemsToFetch.add(new FetchItem(URI.create("http://localhost:8989/bags/v0_96/holey-bag/data/dir1/test3.txt"), null, rootPath.resolve("data/dir1/test3.txt")));
+    itemsToFetch.add(new FetchItem(URI.create("http://localhost:8989/bags/v0_96/holey-bag/data/dir2/dir3/test5.txt"), null, rootPath.resolve("data/dir2/dir3/test5.txt")));
+    itemsToFetch.add(new FetchItem(URI.create("http://localhost:8989/bags/v0_96/holey-bag/data/dir2/test4.txt"), null, rootPath.resolve("data/dir2/test4.txt")));
+    itemsToFetch.add(new FetchItem(URI.create("http://localhost:8989/bags/v0_96/holey-bag/data/test%201.txt"), null, rootPath.resolve("data/test 1.txt")));
+    itemsToFetch.add(new FetchItem(URI.create("http://localhost:8989/bags/v0_96/holey-bag/data/test2.txt"), null, rootPath.resolve("data/test2.txt")));
     
-    FetchWriter.writeFetchFile(itemsToFetch, rootPath, rootPath, StandardCharsets.UTF_8);
+    FetchWriter.writeFetchFile(itemsToFetch, rootPath, StandardCharsets.UTF_8);
     
     List<String> expectedLines = Arrays.asList("http://localhost:8989/bags/v0_96/holey-bag/data/dir1/test3.txt - data/dir1/test3.txt", 
         "http://localhost:8989/bags/v0_96/holey-bag/data/dir2/dir3/test5.txt - data/dir2/dir3/test5.txt", 
@@ -52,5 +53,23 @@ public class FetchWriterTest extends TempFolderTest {
     List<String> actualLines = Files.readAllLines(fetch);
     
     Assertions.assertEquals(expectedLines, actualLines);
+  }
+  
+  @Test
+  public void testRelativePath(){
+    Path parent = Paths.get("/foo");
+    Path child = parent.resolve("bar/ham");
+    String expectedRelativePath = "bar/ham" + System.lineSeparator();
+    
+    Assertions.assertEquals(expectedRelativePath, FetchWriter.formatRelativePathString(parent, child));
+  }
+
+  @Test
+  public void testUsingBothRelativeAndAbsolutePaths(){
+    Path parent = Paths.get("one/two");
+    Path child = Paths.get("one/two/three").toAbsolutePath();
+    String expectedRelativePath = "three" + System.lineSeparator();
+
+    Assertions.assertEquals(expectedRelativePath, FetchWriter.formatRelativePathString(parent, child));
   }
 }

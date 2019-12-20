@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import com.github.jscancella.domain.Bag;
-import com.github.jscancella.reader.BagReader;
+import com.github.jscancella.domain.Bag.BagBuilder;
 
 public class BagLinterTest {
 
@@ -146,7 +146,7 @@ public class BagLinterTest {
   public void testCheckAgainstProfile() throws Exception{
     Path profileJson = new File("src/test/resources/bagitProfiles/exampleProfile.json").toPath();
     Path bagRootPath = new File("src/test/resources/bagitProfileTestBags/profileConformantBag").toPath();
-    Bag bag = BagReader.read(bagRootPath);
+    Bag bag = new BagBuilder().read(bagRootPath);
     
     try(InputStream inputStream = Files.newInputStream(profileJson, StandardOpenOption.READ)){
       BagLinter.checkAgainstProfile(inputStream, bag);
