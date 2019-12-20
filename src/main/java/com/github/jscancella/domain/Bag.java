@@ -3,10 +3,13 @@ package com.github.jscancella.domain;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.security.NoSuchAlgorithmException;
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -19,16 +22,36 @@ import org.slf4j.LoggerFactory;
 
 import com.github.jscancella.domain.Manifest.ManifestBuilder;
 import com.github.jscancella.domain.Metadata.MetadataBuilder;
+import com.github.jscancella.exceptions.CorruptChecksumException;
+import com.github.jscancella.exceptions.FileNotInPayloadDirectoryException;
 import com.github.jscancella.exceptions.InvalidBagStateException;
+import com.github.jscancella.exceptions.InvalidBagitFileFormatException;
+import com.github.jscancella.exceptions.MaliciousPathException;
+import com.github.jscancella.exceptions.MissingBagitFileException;
+import com.github.jscancella.exceptions.MissingPayloadDirectoryException;
+import com.github.jscancella.exceptions.MissingPayloadManifestException;
+import com.github.jscancella.exceptions.UnparsableVersionException;
 import com.github.jscancella.hash.BagitChecksumNameMapping;
+import com.github.jscancella.hash.Hasher;
+import com.github.jscancella.internal.ManifestFilter;
+import com.github.jscancella.internal.PathUtils;
+import com.github.jscancella.reader.internal.BagitTextFileReader;
+import com.github.jscancella.reader.internal.FetchReader;
+import com.github.jscancella.reader.internal.ManifestReader;
+import com.github.jscancella.reader.internal.MetadataReader;
+import com.github.jscancella.verify.internal.BagitTextFileVerifier;
+import com.github.jscancella.verify.internal.MandatoryVerifier;
+import com.github.jscancella.verify.internal.ManifestVerifier;
 import com.github.jscancella.writer.internal.BagitFileWriter;
 import com.github.jscancella.writer.internal.FetchWriter;
+import com.github.jscancella.writer.internal.ManifestWriter;
 import com.github.jscancella.writer.internal.MetadataWriter;
+import com.github.jscancella.writer.internal.PayloadWriter;
 
 /**
  * The main representation of the bagit spec. This is an immutable object, if you need to modify it look at {@link Bag.Builder}
  */
-public final class Bag {
+public final class Bag {  
   //The original version of the bag
   private final Version version;
   
@@ -99,6 +122,13 @@ public final class Bag {
   public Charset getFileEncoding() {
     return fileEncoding;
   }
+  
+  /**
+   * @return the root directory of a bag, usually the folder name
+   */
+  public Path getRootDir() {
+    return rootDir;
+  }
 
   @Override
   public String toString() {
@@ -145,12 +175,80 @@ public final class Bag {
         Objects.equals(this.itemsToFetch, other.getItemsToFetch()) &&
         Objects.equals(this.metadata, other.getMetadata());
   }
-
+  
   /**
-   * @return the root directory of a bag, usually the folder name
+   * See <a href=
+   * "https://tools.ietf.org/html/draft-kunze-bagit#section-3">https://tools.ietf.org/html/draft-kunze-bagit#section-3</a><br>
+   * A bag is <b>valid</b> if the bag is complete and every checksum has been
+   * verified against the contents of its corresponding file.
+   * 
+   * @param bag the bag to check
+   * @param ignoreHiddenFiles to include hidden files when checking
+   * 
+   * @return true if the bag is valid or throws an exception
+   * 
    */
-  public Path getRootDir() {
-    return rootDir;
+  public boolean isValid(final boolean ignoreHiddenFiles) throws InvalidBagitFileFormatException, IOException, NoSuchAlgorithmException, CorruptChecksumException, FileNotInPayloadDirectoryException, MissingBagitFileException, MissingPayloadDirectoryException, MissingPayloadManifestException {
+    boolean isValid = true;
+    
+    BagitTextFileVerifier.checkBagitTextFile(this);
+    isValid = isComplete(this, ignoreHiddenFiles) && isValid;
+    
+    for(final Manifest payloadManifest : payLoadManifests){
+      isValid = checkHashes(payloadManifest) && isValid;
+    }
+    
+    for(final Manifest tagManifest : tagManifests){
+      isValid = checkHashes(tagManifest) && isValid;
+    }
+    
+    return isValid;
+  }
+  
+  private boolean checkHashes(final Manifest manifest) throws CorruptChecksumException, NoSuchAlgorithmException, IOException{
+    final Hasher hasher = BagitChecksumNameMapping.get(manifest.getBagitAlgorithmName());
+    
+    for(final ManifestEntry entry : manifest.getEntries()) {
+      if(Files.exists(entry.getPhysicalLocation())) {
+        final String hash = hasher.hash(entry.getPhysicalLocation());
+        if (!hash.equals(entry.getChecksum())){
+          throw new CorruptChecksumException("File [{}] is suppose to have a [{}] hash of [{}] but was computed [{}].", entry.getRelativeLocation(),
+              manifest.getBagitAlgorithmName(), entry.getChecksum(), hash);
+        }
+      }
+    }
+
+    return true;
+  }
+  
+  /**
+   * See <a href=
+   * "https://tools.ietf.org/html/draft-kunze-bagit#section-3">https://tools.ietf.org/html/draft-kunze-bagit#section-3</a><br>
+   * A bag is <b>complete</b> if <br>
+   * <ul>
+   * <li>every element is present
+   * <li>every file in the payload manifest(s) are present
+   * <li>every file in the tag manifest(s) are present. Tag files not listed in a
+   * tag manifest may be present.
+   * <li>every file in the data directory must be listed in at least one payload
+   * manifest
+   * <li>each element must comply with the bagit spec
+   * </ul>
+   * 
+   * @param bag the bag to check
+   * @param ignoreHiddenFiles when checking to ignore hidden files
+   * 
+   * @return true or throws an exception
+   */
+  public boolean isComplete(final Bag bag, final boolean ignoreHiddenFiles) throws FileNotInPayloadDirectoryException, MissingBagitFileException, MissingPayloadDirectoryException, MissingPayloadManifestException, IOException, MaliciousPathException, InvalidBagitFileFormatException, NoSuchAlgorithmException {
+    MandatoryVerifier.checkFetchItemsExist(bag.getItemsToFetch(), bag.getRootDir());
+    MandatoryVerifier.checkBagitFileExists(bag);
+    MandatoryVerifier.checkPayloadDirectoryExists(bag);
+    MandatoryVerifier.checkIfAtLeastOnePayloadManifestsExist(bag);
+
+    ManifestVerifier.verifyManifests(bag, ignoreHiddenFiles);
+    
+    return true;
   }
   
   public static final class BagBuilder {
@@ -220,14 +318,46 @@ public final class Bag {
       return this;
     }
     
+    public Bag read(final Path bagDirectory) throws MaliciousPathException, InvalidBagitFileFormatException, IOException, UnparsableVersionException, NoSuchAlgorithmException {
+      this.rootDir = bagDirectory;
+      
+      final Path bagitFile = bagDirectory.resolve("bagit.txt");
+      final SimpleImmutableEntry<Version, Charset> bagitInfo = BagitTextFileReader.readBagitTextFile(bagitFile);
+      this.version = bagitInfo.getKey();
+      this.fileEncoding = bagitInfo.getValue();
+      
+      final List<SimpleImmutableEntry<String, String>> metadataLines = MetadataReader.readBagMetadata(bagDirectory, fileEncoding);
+      metadataBuilder.addAll(metadataLines);
+      
+      final Path fetchFile = bagDirectory.resolve("fetch.txt");
+      if(Files.exists(fetchFile)){
+        this.itemsToFetch = FetchReader.readFetch(fetchFile, fileEncoding, rootDir);
+      }
+      
+      final Set<Manifest> payloadManifests = new HashSet<>();
+      final Set<Manifest> tagManifests = new HashSet<>();
+      try(final DirectoryStream<Path> manifests = Files.newDirectoryStream(rootDir, new ManifestFilter())){
+        for (final Path path : manifests){
+          final String filename = PathUtils.getFilename(path);
+          
+          if(filename.startsWith("tagmanifest-")){
+            tagManifests.add(ManifestReader.readManifest(path, rootDir, fileEncoding));
+          }
+          else if(filename.startsWith("manifest-")){
+            payloadManifests.add(ManifestReader.readManifest(path, rootDir, fileEncoding));
+          }
+        }
+      }
+      
+      
+      return new Bag(version, fileEncoding, payloadManifests, tagManifests, itemsToFetch, metadataBuilder.build(), rootDir);
+    }
+    
     public Bag write() throws InvalidBagStateException, NoSuchAlgorithmException, IOException{
       if(rootDir == null) {
         throw new InvalidBagStateException("Bags must have a root directory");
       }
 
-      //TODO
-      //since some of the tag files don't exist yet, bagWriter has to update this bagBuilder.
-      //this ensures that when we call the constructor below it has the correct set of tag files already in the builder
       logger.info("Writing bag to [{}]", rootDir);
       Files.createDirectories(rootDir);
       
@@ -244,11 +374,22 @@ public final class Bag {
         this.addTagFile(fetchFile);
       }
       
-      //TODO write payload files
-        //TODO change from list<path> to list<manifest> entry so that we know where in the bag to put the file?
-      //TODO write payload manifests
-      //TODO write user defined tag files
-      //TODO write tag manifests
+      PayloadWriter.writePayloadFiles(payloadFiles, rootDir);   
+      
+      //write user defined tag files
+      logger.debug("Writing tag file [{}] to [{}]");
+      for(Path tagFile: tagFiles) {
+        final Path writeToPath = rootDir.resolve(tagFile.getFileName());
+        Files.copy(tagFile, writeToPath, StandardCopyOption.REPLACE_EXISTING);
+      }
+      
+      //since the manifest files don't exist yet, bagWriter has to update this bagBuilder.
+      //this ensures that when we call the constructor below it has the correct set of tag files already in the builder
+      final Set<Manifest> payloadManifests = createPayloadManifests();
+      tagFiles.addAll(ManifestWriter.writePayloadManifests(payloadManifests, rootDir, fileEncoding));
+      
+      final Set<Manifest> tagManifests = createTagManifests();
+      ManifestWriter.writePayloadManifests(tagManifests, rootDir, fileEncoding);
       
       return new Bag(this.version, this.fileEncoding, createPayloadManifests(), createTagManifests(), this.itemsToFetch, metadataBuilder.build(), this.rootDir);
     }

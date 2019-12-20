@@ -19,7 +19,6 @@ import com.github.jscancella.exceptions.MissingBagitFileException;
 import com.github.jscancella.exceptions.MissingPayloadDirectoryException;
 import com.github.jscancella.exceptions.MissingPayloadManifestException;
 import com.github.jscancella.reader.BagReader;
-import com.github.jscancella.verify.internal.MandatoryVerifier;
 
 public class MandatoryVerifierTest extends TempFolderTest{
   

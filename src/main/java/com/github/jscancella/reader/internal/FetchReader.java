@@ -2,7 +2,7 @@ package com.github.jscancella.reader.internal;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -46,13 +46,13 @@ public enum FetchReader {;//using enum to enforce singleton
       String line = reader.readLine();
       String[] parts = null;
       long length = 0;
-      URL url = null;
+      URI url = null;
       while(line != null){
         if(line.matches(FETCH_LINE_REGEX) && !line.matches("\\s*")){
           parts = line.split("\\s+", 3);
           final Path path = TagFileReader.createFileFromManifest(bagRootDir, parts[2]);
           length = parts[1].equals("-") ? -1 : Long.decode(parts[1]);
-          url = new URL(parts[0]);
+          url = URI.create(parts[0]);
           
           logger.debug(messages.getString("read_fetch_file_line"), url, length, parts[2], fetchFile);
           final FetchItem itemToFetch = new FetchItem(url, length, path);

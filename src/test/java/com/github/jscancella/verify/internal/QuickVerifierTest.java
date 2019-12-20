@@ -12,7 +12,6 @@ import com.github.jscancella.domain.Bag;
 import com.github.jscancella.exceptions.InvalidPayloadOxumException;
 import com.github.jscancella.exceptions.PayloadOxumDoesNotExistException;
 import com.github.jscancella.reader.BagReader;
-import com.github.jscancella.verify.internal.QuickVerifier;
 
 public class QuickVerifierTest extends TempFolderTest {
 

@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.slf4j.helpers.MessageFormatter;
 
@@ -27,7 +28,12 @@ public final class PayloadFileExistsInAllManifestsVistor extends AbstractPayload
   public FileVisitResult visitFile(final Path path, final BasicFileAttributes attrs)throws FileNotInManifestException{
     if(Files.isRegularFile(path)){
       for(final Manifest manifest : manifests){
-        if(!manifest.getFileToChecksumMap().keySet().contains(path.normalize())){
+        Set<Path> relativePaths = manifest
+                                    .getEntries().stream()
+                                    .map(entry -> entry.getRelativeLocation())
+                                    .collect(Collectors.toSet());
+        
+        if(!relativePaths.contains(path.normalize())){
           final String formattedMessage = messages.getString("file_not_in_manifest_error");
           throw new FileNotInManifestException(MessageFormatter.format(formattedMessage, path, manifest.getBagitAlgorithmName()).getMessage());
         }

@@ -11,7 +11,6 @@ import com.github.jscancella.domain.Bag;
 import com.github.jscancella.exceptions.FileNotInManifestException;
 import com.github.jscancella.exceptions.FileNotInPayloadDirectoryException;
 import com.github.jscancella.reader.BagReader;
-import com.github.jscancella.verify.internal.ManifestVerifier;
 
 public class ManifestVerifierTest {
   

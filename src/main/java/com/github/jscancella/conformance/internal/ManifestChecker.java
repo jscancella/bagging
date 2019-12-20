@@ -6,6 +6,7 @@ import java.nio.charset.Charset;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.NoSuchAlgorithmException;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,9 +57,10 @@ public enum ManifestChecker {;// using enum to enforce singleton
    * @throws IOException if there is a problem reading a file
    * @throws InvalidBagitFileFormatException if a bag file is not formatted correctly
    * @throws MaliciousPathException if the bag is trying to access a file outside the bag
+   * @throws NoSuchAlgorithmException 
    */
   public static void checkManifests(final Path bagitDir, final Charset encoding, final Set<BagitWarning> warnings, 
-      final Collection<BagitWarning> warningsToIgnore) throws IOException, InvalidBagitFileFormatException, MaliciousPathException{
+      final Collection<BagitWarning> warningsToIgnore) throws IOException, InvalidBagitFileFormatException, MaliciousPathException, NoSuchAlgorithmException{
         
     boolean missingTagManifest = true;
     final List<Path> payloadManifests = new ArrayList<>();
@@ -259,7 +262,7 @@ public enum ManifestChecker {;// using enum to enforce singleton
   }
   
   //starting with version 1.0 all manifest types (tag, payload) MUST list the same set of files, but for older versions it SHOULD list all files
-  static void checkManifestsListSameSetOfFiles(final Set<BagitWarning> warnings, final List<Path> manifestPaths, final Charset charset) throws IOException, MaliciousPathException, InvalidBagitFileFormatException{
+  static void checkManifestsListSameSetOfFiles(final Set<BagitWarning> warnings, final List<Path> manifestPaths, final Charset charset) throws IOException, MaliciousPathException, InvalidBagitFileFormatException, NoSuchAlgorithmException{
     
     Manifest compareToManifest = null;
     Path compareToManifestPath = null;
@@ -270,8 +273,10 @@ public enum ManifestChecker {;// using enum to enforce singleton
         compareToManifest = manifest;
         continue;
       }
+      final Set<Path> compareToSet = compareToManifest.getEntries().stream().map(entry -> entry.getRelativeLocation()).collect(Collectors.toSet());
+      final Set<Path> manifestSet = manifest.getEntries().stream().map(entry -> entry.getRelativeLocation()).collect(Collectors.toSet());
       
-      if(!compareToManifest.getFileToChecksumMap().keySet().equals(manifest.getFileToChecksumMap().keySet())) {
+      if(!compareToSet.equals(manifestSet)) {
         logger.warn(messages.getString("manifest_fileset_differ"), compareToManifestPath, manifestPath);
         warnings.add(BagitWarning.MANIFEST_SETS_DIFFER);
       }

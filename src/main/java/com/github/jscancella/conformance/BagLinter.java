@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.security.NoSuchAlgorithmException;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Collection;
 import java.util.Collections;
@@ -40,7 +41,6 @@ import com.github.jscancella.exceptions.MaliciousPathException;
 import com.github.jscancella.exceptions.UnparsableVersionException;
 import com.github.jscancella.reader.internal.BagitTextFileReader;
 import com.github.jscancella.reader.internal.KeyValueReader;
-import com.github.jscancella.verify.BagVerifier;
 
 public enum BagLinter {
   ; // using enum to ensure singleton
@@ -87,7 +87,7 @@ public enum BagLinter {
    * situations where something may be technically allowed, but should be
    * discouraged. This method checks a bag for potential problems, or other items
    * that are allowed but discouraged. This <strong>does not</strong> validate a
-   * bag. See {@link BagVerifier} instead.
+   * bag.
    * 
    * @param rootDir the directory that contains a bag
    * 
@@ -97,8 +97,9 @@ public enum BagLinter {
    * @throws UnparsableVersionException if there was a problem parsing the version of the bag
    * @throws InvalidBagitFileFormatException if a file is not formatted correctly
    * @throws MaliciousPathException if the bag is trying to be malicious
+   * @throws NoSuchAlgorithmException 
    */
-  public static Set<BagitWarning> lintBag(final Path rootDir) throws IOException, UnparsableVersionException, InvalidBagitFileFormatException, MaliciousPathException{
+  public static Set<BagitWarning> lintBag(final Path rootDir) throws IOException, UnparsableVersionException, InvalidBagitFileFormatException, MaliciousPathException, NoSuchAlgorithmException{
     return lintBag(rootDir, Collections.emptyList());
   }
 
@@ -118,8 +119,9 @@ public enum BagLinter {
    * @throws UnparsableVersionException if there was a problem parsing the version of the bag
    * @throws InvalidBagitFileFormatException if a file is not formatted correctly
    * @throws MaliciousPathException if the bag is trying to be maliciou
+   * @throws NoSuchAlgorithmException 
    */
-  public static Set<BagitWarning> lintBag(final Path bagitDir, final Collection<BagitWarning> warningsToIgnore) throws IOException, UnparsableVersionException, InvalidBagitFileFormatException, MaliciousPathException{
+  public static Set<BagitWarning> lintBag(final Path bagitDir, final Collection<BagitWarning> warningsToIgnore) throws IOException, UnparsableVersionException, InvalidBagitFileFormatException, MaliciousPathException, NoSuchAlgorithmException{
     final Set<BagitWarning> warnings = new HashSet<>();
 
     final Path bagitFile = bagitDir.resolve("bagit.txt");

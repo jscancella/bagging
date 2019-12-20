@@ -4,10 +4,12 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.NoSuchAlgorithmException;
 import java.text.Normalizer;
 import java.util.HashSet;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,9 +42,10 @@ public enum ManifestVerifier {; //using enum to enforce singleton
    * @throws MaliciousPathException if a path is outside the bag
    * @throws InvalidBagitFileFormatException if a manifest is not formatted correctly
    * @throws FileNotInPayloadDirectoryException if a file listed in a manifest is not in the payload directory
+   * @throws NoSuchAlgorithmException 
    */
   public static void verifyManifests(final Bag bag, final boolean ignoreHiddenFiles)
-      throws IOException, MaliciousPathException, InvalidBagitFileFormatException, FileNotInPayloadDirectoryException {
+      throws IOException, MaliciousPathException, InvalidBagitFileFormatException, FileNotInPayloadDirectoryException, NoSuchAlgorithmException {
     
     final Set<Path> allFilesListedInManifests = getAllFilesListedInManifests(bag);
     checkAllFilesListedInManifestExist(allFilesListedInManifests);
@@ -57,16 +60,16 @@ public enum ManifestVerifier {; //using enum to enforce singleton
   /*
    * get all the files listed in all the manifests
    */
-  private static Set<Path> getAllFilesListedInManifests(final Bag bag) throws IOException, MaliciousPathException, InvalidBagitFileFormatException {
+  private static Set<Path> getAllFilesListedInManifests(final Bag bag) throws IOException, MaliciousPathException, InvalidBagitFileFormatException, NoSuchAlgorithmException {
     logger.debug(messages.getString("all_files_in_manifests"));
     
     final Set<Path> filesListedInManifests = new HashSet<>();
 
     try(DirectoryStream<Path> directoryStream = Files.newDirectoryStream(bag.getTagFileDir(), new ManifestFilter())){
-      for (final Path path : directoryStream) {
+      for(final Path path : directoryStream) {
         logger.debug(messages.getString("get_listing_in_manifest"), path);
         final Manifest manifest = ManifestReader.readManifest(path, bag.getRootDir(),bag.getFileEncoding());
-        filesListedInManifests.addAll(manifest.getFileToChecksumMap().keySet());
+        filesListedInManifests.addAll(manifest.getEntries().stream().map(entry -> entry.getRelativeLocation()).collect(Collectors.toList()));
       }
     }
 

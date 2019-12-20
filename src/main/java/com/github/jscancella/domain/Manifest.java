@@ -83,6 +83,11 @@ public final class Manifest {
       return this;
     }
     
+    public ManifestBuilder addEntry(final ManifestEntry entry) {
+      this.entries.add(entry);
+      return this;
+    }
+    
     /**
      * Add a file or directory on disk to this manifest
      * 

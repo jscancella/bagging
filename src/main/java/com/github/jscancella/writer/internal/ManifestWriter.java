@@ -6,6 +6,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.HashSet;
 import java.util.ResourceBundle;
 import java.util.Set;
 
@@ -31,9 +32,8 @@ public enum ManifestWriter{;//using enum to enforce singleton
    * 
    * @throws IOException if there was a problem writing a file
    */
-  public static void writePayloadManifests(final Set<Manifest> manifests, final Path outputDir, final Charset charsetName) throws IOException{
-    logger.info(messages.getString("writing_payload_manifests"));
-    writeManifests(manifests, outputDir, "manifest-", charsetName);
+  public static Set<Path> writePayloadManifests(final Set<Manifest> manifests, final Path outputDir, final Charset charsetName) throws IOException{
+    return writeManifests(manifests, outputDir, "manifest-", charsetName);
   }
   
   /**
@@ -45,17 +45,19 @@ public enum ManifestWriter{;//using enum to enforce singleton
    * 
    * @throws IOException if there was a problem writing a file
    */
-  public static void writeTagManifests(final Set<Manifest> tagManifests, final Path outputDir, final Charset charsetName) throws IOException{
-    logger.info(messages.getString("writing_tag_manifests"));
-    writeManifests(tagManifests, outputDir, "tagmanifest-", charsetName);
+  public static Set<Path> writeTagManifests(final Set<Manifest> tagManifests, final Path outputDir, final Charset charsetName) throws IOException{
+    return writeManifests(tagManifests, outputDir, "tagmanifest-", charsetName);
   }
   
   /*
    * Generic method to write manifests
    */
-  private static void writeManifests(final Set<Manifest> manifests, final Path outputDir, final String filenameBase, final Charset charsetName) throws IOException{
+  private static Set<Path> writeManifests(final Set<Manifest> manifests, final Path outputDir, final String filenameBase, final Charset charsetName) throws IOException{
+    Set<Path> manifestFiles = new HashSet<>();
+    
     for(final Manifest manifest : manifests){
       final Path manifestPath = outputDir.resolve(filenameBase + manifest.getBagitAlgorithmName() + ".txt");
+      manifestFiles.add(manifestPath);
       logger.debug(messages.getString("writing_manifest_to_path"), manifestPath);
 
       try(BufferedWriter writer = Files.newBufferedWriter(manifestPath, charsetName, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE)){
@@ -68,5 +70,7 @@ public enum ManifestWriter{;//using enum to enforce singleton
         }
       }
     }
+    
+    return manifestFiles;
   }
 }
