@@ -42,7 +42,7 @@ public enum FetchReader {;//using enum to enforce singleton
     logger.info(messages.getString("reading_fetch_file"), fetchFile);
     final List<FetchItem> itemsToFetch = new ArrayList<>();
     
-    try(final BufferedReader reader = Files.newBufferedReader(fetchFile, encoding)){
+    try(BufferedReader reader = Files.newBufferedReader(fetchFile, encoding)){
       String line = reader.readLine();
       String[] parts = null;
       long length = 0;

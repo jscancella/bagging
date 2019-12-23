@@ -167,6 +167,21 @@ This is beyond the scope of this project, however please see https://github.com/
 ### Technical Reference
 One of the inspirations for writing this library was to create a simple to use interface for creating, reading, writing, verifying, and linting BagIt specification bags. The coding therefore tries to adhere with the best practices in [Effective Java by Joshua Bloch](https://www.amazon.com/Effective-Java-Joshua-Bloch/dp/0134685997) as well as experiences from the team members.
 
+#### Windows Development Notes
+* Install JDK 8+
+* while gradle may work running from your IDE this has not been tested and isn't really supported. Instead run all gradle commands from the commandline using the `gradlew.bat` script root directory. git-bash seems to generally work, but sometimes crashes for unknown reasons.
+* Before submitting a pull request run `./gradlew.bat clean check` and there are no errors.
+
+#### Mac Development Notes
+* Install JDK 8+
+* while gradle may work running from your IDE this has not been tested and isn't really supported. Instead run all gradle commands from the commandline using the `gradlew` script root directory.
+* Before submitting a pull request run `./gradlew.bat clean check` and there are no errors.
+
+#### Linux Development Notes
+* Install JDK 8+
+* while gradle may work running from your IDE this has not been tested and isn't really supported. Instead run all gradle commands from the commandline using the `gradlew` script root directory.
+* Before submitting a pull request run `./gradlew.bat clean check` and there are no errors.
+
 #### Classes/Methods not to use outside this project
 There are many classes that were not designed to be used outside this project, the rules for this are:
 * If a class/method does not contain a javadoc.

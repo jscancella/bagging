@@ -23,6 +23,7 @@ public enum KeyValueReader {;//using enum to enforce singleton
   private static final Logger logger = LoggerFactory.getLogger(KeyValueReader.class);
   private static final String INDENTED_LINE_REGEX = "^\\s+.*";
   private static final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
+  private static final int PARSED_LINE_LENGTH = 2; //since it is key: value there should only be two items per line after parsing
 
   /**
    * Generic method to read key value pairs from the bagit files, like bagit.txt or bag-info.txt
@@ -40,7 +41,7 @@ public enum KeyValueReader {;//using enum to enforce singleton
   public static List<SimpleImmutableEntry<String, String>> readKeyValuesFromFile(final Path file, final String splitRegex, final Charset charset) throws IOException, InvalidBagMetadataException{
     final List<SimpleImmutableEntry<String, String>> keyValues = new ArrayList<>();
     
-    try(final BufferedReader reader = Files.newBufferedReader(file, charset)){
+    try(BufferedReader reader = Files.newBufferedReader(file, charset)){
       String line = reader.readLine();
       while(line != null){
         if(line.matches(INDENTED_LINE_REGEX) && !keyValues.isEmpty()){
@@ -73,9 +74,9 @@ public enum KeyValueReader {;//using enum to enforce singleton
   }
   
   private static String[] checkLineFormat(final String line, final String splitRegex) throws InvalidBagMetadataException{
-    final String[] parts = line.split(splitRegex, 2);
+    final String[] parts = line.split(splitRegex, PARSED_LINE_LENGTH);
     
-    if(parts.length != 2){
+    if(parts.length != PARSED_LINE_LENGTH){
       final String formattedMessage = messages.getString("malformed_key_value_line_error");
       throw new InvalidBagMetadataException(MessageFormatter.format(formattedMessage, line, splitRegex).getMessage());
     }

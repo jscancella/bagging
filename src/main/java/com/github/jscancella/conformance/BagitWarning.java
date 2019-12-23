@@ -29,7 +29,7 @@ public enum BagitWarning {
   private final String messageBundleKey;
   private static final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
   
-  private BagitWarning(final String reason){
+  BagitWarning(final String reason){
     this.messageBundleKey = reason;
   }
 

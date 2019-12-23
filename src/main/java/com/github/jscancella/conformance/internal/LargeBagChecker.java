@@ -68,7 +68,7 @@ public enum LargeBagChecker { ; //using enum to enforce singleton
   
   private static void checkNumberOfManifests(final Path bagitDir, final Set<BagitWarning> warnings) throws IOException {
     long count = 0;
-    try(final DirectoryStream<Path> files = Files.newDirectoryStream(bagitDir, new ManifestFilter())){
+    try(DirectoryStream<Path> files = Files.newDirectoryStream(bagitDir, new ManifestFilter())){
       for(@SuppressWarnings("unused") final Path file : files){
         count++;
         if(count > LARGE_MANIFEST_COUNT){

@@ -2,12 +2,12 @@ package com.github.jscancella.conformance.profile;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,9 +64,27 @@ public class BagitProfileDeserializer extends StdDeserializer<BagitProfile> {
   }
   
   private static void parseBagitProfileInfo(final JsonNode node, final BagitProfile profile){
-    final JsonNode bagitProfileInfoNode = node.get("BagIt-Profile-Info");
     logger.debug(messages.getString("parsing_bagit_profile_info_section"));
+
+    final JsonNode bagitProfileInfoNode = node.get("BagIt-Profile-Info");
+    parseMandatoryTagsOfBagitProfileInfo(bagitProfileInfoNode, profile);
+    parseOptionalTagsOfBagitProfileInfo(bagitProfileInfoNode, profile);
+  }
+
+  /**
+   * Parse required tags due to specification version 1.1.0 defined at
+   * {@link "https://github.com/bagit-profiles/bagit-profiles-specification/tree/1.1.0"}
+   * Note: If one of the tags is missing, a NullPointerException is thrown.
+   *
+   * @param bagitProfileInfoNode Root node of the bagit profile info section.
+   * @param profile Representation of bagit profile.
+   */
+  private static void parseMandatoryTagsOfBagitProfileInfo(final JsonNode bagitProfileInfoNode, final BagitProfile profile) {
+    logger.debug(messages.getString("parsing_mandatory_tags_of_bagit_profile_info_section"));
     
+    
+    // Read required tags
+    // due to specification defined at https://github.com/bagit-profiles/bagit-profiles-specification/tree/1.1.0
     final String profileIdentifier = bagitProfileInfoNode.get("BagIt-Profile-Identifier").asText();
     logger.debug(messages.getString("identifier"), profileIdentifier);
     profile.setBagitProfileIdentifier(profileIdentifier);
@@ -74,14 +92,6 @@ public class BagitProfileDeserializer extends StdDeserializer<BagitProfile> {
     final String sourceOrg = bagitProfileInfoNode.get("Source-Organization").asText();
     logger.debug(messages.getString("source_organization"), sourceOrg);
     profile.setSourceOrganization(sourceOrg);
-    
-    final String contactName = bagitProfileInfoNode.get("Contact-Name").asText();
-    logger.debug(messages.getString("contact_name"), contactName);
-    profile.setContactName(contactName);
-    
-    final String contactEmail = bagitProfileInfoNode.get("Contact-Email").asText();
-    logger.debug(messages.getString("contact_email"), contactEmail);
-    profile.setContactEmail(contactEmail);
     
     final String extDescript = bagitProfileInfoNode.get("External-Description").asText();
     logger.debug(messages.getString("external_description"), extDescript);
@@ -91,12 +101,48 @@ public class BagitProfileDeserializer extends StdDeserializer<BagitProfile> {
     logger.debug(messages.getString("version"), version);
     profile.setVersion(version);
   }
-  
+
+  /**
+   * Parse optional tags due to examples at specification version 1.1.0 defined at
+   * {@link "https://github.com/bagit-profiles/bagit-profiles-specification/tree/1.1.0"}
+   *
+   * @param bagitProfileInfoNode Root node of the bagit profile info section.
+   * @param profile Representation of bagit profile .
+   */
+  private static void parseOptionalTagsOfBagitProfileInfo(final JsonNode bagitProfileInfoNode, final BagitProfile profile) {
+    logger.debug(messages.getString("parsing_optional_tags_of_bagit_profile_info_section"));
+
+    final JsonNode contactNameNode = bagitProfileInfoNode.get("Contact-Name");
+    if (contactNameNode != null) {
+      final String contactName = contactNameNode.asText();
+      logger.debug(messages.getString("contact_name"), contactName);
+      profile.setContactName(contactName);
+    }
+
+    final JsonNode contactEmailNode = bagitProfileInfoNode.get("Contact-Email");
+    if (contactEmailNode != null) {
+      final String contactEmail = contactEmailNode.asText();
+      logger.debug(messages.getString("contact_email"), contactEmail);
+      profile.setContactEmail(contactEmail);
+    }
+
+    final JsonNode contactPhoneNode = bagitProfileInfoNode.get("Contact-Phone");
+    if (contactPhoneNode != null) {
+      final String contactPhone = contactPhoneNode.asText();
+      logger.debug(messages.getString("contact_phone"), contactPhone);
+      profile.setContactPhone(contactPhone);
+    }
+  }
+  /**
+   * Parse Bag Info section of profile.
+   * @param rootNode Root node of the profile.
+   * @return Map containing all entries of the Bag-Info node.
+   */
   @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
   private static Map<String, BagInfoRequirement> parseBagInfo(final JsonNode rootNode){
     final JsonNode bagInfoNode = rootNode.get("Bag-Info");
     logger.debug(messages.getString("parsing_bag_info"));
-    final Map<String, BagInfoRequirement>  bagInfo = new HashMap<>();
+    final Map<String, BagInfoRequirement>  bagInfo = new ConcurrentHashMap<>();
     
     final Iterator<Entry<String, JsonNode>> nodes = bagInfoNode.fields(); //stuck in java 6...
     
@@ -104,7 +150,16 @@ public class BagitProfileDeserializer extends StdDeserializer<BagitProfile> {
       final Entry<String, JsonNode> node = nodes.next();
       
       final BagInfoRequirement entry = new BagInfoRequirement();
-      entry.setRequired(node.getValue().get("required").asBoolean());
+
+      final JsonNode requiredNode = node.getValue().get("required");
+      if (requiredNode != null) {
+        entry.setRequired(requiredNode.asBoolean());
+      }
+
+      final JsonNode repeatableNode = node.getValue().get("repeatable");
+      if (repeatableNode != null) {
+        entry.setRepeatable(repeatableNode.asBoolean());
+      }
       
       final JsonNode valuesNode = node.getValue().get("values");
       if(valuesNode != null){
@@ -149,24 +204,27 @@ public class BagitProfileDeserializer extends StdDeserializer<BagitProfile> {
   private static List<String> parseRequiredTagmanifestTypes(final JsonNode node){
     final JsonNode tagManifestsRequiredNodes = node.get("Tag-Manifests-Required");
     final List<String> requiredTagmanifestTypes = new ArrayList<>();
-    
-    for(final JsonNode tagManifestsRequiredNode : tagManifestsRequiredNodes){
-      requiredTagmanifestTypes.add(tagManifestsRequiredNode.asText());
+    if (tagManifestsRequiredNodes != null) {
+      for (final JsonNode tagManifestsRequiredNode : tagManifestsRequiredNodes) {
+        requiredTagmanifestTypes.add(tagManifestsRequiredNode.asText());
+      }
     }
     logger.debug(messages.getString("required_tagmanifest_types"), requiredTagmanifestTypes);
-    
+
     return requiredTagmanifestTypes;
   }
   
   private static List<String> parseRequiredTagFiles(final JsonNode node){
     final JsonNode tagFilesRequiredNodes = node.get("Tag-Files-Required");
     final List<String> requiredTagFiles = new ArrayList<>();
-    
-    for(final JsonNode tagFilesRequiredNode : tagFilesRequiredNodes){
-      requiredTagFiles.add(tagFilesRequiredNode.asText());
+
+    if (tagFilesRequiredNodes != null) {
+      for (final JsonNode tagFilesRequiredNode : tagFilesRequiredNodes) {
+        requiredTagFiles.add(tagFilesRequiredNode.asText());
+      }
     }
     logger.debug(messages.getString("tag_files_required"), requiredTagFiles);
-    
+
     return requiredTagFiles;
   }
   

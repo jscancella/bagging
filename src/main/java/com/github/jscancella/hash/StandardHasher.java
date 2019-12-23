@@ -27,7 +27,7 @@ public enum StandardHasher implements Hasher {
   private final String MESSAGE_DIGEST_NAME;
   private final String BAGIT_ALGORITHM_NAME;
   
-  private StandardHasher(final String digestName, final String bagitAlgorithmName) {
+  StandardHasher(final String digestName, final String bagitAlgorithmName) {
     MESSAGE_DIGEST_NAME = digestName;
     BAGIT_ALGORITHM_NAME = bagitAlgorithmName;
   }
@@ -60,7 +60,7 @@ public enum StandardHasher implements Hasher {
   }
   
   private static void updateMessageDigest(final Path path, final MessageDigest messageDigest) throws IOException{
-    try(final InputStream is = new BufferedInputStream(Files.newInputStream(path, StandardOpenOption.READ))){
+    try(InputStream is = new BufferedInputStream(Files.newInputStream(path, StandardOpenOption.READ))){
       final byte[] buffer = new byte[CHUNK_SIZE];
       int read = is.read(buffer);
 
@@ -72,7 +72,7 @@ public enum StandardHasher implements Hasher {
   }
   
   private static String formatMessageDigest(final MessageDigest messageDigest){
-    try(final Formatter formatter = new Formatter()){
+    try(Formatter formatter = new Formatter()){
       for (final byte b : messageDigest.digest()) {
         formatter.format("%02x", b);
       }

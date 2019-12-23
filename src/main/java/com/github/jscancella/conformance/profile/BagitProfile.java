@@ -10,12 +10,14 @@ import java.util.Objects;
  * POJO for all the bagit profile fields. 
  * A bagit profile is used to ensure the bag metadata contains all required elements and optional elements follow allowed values
  */
+@SuppressWarnings("PMD.UseConcurrentHashMap")
 public class BagitProfile {
   private String bagitProfileIdentifier = "";
   private String sourceOrganization = "";
   private String externalDescription = "";
   private String contactName = "";
   private String contactEmail = "";
+  private String contactPhone = "";
   private String version = "";
   
   private Map<String, BagInfoRequirement> bagInfoRequirements = new HashMap<>();
@@ -38,6 +40,7 @@ public class BagitProfile {
         && Objects.equals(sourceOrganization, castOther.sourceOrganization)
         && Objects.equals(externalDescription, castOther.externalDescription)
         && Objects.equals(contactName, castOther.contactName) && Objects.equals(contactEmail, castOther.contactEmail)
+        && Objects.equals(contactPhone, castOther.contactPhone)
         && Objects.equals(version, castOther.version)
         && Objects.equals(bagInfoRequirements, castOther.bagInfoRequirements)
         && Objects.equals(manifestTypesRequired, castOther.manifestTypesRequired)
@@ -50,7 +53,7 @@ public class BagitProfile {
   }
   @Override
   public int hashCode() {
-    return Objects.hash(bagitProfileIdentifier, sourceOrganization, externalDescription, contactName, contactEmail,
+    return Objects.hash(bagitProfileIdentifier, sourceOrganization, externalDescription, contactName, contactEmail, contactPhone,
         version, bagInfoRequirements, manifestTypesRequired, fetchFileAllowed, serialization,
         acceptableMIMESerializationTypes, acceptableBagitVersions, tagManifestTypesRequired, tagFilesRequired);
   }
@@ -58,7 +61,7 @@ public class BagitProfile {
   public String toString() {
     return "BagitProfile [bagitProfileIdentifier=" + bagitProfileIdentifier + ", sourceOrganization="
         + sourceOrganization + ", externalDescription=" + externalDescription + ", contactName=" + contactName
-        + ", contactEmail=" + contactEmail + ", version=" + version + ", bagInfoRequirements=" + bagInfoRequirements
+        + ", contactEmail=" + contactEmail + ", contactPhone=" + contactPhone + ", version=" + version + ", bagInfoRequirements=" + bagInfoRequirements
         + ", manifestTypesRequired=" + manifestTypesRequired + ", fetchFileAllowed=" + fetchFileAllowed
         + ", serialization=" + serialization + ", acceptableMIMESerializationTypes=" + acceptableMIMESerializationTypes
         + ", acceptableBagitVersions=" + acceptableBagitVersions + ", tagManifestTypesRequired="
@@ -142,6 +145,12 @@ public class BagitProfile {
   }
   public void setContactEmail(final String contactEmail) {
     this.contactEmail = contactEmail;
+  }
+  public String getContactPhone() {
+    return contactPhone;
+  }
+  public void setContactPhone(final String contactPhone) {
+    this.contactPhone = contactPhone;
   }
   public String getVersion() {
     return version;

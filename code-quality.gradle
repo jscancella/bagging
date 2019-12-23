@@ -13,8 +13,8 @@ sourceSets {
 }
 
 configurations {
-  integrationTestCompile.extendsFrom testCompile
-  integrationTestRuntime.extendsFrom testRuntime
+  integrationTestCompile.extendsFrom testImplementation
+  integrationTestRuntime.extendsFrom testRuntimeOnly
 }
 
 task integrationTest(type: Test, dependsOn: "cloneConformanceSuite") {
@@ -45,26 +45,8 @@ pmdIntegrationTest.enabled = false
 pmdTest.enabled = false
 
 pmd {
-  toolVersion = "5.5.4"
-  ruleSets = [
-    "java-basic", 
-    "java-braces",
-    "java-clone",
-    "java-codesize",
-    "java-design",
-    "java-empty",
-    "java-finalizers",
-    "java-imports",
-    "java-j2ee",
-    "java-javabeans",
-    "java-optimizations",
-    "java-strictexception",
-    "java-strings",
-    "java-sunsecure",
-    "java-typeresolution",
-    "java-unnecessary",
-    "java-unusedcode"
-  ]
+  ruleSets = [] //specifically set this to be empty, otherwise gradle includes the defaults in addition to our custom ruleset! 
+  ruleSetConfig = resources.text.fromFile("config/pmd/ruleset.xml")
 }
 
 jacocoTestReport {
@@ -73,7 +55,7 @@ jacocoTestReport {
       html.enabled = true
   }
   afterEvaluate {
-    classDirectories = files(classDirectories.files.collect {
+    classDirectories.from = files(classDirectories.files.collect {
         fileTree(dir: it, exclude: ['com/github/jscancella/domain/**',
           'com/github/jscancella/exceptions/**',
           'com/github/jscancella/conformance/exceptions/**',

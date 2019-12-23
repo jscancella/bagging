@@ -1,7 +1,7 @@
 package com.github.jscancella.hash;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -18,14 +18,15 @@ import com.github.jscancella.exceptions.NoSuchBagitAlgorithmException;
  * Example:
  * {@code BagitChecksumNameMapping.add("md5", new MyNewMD5Hasher());} 
  */
+@SuppressWarnings("PMD.MoreThanOneLogger")
 public enum BagitChecksumNameMapping {
   INSTANCE; //using enum to ensure singleton
   
-  private final Map<String, Hasher> map = new HashMap<>();
+  private static final Logger logger = LoggerFactory.getLogger(BagitChecksumNameMapping.class);
+  private final Map<String, Hasher> map = new ConcurrentHashMap<>();
 
-  private BagitChecksumNameMapping() {
+  BagitChecksumNameMapping() {
     final Logger logger = LoggerFactory.getLogger(BagitChecksumNameMapping.class);
-    
     for(final Hasher hasher : StandardHasher.values()) {
       try {
         hasher.initialize();
@@ -51,7 +52,6 @@ public enum BagitChecksumNameMapping {
       return true;
     }
     catch(NoSuchAlgorithmException e) {
-      final Logger logger = LoggerFactory.getLogger(BagitChecksumNameMapping.class);
       final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
       logger.error(messages.getString("hasher_setup"), implementation.getBagitAlgorithmName(), e);
     }

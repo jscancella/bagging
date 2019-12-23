@@ -21,6 +21,7 @@ abstract public class AbstractPayloadFileExistsInManifestsVistor extends SimpleF
   protected transient final boolean ignoreHiddenFiles;
 
   public AbstractPayloadFileExistsInManifestsVistor(final boolean ignoreHiddenFiles) {
+    super();
     this.ignoreHiddenFiles = ignoreHiddenFiles;
   }
   

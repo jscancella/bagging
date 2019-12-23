@@ -103,7 +103,7 @@ public enum ManifestVerifier {; //using enum to enforce singleton
     final String normalizedFile = Normalizer.normalize(file.toString(), Normalizer.Form.NFD);
     final Path parent = file.getParent();
     if(parent != null){
-      try(final DirectoryStream<Path> files = Files.newDirectoryStream(parent)){
+      try(DirectoryStream<Path> files = Files.newDirectoryStream(parent)){
         for(final Path fileToCheck : files){
           final String normalizedFileToCheck = Normalizer.normalize(fileToCheck.toString(), Normalizer.Form.NFD);
           if(normalizedFile.equals(normalizedFileToCheck)){
