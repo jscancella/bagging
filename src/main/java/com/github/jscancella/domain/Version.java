@@ -23,10 +23,16 @@ public final class Version implements Comparable<Version>{
     return Version.VERSION_1_0();
   }
   
+  /**
+   * @return the version that corresponds with version 1.0 of the specification
+   */
   public static Version VERSION_1_0() {
     return new Version(1, 0);
   }
   
+  /**
+   * @return the version that corresponds with version 0.95 of the specification. 0.95 was the last version where particular tag files were named differently than now 
+   */
   public static Version VERSION_0_95() {
     return new Version(0, 95);
   }

@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.security.NoSuchAlgorithmException;
 import java.util.ResourceBundle;
 
 import org.slf4j.Logger;
@@ -37,10 +36,9 @@ public enum ManifestReader {;//using enum to enforce singleton
    * @throws IOException if there is a problem reading a file
    * @throws MaliciousPathException if the manifest has a path that is outside the bag
    * @throws InvalidBagitFileFormatException if the manifest is not formatted correctly
-   * @throws NoSuchAlgorithmException 
    */
   public static Manifest readManifest(final Path manifestFile, final Path bagRootDir, final Charset charset) 
-          throws IOException, MaliciousPathException, InvalidBagitFileFormatException, NoSuchAlgorithmException{
+          throws IOException, MaliciousPathException, InvalidBagitFileFormatException{
     logger.debug(messages.getString("reading_manifest"), manifestFile);
     final String algorithm = PathUtils.getFilename(manifestFile).split("[-\\.]")[1];
     

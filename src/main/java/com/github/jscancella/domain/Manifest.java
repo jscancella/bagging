@@ -61,12 +61,15 @@ public final class Manifest {
     return Objects.equals(bagitAlgorithmName, other.getBagitAlgorithmName()) && entries.equals(other.getEntries()); 
   }
   
+  /**
+   * Programmatically build a manifest
+   */
   public static final class ManifestBuilder {
     private String bagitAlgorithmName = null;
     private Hasher hasher;
     private List<ManifestEntry> entries = new ArrayList<>();
     
-    public ManifestBuilder(String bagitAlgorithmName) throws NoSuchAlgorithmException {
+    public ManifestBuilder(String bagitAlgorithmName){
       this.bagitAlgorithmName(bagitAlgorithmName);
     }
     
@@ -76,13 +79,18 @@ public final class Manifest {
      * @return this builder for chaining
      * @throws NoSuchAlgorithmException if {@link BagitChecksumNameMapping} doesn't have an implmentation of that algorithm
      */
-    public ManifestBuilder bagitAlgorithmName(final String name) throws NoSuchAlgorithmException {
+    public ManifestBuilder bagitAlgorithmName(final String name){
       this.hasher = BagitChecksumNameMapping.get(name);
       this.bagitAlgorithmName = name;
       
       return this;
     }
     
+    /**
+     * a convenience method for adding an entry from another manifest
+     * @param entry
+     * @return
+     */
     public ManifestBuilder addEntry(final ManifestEntry entry) {
       this.entries.add(entry);
       return this;
@@ -92,6 +100,7 @@ public final class Manifest {
      * Add a file or directory on disk to this manifest
      * 
      * @param file the file or directory to add to the manifest
+     * @param relative the relative path to put this in the bag
      * @throws RuntimeException if the bagitAlgorithmName is already set before calling this
      * @return the builder for chaining
      * @throws IOException if the file or directory can't be read
@@ -111,8 +120,10 @@ public final class Manifest {
       return this;
     }
     
-    //TODO add in ability to add file to a specific relative path
-    
+    /**
+     * create the manifest
+     * @return
+     */
     public Manifest build() {
       return new Manifest(bagitAlgorithmName, entries);
     }

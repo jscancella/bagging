@@ -83,6 +83,9 @@ public final class Metadata {
     return list.isEmpty();
   }
   
+  /**
+   * Programmatically and dynamically create metadata
+   */
   public static final class MetadataBuilder {
     private Map<String, List<String>> map = new HashMap<>();
     private List<SimpleImmutableEntry<String, String>> list = new ArrayList<>();

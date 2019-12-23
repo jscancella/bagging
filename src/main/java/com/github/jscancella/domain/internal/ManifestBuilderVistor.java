@@ -14,12 +14,22 @@ import org.slf4j.LoggerFactory;
 import com.github.jscancella.domain.ManifestEntry;
 import com.github.jscancella.hash.Hasher;
 
+/**
+ * Creates a manifest from the supplied starting point
+ */
 public final class ManifestBuilderVistor extends SimpleFileVisitor<Path> {
   private static final Logger logger = LoggerFactory.getLogger(ManifestBuilderVistor.class);
   private final List<ManifestEntry> entries;
   private final Path startingPoint;
   private final Hasher hasher;
   
+  /**
+   * Create a manifest from the starting point
+   * 
+   * @param entries the {@link ManifestEntry} that corresponds to a particular file
+   * @param startingPoint The place to use when creating a relative path
+   * @param hasher the hashing implementation
+   */
   public ManifestBuilderVistor(final List<ManifestEntry> entries, final Path startingPoint, final Hasher hasher) {
     this.entries = entries;
     this.startingPoint = Paths.get(startingPoint.toAbsolutePath().toString());

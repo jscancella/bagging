@@ -39,20 +39,23 @@ The BagIt specification was first created by the Library of Congress because it 
 #### How to read a bag?
 ```java
 Path rootDir = Paths.get("RootDirectoryOfExistingBag");
-Bag bag = BagReader.read(rootDir);
+Bag bag = Bag.read(rootDir);
 ```
 
 #### How to write a bag?
 ```java
 Path outputDir = Paths.get("WhereYouWantToWriteTheBagTo");
-BagWriter.write(bag, outputDir); //where bag is a Bag object
+bag.write(outputDir); //where bag is a Bag object
 ```
 
-#### How to create a bag from a directory?
+#### How to create a bag programmatically?
 ```java
-Path folder = Paths.get("FolderYouWantToBag");
-boolean includeHiddenFiles = false;
-Bag bag = BagWriter.bagInPlace(folder, Arrays.asList("sha512"), includeHiddenFiles);
+BagBuilder builder = new BagBuilder();
+Bag bag = builder.addAlgorithm("md5")
+    .addPayloadFile(Paths.get("/foo.txt"))
+    .addMetadata("someKey", "someValue")
+    .rootDir(Paths.get("/myNewBag"))
+    .write();
 ```
 
 #### How to validate a bag?
@@ -64,32 +67,25 @@ There are three kinds of validations:
 ##### Verify Complete
 ```java
 boolean ignoreHiddenFiles = true;
-BagVerifier.isComplete(bag, ignoreHiddenFiles);
+bag.isValid(ignoreHiddenFiles);
 ```
 
 ##### Verify Valid (both complete and correct)
 ```java
 boolean ignoreHiddenFiles = true;
-BagVerifier.isValid(final Bag bag, final boolean ignoreHiddenFiles)
-```
-
-##### Quickly Verify (just check file count and bite size)
-This may be removed in the future since it is mostly a hack of the bag metadata
-
-```java
-BagVerifier.quicklyVerify(bag); //where bag is a Bag object
+bag.isComplete(ignoreHiddenFiles);
 ```
 
 #### How to lint a bag (check for potential issues)?
 ```java
 Path folder = Paths.get("BagYouWantToCheck");
-Set<BagitWarning> warnings = BagLinter(folder);
+Set<BagitWarning> warnings = BagLinter.lintBag(folder);
 ```
 
 #### How to verify against a profile?
 ```java
 Path rootDir = Paths.get("RootDirectoryOfExistingBag");
-Bag bag = BagReader.read(rootDir);
+Bag bag = Bag.read(rootDir);
 InputStream jsonProfile = new URL("https://github.com/bagit-profiles/bagit-profiles/blob/1.1.0/bagProfileFoo.json").openStream();
 assert BagLinter.checkAgainstProfile(jsonProfile, bag) == true;
 ```
@@ -174,7 +170,7 @@ One of the inspirations for writing this library was to create a simple to use i
 #### Classes/Methods not to use outside this project
 There are many classes that were not designed to be used outside this project, the rules for this are:
 * If a class/method does not contain a javadoc.
-* If a class is in a package named "internal".
+* If a class is in a package named "internal". Any internal classes can be removed at any time and effort will be made to preserve backwards compatibility.
 * If a class is final, that class was not designed to be extended by users outside this project.
 
 #### Javadocs

@@ -58,9 +58,9 @@ public enum ManifestVerifier {; //using enum to enforce singleton
   }
 
   /*
-   * get all the files listed in all the manifests
+   * get the full path (absolute) of all the files listed in all the manifests
    */
-  private static Set<Path> getAllFilesListedInManifests(final Bag bag) throws IOException, MaliciousPathException, InvalidBagitFileFormatException, NoSuchAlgorithmException {
+  private static Set<Path> getAllFilesListedInManifests(final Bag bag) throws IOException, MaliciousPathException, InvalidBagitFileFormatException {
     logger.debug(messages.getString("all_files_in_manifests"));
     
     final Set<Path> filesListedInManifests = new HashSet<>();

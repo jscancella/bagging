@@ -18,14 +18,26 @@ public final class ManifestEntry {
     this.checksum = checksum;
   }
 
+  /**
+   * the location on disk
+   * @return
+   */
   public Path getPhysicalLocation(){
     return physicalLocation;
   }
 
+  /**
+   * the location in a manifest
+   * @return
+   */
   public Path getRelativeLocation(){
     return relativeLocation;
   }
 
+  /**
+   * the generated checksum over the bytes in the file
+   * @return
+   */
   public String getChecksum(){
     return checksum;
   }

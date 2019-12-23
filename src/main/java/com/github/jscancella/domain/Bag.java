@@ -2,6 +2,7 @@ package com.github.jscancella.domain;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -65,6 +66,17 @@ public final class Bag {
   //the current location of the bag on the filesystem
   private final Path rootDir;
   
+  /**
+   * An immutable Bag object. Typically used by {@link BagBuilder}.
+   * 
+   * @param version the version of the bagit specification this adheres to
+   * @param fileEncoding the encoding of the tag files
+   * @param payloadManifests the manifest(s) that define the payload files
+   * @param tagManifests the manifest(s) that define the tag files
+   * @param itemsToFetch items to fetch to make this bag complete (see {@link #isComplete(boolean)}
+   * @param metadata the human readable information to keep with the bag
+   * @param rootDir the root path of the bag on the filesystem
+   */
   public Bag(final Version version, final Charset fileEncoding, final Set<Manifest> payloadManifests, 
       final Set<Manifest> tagManifests, final List<FetchItem> itemsToFetch, final Metadata metadata, final Path rootDir){
     this.version = version;
@@ -91,26 +103,44 @@ public final class Bag {
     return rootDir; //whenever .bagit comes around this will be very helpful
   }
   
+  /**
+   * @return the bagit specification version this bag adheres to
+   */
   public Version getVersion(){
     return version;
   }
 
+  /**
+   * @return the manifests that make up the payload files
+   */
   public Set<Manifest> getPayLoadManifests() {
     return payLoadManifests;
   }
 
+  /**
+   * @return the manifests that make up the tag files
+   */
   public Set<Manifest> getTagManifests() {
     return tagManifests;
   }
 
+  /**
+   * @return files to fetch
+   */
   public List<FetchItem> getItemsToFetch() {
     return itemsToFetch;
   }
 
+  /**
+   * @return the human readable information kept with a bag
+   */
   public Metadata getMetadata() {
     return metadata;
   }
 
+  /**
+   * @return the file encoding of the tag files. You SHOULD be using {@link StandardCharsets#UTF_8}
+   */
   public Charset getFileEncoding() {
     return fileEncoding;
   }
@@ -179,8 +209,18 @@ public final class Bag {
    * 
    * @return true if the bag is valid or throws an exception
    * 
+   * @throws InvalidBagitFileFormatException
+   * @throws IOException
+   * @throws NoSuchAlgorithmException
+   * @throws CorruptChecksumException
+   * @throws FileNotInPayloadDirectoryException
+   * @throws MissingBagitFileException
+   * @throws MissingPayloadDirectoryException
+   * @throws MissingPayloadManifestException
    */
-  public boolean isValid(final boolean ignoreHiddenFiles) throws InvalidBagitFileFormatException, IOException, NoSuchAlgorithmException, CorruptChecksumException, FileNotInPayloadDirectoryException, MissingBagitFileException, MissingPayloadDirectoryException, MissingPayloadManifestException {
+  public boolean isValid(final boolean ignoreHiddenFiles) throws InvalidBagitFileFormatException, 
+  IOException, NoSuchAlgorithmException, CorruptChecksumException, FileNotInPayloadDirectoryException, 
+  MissingBagitFileException, MissingPayloadDirectoryException, MissingPayloadManifestException {
     boolean isValid = true;
     
     BagitTextFileVerifier.checkBagitTextFile(this);
@@ -197,7 +237,7 @@ public final class Bag {
     return isValid;
   }
   
-  private boolean checkHashes(final Manifest manifest) throws CorruptChecksumException, NoSuchAlgorithmException, IOException{
+  private boolean checkHashes(final Manifest manifest) throws IOException, CorruptChecksumException{
     final Hasher hasher = BagitChecksumNameMapping.get(manifest.getBagitAlgorithmName());
     
     for(final ManifestEntry entry : manifest.getEntries()) {
@@ -231,8 +271,20 @@ public final class Bag {
    * @param ignoreHiddenFiles when checking to ignore hidden files
    * 
    * @return true or throws an exception
+   * 
+   * @throws FileNotInPayloadDirectoryException
+   * @throws MissingBagitFileException
+   * @throws MissingPayloadDirectoryException
+   * @throws MissingPayloadManifestException
+   * @throws IOException
+   * @throws MaliciousPathException
+   * @throws InvalidBagitFileFormatException
+   * @throws NoSuchAlgorithmException
    */
-  public boolean isComplete(final boolean ignoreHiddenFiles) throws FileNotInPayloadDirectoryException, MissingBagitFileException, MissingPayloadDirectoryException, MissingPayloadManifestException, IOException, MaliciousPathException, InvalidBagitFileFormatException, NoSuchAlgorithmException {
+  public boolean isComplete(final boolean ignoreHiddenFiles) throws FileNotInPayloadDirectoryException, MissingBagitFileException, 
+  MissingPayloadDirectoryException, MissingPayloadManifestException, IOException, MaliciousPathException, 
+  InvalidBagitFileFormatException, NoSuchAlgorithmException {
+    
     MandatoryVerifier.checkFetchItemsExist(itemsToFetch, rootDir);
     MandatoryVerifier.checkBagitFileExists(this);
     MandatoryVerifier.checkPayloadDirectoryExists(this);
@@ -243,8 +295,14 @@ public final class Bag {
     return true;
   }
   
-  //TODO cleanup exceptions
-  public Bag write(final Path writeTo) throws Exception {
+  /**
+   * Write a bag to a physical location (on disk).
+   * 
+   * @param writeTo the root location of the bag
+   * @return a new immuteable bag
+   * @throws IOException if there is a problem writing the files
+   */
+  public Bag write(final Path writeTo) throws IOException {
     if(Files.exists(rootDir) && writeTo.equals(rootDir)) {
       //TODO warn writing to same location, so we will not do anything
       throw new RuntimeException("Why are you trying to write to the location where it already exists?");
@@ -272,7 +330,7 @@ public final class Bag {
     return new Bag(version, fileEncoding, newPayloadManifests, newTagManifests, itemsToFetch, metadata, writeTo);
   }
   
-  private Set<Manifest> writeManifests(final Path writeTo, final Set<Manifest> manifests) throws Exception{
+  private Set<Manifest> writeManifests(final Path writeTo, final Set<Manifest> manifests) throws IOException{
     final Set<Manifest> newTagManifests = new HashSet<>();
 
     for(final Manifest manifest : manifests) {
@@ -299,12 +357,22 @@ public final class Bag {
     Files.copy(entry.getPhysicalLocation(), newEntry.getPhysicalLocation(), StandardCopyOption.REPLACE_EXISTING);
   }
   
+  /**
+   * Convenience method for getting a new builder 
+   * @return a new builder instance
+   */
   public static BagBuilder getBuilder() {
     return new BagBuilder();
   }
   
-  //TODO cleanup exceptions
-  public static Bag read(final Path rootDir) throws Exception {
+  /**
+   * Reads a bag from a physical location (on disk).
+   * 
+   * @param rootDir the base directory of a bag
+   * @return a immutable bag
+   * @throws IOException if there is a problem reading a file
+   */
+  public static Bag read(final Path rootDir) throws IOException{
     
     final Path bagitFile = rootDir.resolve("bagit.txt");
     final SimpleImmutableEntry<Version, Charset> bagitInfo = BagitTextFileReader.readBagitTextFile(bagitFile);

@@ -262,7 +262,7 @@ public enum ManifestChecker {;// using enum to enforce singleton
   }
   
   //starting with version 1.0 all manifest types (tag, payload) MUST list the same set of files, but for older versions it SHOULD list all files
-  static void checkManifestsListSameSetOfFiles(final Set<BagitWarning> warnings, final List<Path> manifestPaths, final Charset charset) throws IOException, MaliciousPathException, InvalidBagitFileFormatException, NoSuchAlgorithmException{
+  static void checkManifestsListSameSetOfFiles(final Set<BagitWarning> warnings, final List<Path> manifestPaths, final Charset charset) throws IOException, MaliciousPathException, InvalidBagitFileFormatException{
     
     Manifest compareToManifest = null;
     Path compareToManifestPath = null;
