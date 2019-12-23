@@ -18,10 +18,12 @@ import com.github.jscancella.exceptions.FileNotInManifestException;
  */
 public final class PayloadFileExistsInAllManifestsVistor extends AbstractPayloadFileExistsInManifestsVistor {
   private transient final Set<Manifest> manifests;
+  private transient final Path rootDir;
 
-  public PayloadFileExistsInAllManifestsVistor(final Set<Manifest> manifests, final boolean ignoreHiddenFiles) {
+  public PayloadFileExistsInAllManifestsVistor(final Set<Manifest> manifests, final Path rootDir, final boolean ignoreHiddenFiles) {
     super(ignoreHiddenFiles);
     this.manifests = manifests;
+    this.rootDir = rootDir;
   }
 
   @Override
@@ -32,8 +34,9 @@ public final class PayloadFileExistsInAllManifestsVistor extends AbstractPayload
                                     .getEntries().stream()
                                     .map(entry -> entry.getRelativeLocation())
                                     .collect(Collectors.toSet());
+        final Path relativePath = rootDir.relativize(path);
         
-        if(!relativePaths.contains(path.normalize())){
+        if(!relativePaths.contains(relativePath)){
           final String formattedMessage = messages.getString("file_not_in_manifest_error");
           throw new FileNotInManifestException(MessageFormatter.format(formattedMessage, path, manifest.getBagitAlgorithmName()).getMessage());
         }

@@ -20,7 +20,7 @@ import com.github.jscancella.domain.ManifestEntry;
  * Responsible for writing out a {@link Manifest} to the filesystem
  */
 public enum ManifestWriter{;//using enum to enforce singleton
-  private static final Logger logger = LoggerFactory.getLogger(PayloadWriter.class);
+  private static final Logger logger = LoggerFactory.getLogger(ManifestWriter.class);
   private static final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
   
   /**
@@ -64,7 +64,7 @@ public enum ManifestWriter{;//using enum to enforce singleton
         for(final ManifestEntry entry : manifest.getEntries()){
           //there are 2 spaces between the checksum and the path so that the manifests are compatible with the md5sum tools available on most unix systems.
           //This may cause problems on windows due to it being text mode, in which case either replace with a * or try verifying in binary mode with --binary
-          final String line = entry.getChecksum() + "  " + entry.getRelativeLocation();
+          final String line = entry.getChecksum() + "  " + RelativePathWriter.formatRelativePathString(entry.getRelativeLocation());
           logger.debug(messages.getString("writing_line_to_file"), line, manifestPath);
           writer.write(line);
         }

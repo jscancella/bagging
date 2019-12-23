@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
 
 import com.github.jscancella.TempFolderTest;
 import com.github.jscancella.domain.Bag;
-import com.github.jscancella.domain.Bag.BagBuilder;
 import com.github.jscancella.exceptions.FileNotInPayloadDirectoryException;
 import com.github.jscancella.exceptions.MissingBagitFileException;
 import com.github.jscancella.exceptions.MissingPayloadDirectoryException;
@@ -27,7 +26,7 @@ public class MandatoryVerifierTest extends TempFolderTest{
   @Test
   public void testErrorWhenFetchItemsDontExist() throws Exception{
     rootDir = Paths.get(new File("src/test/resources/bad-fetch-bag").toURI());
-    Bag bag = new BagBuilder().read(rootDir);
+    Bag bag = Bag.read(rootDir);
     
     Assertions.assertThrows(FileNotInPayloadDirectoryException.class, 
         () -> { MandatoryVerifier.checkFetchItemsExist(bag.getItemsToFetch(), bag.getRootDir()); });
@@ -36,7 +35,7 @@ public class MandatoryVerifierTest extends TempFolderTest{
   @Test
   public void testErrorWhenMissingPayloadDirectory() throws Exception{
     copyBagToTestFolder();
-    Bag bag = new BagBuilder().read(folder);
+    Bag bag = Bag.read(folder);
     Path dataDir = createDirectory("data");
     deleteDirectory(dataDir);
     
@@ -47,7 +46,7 @@ public class MandatoryVerifierTest extends TempFolderTest{
   @Test
   public void testErrorWhenMissingPayloadManifest() throws Exception{
     copyBagToTestFolder();
-    Bag bag = new BagBuilder().read(folder);
+    Bag bag = Bag.read(folder);
     Path manifestFile = folder.resolve("manifest-md5.txt");
     Files.delete(manifestFile);
     
@@ -58,7 +57,7 @@ public class MandatoryVerifierTest extends TempFolderTest{
   @Test
   public void testErrorWhenMissingBagitTextFile() throws Exception{
     copyBagToTestFolder();
-    Bag bag = new BagBuilder().read(folder);
+    Bag bag = Bag.read(folder);
     Path bagitFile = folder.resolve("bagit.txt");
     Files.delete(bagitFile);
     

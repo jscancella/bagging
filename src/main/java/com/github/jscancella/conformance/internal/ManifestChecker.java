@@ -255,7 +255,7 @@ public enum ManifestChecker {;// using enum to enforce singleton
       warnings.add(BagitWarning.WEAK_CHECKSUM_ALGORITHM);
     }
     
-    else if(!warningsToIgnore.contains(BagitWarning.NON_STANDARD_ALGORITHM) && !upperCaseAlg.matches("MD5|SHA(224|256|384|512)?")){
+    if(!warningsToIgnore.contains(BagitWarning.NON_STANDARD_ALGORITHM) && !upperCaseAlg.matches("MD5|SHA(224|256|384|512)?")){
       logger.warn(messages.getString("non_standard_algorithm_warning"), algorithm);
       warnings.add(BagitWarning.NON_STANDARD_ALGORITHM);
     }

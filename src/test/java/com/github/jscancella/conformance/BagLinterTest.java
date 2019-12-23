@@ -6,16 +6,27 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.security.Security;
 import java.util.Arrays;
 import java.util.Set;
+import java.util.stream.IntStream;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import com.github.jscancella.domain.Bag;
-import com.github.jscancella.domain.Bag.BagBuilder;
+import com.github.jscancella.hash.BagitChecksumNameMapping;
+import com.github.jscancella.hash.StandardHasher;
+import com.github.jscancella.verify.SHA3Hasher;
 
 public class BagLinterTest {
+  
+  static {
+    if (Security.getProvider("BC") == null) {
+      Security.addProvider(new BouncyCastleProvider());
+    }
+  }
 
   private final Path rootDir = Paths.get("src","test","resources","linterBags");
   
@@ -56,9 +67,14 @@ public class BagLinterTest {
   
   @Test
   public void testNonStandardAlgorithm() throws Exception {
+    boolean successful = BagitChecksumNameMapping.add("sha3", SHA3Hasher.INSTANCE);
+    Assertions.assertTrue(successful, "couldn't add sha3, did you add bouncy castle?");
+    
     Set<BagitWarning> warnings =  BagLinter.lintBag(rootDir.resolve("nonstandardAlgorithm"));
-    Assertions.assertTrue(warnings.contains(BagitWarning.NON_STANDARD_ALGORITHM));
-    Assertions.assertTrue(warnings.size() == 1);
+    Assertions.assertTrue(warnings.contains(BagitWarning.NON_STANDARD_ALGORITHM), "Should have contained BagitWarning.NON_STANDARD_ALGORITHM but instead had: " + warnings);
+    Assertions.assertEquals(1, warnings.size());
+    
+    BagitChecksumNameMapping.clear("sha3256");
   }
   
   @Test
@@ -120,6 +136,9 @@ public class BagLinterTest {
   
   @Test
   public void testTooManyManifests() throws Exception {
+    //otherwise we will get an exception for not having an implementation of that algorithm
+    IntStream.rangeClosed(3, 21).forEach(i -> BagitChecksumNameMapping.add("sha" + String.valueOf(i), StandardHasher.SHA1));
+    
     //starting with version 1.0 manifests MUST contain the same list of files
     Set<BagitWarning> warnings =  BagLinter.lintBag(rootDir.resolve("largeNumberOfManifests"), Arrays.asList(BagitWarning.NON_STANDARD_ALGORITHM, BagitWarning.MISSING_TAG_MANIFEST));
     Assertions.assertTrue(warnings.contains(BagitWarning.LARGE_NUMBER_OF_MANIFESTS));
@@ -146,7 +165,7 @@ public class BagLinterTest {
   public void testCheckAgainstProfile() throws Exception{
     Path profileJson = new File("src/test/resources/bagitProfiles/exampleProfile.json").toPath();
     Path bagRootPath = new File("src/test/resources/bagitProfileTestBags/profileConformantBag").toPath();
-    Bag bag = new BagBuilder().read(bagRootPath);
+    Bag bag = Bag.read(bagRootPath);
     
     try(InputStream inputStream = Files.newInputStream(profileJson, StandardOpenOption.READ)){
       BagLinter.checkAgainstProfile(inputStream, bag);

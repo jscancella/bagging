@@ -51,8 +51,10 @@ public enum ManifestReader {;//using enum to enforce singleton
       while(line != null){
         final String[] parts = line.split("\\s+", 2);
         final Path file = TagFileReader.createFileFromManifest(bagRootDir, parts[1]);
-        final ManifestEntry entry = new ManifestEntry(bagRootDir.resolve(file), file, parts[0]);
+        final Path relative = bagRootDir.relativize(file);
+        final ManifestEntry entry = new ManifestEntry(file, relative, parts[0]);
         manifestBuilder.addEntry(entry);
+        line = br.readLine();
       }
     }
     

@@ -53,7 +53,7 @@ public enum ManifestVerifier {; //using enum to enforce singleton
     if (bag.getVersion().isOlder(Version.VERSION_1_0())) {
       checkAllFilesInPayloadDirAreListedInAtLeastOneAManifest(allFilesListedInManifests, bag.getDataDir(), ignoreHiddenFiles);
     } else {
-      CheckAllFilesInPayloadDirAreListedInAllManifests(bag.getPayLoadManifests(), bag.getDataDir(), ignoreHiddenFiles);
+      CheckAllFilesInPayloadDirAreListedInAllManifests(bag, ignoreHiddenFiles);
     }
   }
 
@@ -69,7 +69,7 @@ public enum ManifestVerifier {; //using enum to enforce singleton
       for(final Path path : directoryStream) {
         logger.debug(messages.getString("get_listing_in_manifest"), path);
         final Manifest manifest = ManifestReader.readManifest(path, bag.getRootDir(),bag.getFileEncoding());
-        filesListedInManifests.addAll(manifest.getEntries().stream().map(entry -> entry.getRelativeLocation()).collect(Collectors.toList()));
+        filesListedInManifests.addAll(manifest.getEntries().stream().map(entry -> entry.getPhysicalLocation()).collect(Collectors.toList()));
       }
     }
 
@@ -80,8 +80,8 @@ public enum ManifestVerifier {; //using enum to enforce singleton
    * Make sure all the listed files actually exist
    */
   private static void checkAllFilesListedInManifestExist(final Set<Path> files) throws FileNotInPayloadDirectoryException {
-
     logger.info(messages.getString("check_all_files_in_manifests_exist"));
+    
     for (final Path file : files) {
       if(!Files.exists(file)){
         if(existsNormalized(file)){
@@ -134,11 +134,10 @@ public enum ManifestVerifier {; //using enum to enforce singleton
   /*
    * as per the bagit-spec 1.0+ all files have to be listed in all manifests
    */
-  private static void CheckAllFilesInPayloadDirAreListedInAllManifests(final Set<Manifest> payLoadManifests,
-      final Path payloadDir, final boolean ignoreHiddenFiles) throws IOException {
-    logger.debug(messages.getString("checking_file_in_all_manifests"), payloadDir);
-    if (Files.exists(payloadDir)) {
-      Files.walkFileTree(payloadDir, new PayloadFileExistsInAllManifestsVistor(payLoadManifests, ignoreHiddenFiles));
+  private static void CheckAllFilesInPayloadDirAreListedInAllManifests(final Bag bag, final boolean ignoreHiddenFiles) throws IOException {
+    logger.debug(messages.getString("checking_file_in_all_manifests"), bag.getDataDir());
+    if (Files.exists(bag.getDataDir())) {
+      Files.walkFileTree(bag.getDataDir(), new PayloadFileExistsInAllManifestsVistor(bag.getPayLoadManifests(), bag.getRootDir(), ignoreHiddenFiles));
     }
   }
 }

@@ -77,7 +77,7 @@ public final class Manifest {
      * @throws NoSuchAlgorithmException if {@link BagitChecksumNameMapping} doesn't have an implmentation of that algorithm
      */
     public ManifestBuilder bagitAlgorithmName(final String name) throws NoSuchAlgorithmException {
-      hasher = BagitChecksumNameMapping.get(bagitAlgorithmName);
+      this.hasher = BagitChecksumNameMapping.get(name);
       this.bagitAlgorithmName = name;
       
       return this;
@@ -96,13 +96,13 @@ public final class Manifest {
      * @return the builder for chaining
      * @throws IOException if the file or directory can't be read
      */
-    public ManifestBuilder addFile(final Path file) throws IOException {
+    public ManifestBuilder addFile(final Path file, final Path relative) throws IOException {
       if(Files.isDirectory(file)) {
         Files.walkFileTree(file, new ManifestBuilderVistor(entries, file, hasher));
       }
       else {
         final Path physicalLocation = file.toAbsolutePath();
-        final Path relativeLocation = file.getFileName();
+        final Path relativeLocation = relative.resolve(file.getFileName());
         final String checksum = hasher.hash(physicalLocation);
         final ManifestEntry entry = new ManifestEntry(physicalLocation, relativeLocation, checksum);
         entries.add(entry);

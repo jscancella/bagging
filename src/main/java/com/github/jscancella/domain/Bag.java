@@ -2,11 +2,9 @@ package com.github.jscancella.domain;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.NoSuchAlgorithmException;
 import java.util.AbstractMap.SimpleImmutableEntry;
@@ -17,20 +15,15 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.github.jscancella.domain.Manifest.ManifestBuilder;
 import com.github.jscancella.domain.Metadata.MetadataBuilder;
 import com.github.jscancella.exceptions.CorruptChecksumException;
 import com.github.jscancella.exceptions.FileNotInPayloadDirectoryException;
-import com.github.jscancella.exceptions.InvalidBagStateException;
 import com.github.jscancella.exceptions.InvalidBagitFileFormatException;
 import com.github.jscancella.exceptions.MaliciousPathException;
 import com.github.jscancella.exceptions.MissingBagitFileException;
 import com.github.jscancella.exceptions.MissingPayloadDirectoryException;
 import com.github.jscancella.exceptions.MissingPayloadManifestException;
-import com.github.jscancella.exceptions.UnparsableVersionException;
 import com.github.jscancella.hash.BagitChecksumNameMapping;
 import com.github.jscancella.hash.Hasher;
 import com.github.jscancella.internal.ManifestFilter;
@@ -46,7 +39,6 @@ import com.github.jscancella.writer.internal.BagitFileWriter;
 import com.github.jscancella.writer.internal.FetchWriter;
 import com.github.jscancella.writer.internal.ManifestWriter;
 import com.github.jscancella.writer.internal.MetadataWriter;
-import com.github.jscancella.writer.internal.PayloadWriter;
 
 /**
  * The main representation of the bagit spec. This is an immutable object, if you need to modify it look at {@link Bag.Builder}
@@ -73,7 +65,7 @@ public final class Bag {
   //the current location of the bag on the filesystem
   private final Path rootDir;
   
-  private Bag(final Version version, final Charset fileEncoding, final Set<Manifest> payloadManifests, 
+  public Bag(final Version version, final Charset fileEncoding, final Set<Manifest> payloadManifests, 
       final Set<Manifest> tagManifests, final List<FetchItem> itemsToFetch, final Metadata metadata, final Path rootDir){
     this.version = version;
     this.fileEncoding = fileEncoding;
@@ -212,7 +204,7 @@ public final class Bag {
       if(Files.exists(entry.getPhysicalLocation())) {
         final String hash = hasher.hash(entry.getPhysicalLocation());
         if (!hash.equals(entry.getChecksum())){
-          throw new CorruptChecksumException("File [{}] is suppose to have a [{}] hash of [{}] but was computed [{}].", entry.getRelativeLocation(),
+          throw new CorruptChecksumException("File [{}] is suppose to have a [{}] hash of [{}] but was computed [{}].", entry.getPhysicalLocation(), //entry.getRelativeLocation(),
               manifest.getBagitAlgorithmName(), entry.getChecksum(), hash);
         }
       }
@@ -251,177 +243,101 @@ public final class Bag {
     return true;
   }
   
-  public static final class BagBuilder {
-    private static final Logger logger = LoggerFactory.getLogger(BagBuilder.class);
-    private Version version = Version.LATEST_BAGIT_VERSION();
-    private Charset fileEncoding = StandardCharsets.UTF_8;
-    private Set<Path> payloadFiles = new HashSet<>();
-    private Set<Path> tagFiles = new HashSet<>();
-    private Set<String> bagitAlgorithmNames = new HashSet<>();
-    private List<FetchItem> itemsToFetch = new ArrayList<>();
-    private final MetadataBuilder metadataBuilder = new MetadataBuilder();
-    //the current location of the bag on the filesystem
-    private Path rootDir = null;
-    
-    public BagBuilder() {
-      //intentionally left empty
+  //TODO cleanup exceptions
+  public Bag write(final Path writeTo) throws Exception {
+    if(Files.exists(rootDir) && writeTo.equals(rootDir)) {
+      //TODO warn writing to same location, so we will not do anything
+      throw new RuntimeException("Why are you trying to write to the location where it already exists?");
     }
     
-    public BagBuilder version(final int major, final int minor) {
-      this.version = new Version(major, minor);
-      return this;
+//    logger.info("Writing bag to [{}]", rootDir);
+    Files.createDirectories(writeTo);
+    
+    BagitFileWriter.writeBagitFile(version, fileEncoding, writeTo);
+    
+    if(!metadata.isEmpty()) {
+      MetadataWriter.writeBagMetadata(metadata, version, writeTo, fileEncoding);
     }
     
-    public BagBuilder version(final Version version) {
-      this.version = new Version(version.major, version.minor);
-      return this;
+    if(!itemsToFetch.isEmpty()){
+      FetchWriter.writeFetchFile(itemsToFetch, writeTo, fileEncoding);
     }
     
-    public BagBuilder fileEncoding(final Charset fileEncoding) {
-      this.fileEncoding = Charset.forName(fileEncoding.name());
-      return this;
-    }
+    final Set<Manifest> newPayloadManifests = writeManifests(writeTo, payLoadManifests);
+    ManifestWriter.writePayloadManifests(newPayloadManifests, writeTo, fileEncoding);
     
-    public BagBuilder addPayloadFile(final Path payload) {
-      this.payloadFiles.add(Paths.get(payload.toAbsolutePath().toString()));
-      return this;
-    }
+    final Set<Manifest> newTagManifests = writeManifests(writeTo, tagManifests);
+    ManifestWriter.writeTagManifests(newTagManifests, writeTo, fileEncoding);
     
-    public BagBuilder addTagFile(final Path tag) {
-      this.tagFiles.add(Paths.get(tag.toAbsolutePath().toString()));
-      return this;
-    }
-    
-    public BagBuilder addAlgorithm(final String bagitAlgorithmName) {
-      if(BagitChecksumNameMapping.isSupported(bagitAlgorithmName)) {
-        this.bagitAlgorithmNames.add(bagitAlgorithmName);
-      }
-      else {
-        logger.error("[{}] is not supported so it will be ignored. "
-            + "Please add an implementation to BagitChecksumNameMapping.java if you wish to use [{}]", bagitAlgorithmName, bagitAlgorithmName);
-      }
-      return this;
-    }
-    
-    public BagBuilder addItemToFetch(final FetchItem fetchItem) {
-      this.itemsToFetch.add(fetchItem);
-      return this;
-    }
-    
-    public BagBuilder addMetadata(final String key, final String value) {
-      metadataBuilder.add(key, value);
-      return this;
-    }
-    
-    public BagBuilder rootDir(final Path dir) {
-      this.rootDir = Paths.get(dir.toAbsolutePath().toString());
-      return this;
-    }
-    
-    public Bag read(final Path bagDirectory) throws MaliciousPathException, InvalidBagitFileFormatException, IOException, UnparsableVersionException, NoSuchAlgorithmException {
-      this.rootDir = bagDirectory;
-      
-      final Path bagitFile = bagDirectory.resolve("bagit.txt");
-      final SimpleImmutableEntry<Version, Charset> bagitInfo = BagitTextFileReader.readBagitTextFile(bagitFile);
-      this.version = bagitInfo.getKey();
-      this.fileEncoding = bagitInfo.getValue();
-      
-      final List<SimpleImmutableEntry<String, String>> metadataLines = MetadataReader.readBagMetadata(bagDirectory, fileEncoding);
-      metadataBuilder.addAll(metadataLines);
-      
-      final Path fetchFile = bagDirectory.resolve("fetch.txt");
-      if(Files.exists(fetchFile)){
-        this.itemsToFetch = FetchReader.readFetch(fetchFile, fileEncoding, rootDir);
-      }
-      
-      final Set<Manifest> payloadManifests = new HashSet<>();
-      final Set<Manifest> tagManifests = new HashSet<>();
-      try(final DirectoryStream<Path> manifests = Files.newDirectoryStream(rootDir, new ManifestFilter())){
-        for (final Path path : manifests){
-          final String filename = PathUtils.getFilename(path);
-          
-          if(filename.startsWith("tagmanifest-")){
-            tagManifests.add(ManifestReader.readManifest(path, rootDir, fileEncoding));
-          }
-          else if(filename.startsWith("manifest-")){
-            payloadManifests.add(ManifestReader.readManifest(path, rootDir, fileEncoding));
-          }
-        }
-      }
-      
-      
-      return new Bag(version, fileEncoding, payloadManifests, tagManifests, itemsToFetch, metadataBuilder.build(), rootDir);
-    }
-    
-    public Bag write() throws InvalidBagStateException, NoSuchAlgorithmException, IOException{
-      if(rootDir == null) {
-        throw new InvalidBagStateException("Bags must have a root directory");
-      }
+    return new Bag(version, fileEncoding, newPayloadManifests, newTagManifests, itemsToFetch, metadata, writeTo);
+  }
+  
+  private Set<Manifest> writeManifests(final Path writeTo, final Set<Manifest> manifests) throws Exception{
+    final Set<Manifest> newTagManifests = new HashSet<>();
 
-      logger.info("Writing bag to [{}]", rootDir);
-      Files.createDirectories(rootDir);
+    for(final Manifest manifest : manifests) {
+      final ManifestBuilder manifestBuilder = new ManifestBuilder(manifest.getBagitAlgorithmName());
       
-      final Path bagitPath = BagitFileWriter.writeBagitFile(version, fileEncoding, rootDir);
-      this.addTagFile(bagitPath);
-      
-      final Metadata metadata = metadataBuilder.build();
-      if(!metadata.isEmpty()){
-        final Path metadataPath = MetadataWriter.writeBagMetadata(metadata, version, rootDir, fileEncoding);
-        this.addTagFile(metadataPath);
-      }
-      if(!itemsToFetch.isEmpty()){
-        final Path fetchFile = FetchWriter.writeFetchFile(itemsToFetch, rootDir, fileEncoding);
-        this.addTagFile(fetchFile);
+      for(final ManifestEntry entry : manifest.getEntries()) {
+        updateEntry(writeTo, manifestBuilder, entry);
       }
       
-      PayloadWriter.writePayloadFiles(payloadFiles, rootDir);   
-      
-      //write user defined tag files
-      logger.debug("Writing tag file [{}] to [{}]");
-      for(Path tagFile: tagFiles) {
-        final Path writeToPath = rootDir.resolve(tagFile.getFileName());
-        Files.copy(tagFile, writeToPath, StandardCopyOption.REPLACE_EXISTING);
-      }
-      
-      //since the manifest files don't exist yet, bagWriter has to update this bagBuilder.
-      //this ensures that when we call the constructor below it has the correct set of tag files already in the builder
-      final Set<Manifest> payloadManifests = createPayloadManifests();
-      tagFiles.addAll(ManifestWriter.writePayloadManifests(payloadManifests, rootDir, fileEncoding));
-      
-      final Set<Manifest> tagManifests = createTagManifests();
-      ManifestWriter.writePayloadManifests(tagManifests, rootDir, fileEncoding);
-      
-      return new Bag(this.version, this.fileEncoding, createPayloadManifests(), createTagManifests(), this.itemsToFetch, metadataBuilder.build(), this.rootDir);
+      newTagManifests.add(manifestBuilder.build());
     }
-
-    private Set<Manifest> createTagManifests() throws IOException, NoSuchAlgorithmException{
-      final Set<Manifest> manifests = new HashSet<>();
-      
-      for(final String name : bagitAlgorithmNames) {
-        final ManifestBuilder builder = new ManifestBuilder(name);
-        for(final Path tagFile : tagFiles) {
-          builder.addFile(tagFile);
-        }
+    return newTagManifests;
+  }
+  
+  private void updateEntry(final Path writeTo, final ManifestBuilder manifestBuilder, final ManifestEntry entry) throws IOException {
+    //update physical location in new manifest entry
+    final ManifestEntry newEntry = new ManifestEntry(writeTo.resolve(entry.getRelativeLocation()), entry.getRelativeLocation(), entry.getChecksum());
+    manifestBuilder.addEntry(newEntry);
+    //copy to new location
+    final Path newParentLocation = newEntry.getPhysicalLocation().getParent();
+    if(!Files.exists(newParentLocation)) {
+      Files.createDirectories(newParentLocation);
+    }
+    Files.copy(entry.getPhysicalLocation(), newEntry.getPhysicalLocation(), StandardCopyOption.REPLACE_EXISTING);
+  }
+  
+  public static BagBuilder getBuilder() {
+    return new BagBuilder();
+  }
+  
+  //TODO cleanup exceptions
+  public static Bag read(final Path rootDir) throws Exception {
+    
+    final Path bagitFile = rootDir.resolve("bagit.txt");
+    final SimpleImmutableEntry<Version, Charset> bagitInfo = BagitTextFileReader.readBagitTextFile(bagitFile);
+    final Version version = bagitInfo.getKey();
+    final Charset encoding = bagitInfo.getValue();
+    
+    final List<SimpleImmutableEntry<String, String>> metadataLines = MetadataReader.readBagMetadata(rootDir, encoding);
+    final MetadataBuilder metadataBuilder = new MetadataBuilder();
+    metadataBuilder.addAll(metadataLines);
+    
+    final Path fetchFile = rootDir.resolve("fetch.txt");
+    final List<FetchItem> itemsToFetch = new ArrayList<>();
+    if(Files.exists(fetchFile)){
+      itemsToFetch.addAll(FetchReader.readFetch(fetchFile, encoding, rootDir));
+    }
+    
+    final Set<Manifest> payloadManifests = new HashSet<>();
+    final Set<Manifest> tagManifests = new HashSet<>();
+    try(final DirectoryStream<Path> manifests = Files.newDirectoryStream(rootDir, new ManifestFilter())){
+      for (final Path path : manifests){
+        final String filename = PathUtils.getFilename(path);
         
-        manifests.add(builder.build());
-      }
-      
-      return manifests;
-    }
-
-    private Set<Manifest> createPayloadManifests() throws NoSuchAlgorithmException, IOException{
-      final Set<Manifest> manifests = new HashSet<>();
-      
-      for(final String name : bagitAlgorithmNames) {
-        final ManifestBuilder builder = new ManifestBuilder(name);
-        for(final Path payloadFile : payloadFiles) {
-          builder.addFile(payloadFile);
+        if(filename.startsWith("tagmanifest-")){
+          final Manifest tagManifest = ManifestReader.readManifest(path, rootDir, encoding);
+          tagManifests.add(tagManifest);
         }
-        
-        manifests.add(builder.build());
+        else if(filename.startsWith("manifest-")){
+          final Manifest payloadManifest = ManifestReader.readManifest(path, rootDir, encoding);
+          payloadManifests.add(payloadManifest);
+        }
       }
-      
-      return manifests;
-    }
+    }    
+    
+    return new Bag(version, encoding, payloadManifests, tagManifests, itemsToFetch, metadataBuilder.build(), rootDir);
   }
 }

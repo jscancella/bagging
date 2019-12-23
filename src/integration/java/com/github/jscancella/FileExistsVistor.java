@@ -21,7 +21,8 @@ public class FileExistsVistor extends SimpleFileVisitor<Path>{
   @Override
   public FileVisitResult preVisitDirectory(final Path dir, final BasicFileAttributes attrs) throws IOException {
     Path relative = originalBag.relativize(dir);
-    Assertions.assertTrue(Files.exists(newBag.resolve(relative)));
+    Path newRelative = newBag.resolve(relative);
+    Assertions.assertTrue(Files.exists(newRelative), newRelative + " should exist but it doesn't!");
     
     return FileVisitResult.CONTINUE;
   }
@@ -29,7 +30,8 @@ public class FileExistsVistor extends SimpleFileVisitor<Path>{
   @Override
   public FileVisitResult visitFile(final Path path, final BasicFileAttributes attrs)throws IOException{
     final Path relative = originalBag.relativize(path);
-    Assertions.assertTrue(Files.exists(newBag.resolve(relative)));
+    Path newRelative = newBag.resolve(relative);
+    Assertions.assertTrue(Files.exists(newRelative), newRelative + " should exist but it doesn't!");
     
     return FileVisitResult.CONTINUE;
   }
