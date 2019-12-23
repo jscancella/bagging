@@ -16,6 +16,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.jscancella.domain.Manifest.ManifestBuilder;
 import com.github.jscancella.domain.Metadata.MetadataBuilder;
 import com.github.jscancella.exceptions.CorruptChecksumException;
@@ -42,9 +45,11 @@ import com.github.jscancella.writer.internal.ManifestWriter;
 import com.github.jscancella.writer.internal.MetadataWriter;
 
 /**
- * The main representation of the bagit spec. This is an immutable object, if you need to modify it look at {@link Bag.Builder}
+ * The main representation of the bagit spec. This is an immutable object.
  */
 public final class Bag {  
+  private static final Logger logger = LoggerFactory.getLogger(Bag.class);
+  
   //The original version of the bag
   private final Version version;
   
@@ -204,19 +209,18 @@ public final class Bag {
    * A bag is <b>valid</b> if the bag is complete and every checksum has been
    * verified against the contents of its corresponding file.
    * 
-   * @param bag the bag to check
    * @param ignoreHiddenFiles to include hidden files when checking
    * 
    * @return true if the bag is valid or throws an exception
    * 
-   * @throws InvalidBagitFileFormatException
-   * @throws IOException
-   * @throws NoSuchAlgorithmException
-   * @throws CorruptChecksumException
-   * @throws FileNotInPayloadDirectoryException
-   * @throws MissingBagitFileException
-   * @throws MissingPayloadDirectoryException
-   * @throws MissingPayloadManifestException
+   * @throws InvalidBagitFileFormatException if the file(s) are not formatted correctly
+   * @throws IOException if there is a problem reading a file
+   * @throws NoSuchAlgorithmException if the algorithm hasn't bee mapped in {@link BagitChecksumNameMapping}
+   * @throws CorruptChecksumException the checksum doesn't match what was listed in the manifest
+   * @throws FileNotInPayloadDirectoryException file listed in manifest but doesn't exist
+   * @throws MissingBagitFileException the bagit.txt file is missing
+   * @throws MissingPayloadDirectoryException if a bag is missing a payload directory
+   * @throws MissingPayloadManifestException if there is no payload manifest
    */
   public boolean isValid(final boolean ignoreHiddenFiles) throws InvalidBagitFileFormatException, 
   IOException, NoSuchAlgorithmException, CorruptChecksumException, FileNotInPayloadDirectoryException, 
@@ -267,19 +271,19 @@ public final class Bag {
    * <li>each element must comply with the bagit spec
    * </ul>
    * 
-   * @param bag the bag to check
    * @param ignoreHiddenFiles when checking to ignore hidden files
    * 
    * @return true or throws an exception
    * 
-   * @throws FileNotInPayloadDirectoryException
-   * @throws MissingBagitFileException
-   * @throws MissingPayloadDirectoryException
-   * @throws MissingPayloadManifestException
-   * @throws IOException
-   * @throws MaliciousPathException
-   * @throws InvalidBagitFileFormatException
-   * @throws NoSuchAlgorithmException
+   * @throws InvalidBagitFileFormatException if the file(s) are not formatted correctly
+   * @throws IOException if there is a problem reading a file
+   * @throws NoSuchAlgorithmException if the algorithm hasn't bee mapped in {@link BagitChecksumNameMapping}
+   * @throws CorruptChecksumException the checksum doesn't match what was listed in the manifest
+   * @throws FileNotInPayloadDirectoryException file listed in manifest but doesn't exist
+   * @throws MissingBagitFileException the bagit.txt file is missing
+   * @throws MissingPayloadDirectoryException if a bag is missing a payload directory
+   * @throws MissingPayloadManifestException if there is no payload manifest
+   * @throws MaliciousPathException if the path is specifying a path outside the bag
    */
   public boolean isComplete(final boolean ignoreHiddenFiles) throws FileNotInPayloadDirectoryException, MissingBagitFileException, 
   MissingPayloadDirectoryException, MissingPayloadManifestException, IOException, MaliciousPathException, 
@@ -299,13 +303,13 @@ public final class Bag {
    * Write a bag to a physical location (on disk).
    * 
    * @param writeTo the root location of the bag
-   * @return a new immuteable bag
+   * @return a new immutable bag
    * @throws IOException if there is a problem writing the files
    */
   public Bag write(final Path writeTo) throws IOException {
     if(Files.exists(rootDir) && writeTo.equals(rootDir)) {
       //TODO warn writing to same location, so we will not do anything
-      throw new RuntimeException("Why are you trying to write to the location where it already exists?");
+      logger.warn("Trying to write to the same location as the bag currently is at. Skipping writting bag to [{}]", writeTo);
     }
     
 //    logger.info("Writing bag to [{}]", rootDir);
@@ -330,6 +334,7 @@ public final class Bag {
     return new Bag(version, fileEncoding, newPayloadManifests, newTagManifests, itemsToFetch, metadata, writeTo);
   }
   
+  @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
   private Set<Manifest> writeManifests(final Path writeTo, final Set<Manifest> manifests) throws IOException{
     final Set<Manifest> newTagManifests = new HashSet<>();
 

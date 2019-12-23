@@ -25,6 +25,7 @@ import com.github.jscancella.conformance.BagitWarning;
 import com.github.jscancella.domain.Manifest;
 import com.github.jscancella.exceptions.InvalidBagitFileFormatException;
 import com.github.jscancella.exceptions.MaliciousPathException;
+import com.github.jscancella.hash.BagitChecksumNameMapping;
 import com.github.jscancella.internal.PathUtils;
 import com.github.jscancella.reader.internal.ManifestReader;
 
@@ -57,7 +58,7 @@ public enum ManifestChecker {;// using enum to enforce singleton
    * @throws IOException if there is a problem reading a file
    * @throws InvalidBagitFileFormatException if a bag file is not formatted correctly
    * @throws MaliciousPathException if the bag is trying to access a file outside the bag
-   * @throws NoSuchAlgorithmException 
+   * @throws NoSuchAlgorithmException if the algorithm hasn't bee mapped in {@link BagitChecksumNameMapping}
    */
   public static void checkManifests(final Path bagitDir, final Charset encoding, final Set<BagitWarning> warnings, 
       final Collection<BagitWarning> warningsToIgnore) throws IOException, InvalidBagitFileFormatException, MaliciousPathException, NoSuchAlgorithmException{

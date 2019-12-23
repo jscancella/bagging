@@ -12,6 +12,11 @@ public final class ManifestEntry {
   private final Path relativeLocation; //relative to the data dir
   private final String checksum; //checksum of the physical location
   
+  /**
+   * @param physicalLocation the location on disk
+   * @param relativeLocation the location in the bag relative to the base directory
+   * @param checksum the generated checksum
+   */
   public ManifestEntry(final Path physicalLocation, final Path relativeLocation, final String checksum) {
     this.physicalLocation = Paths.get(physicalLocation.toAbsolutePath().toString());
     this.relativeLocation = Paths.get(relativeLocation.toString());
@@ -19,24 +24,21 @@ public final class ManifestEntry {
   }
 
   /**
-   * the location on disk
-   * @return
+   * @return the location on disk
    */
   public Path getPhysicalLocation(){
     return physicalLocation;
   }
 
   /**
-   * the location in a manifest
-   * @return
+   * @return the location in a manifest
    */
   public Path getRelativeLocation(){
     return relativeLocation;
   }
 
   /**
-   * the generated checksum over the bytes in the file
-   * @return
+   * @return the generated checksum over the bytes in the file
    */
   public String getChecksum(){
     return checksum;
@@ -54,7 +56,7 @@ public final class ManifestEntry {
   }
 
   @Override
-  public boolean equals(Object obj){
+  public boolean equals(final Object obj){
     if (this == obj){
       return true;
     }

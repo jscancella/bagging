@@ -30,6 +30,7 @@ public enum BagitFileWriter {
    *          the encoding of the tag files
    * @param outputDir
    *          the root of the bag
+   * @return the path of the newly created bagit.txt file
    * 
    * @throws IOException
    *           if there was a problem writing the file

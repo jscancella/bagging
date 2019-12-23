@@ -37,6 +37,7 @@ public enum ManifestReader {;//using enum to enforce singleton
    * @throws MaliciousPathException if the manifest has a path that is outside the bag
    * @throws InvalidBagitFileFormatException if the manifest is not formatted correctly
    */
+  @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
   public static Manifest readManifest(final Path manifestFile, final Path bagRootDir, final Charset charset) 
           throws IOException, MaliciousPathException, InvalidBagitFileFormatException{
     logger.debug(messages.getString("reading_manifest"), manifestFile);

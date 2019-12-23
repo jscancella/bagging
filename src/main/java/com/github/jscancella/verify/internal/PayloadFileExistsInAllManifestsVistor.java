@@ -30,7 +30,7 @@ public final class PayloadFileExistsInAllManifestsVistor extends AbstractPayload
   public FileVisitResult visitFile(final Path path, final BasicFileAttributes attrs)throws FileNotInManifestException{
     if(Files.isRegularFile(path)){
       for(final Manifest manifest : manifests){
-        Set<Path> relativePaths = manifest
+        final Set<Path> relativePaths = manifest
                                     .getEntries().stream()
                                     .map(entry -> entry.getRelativeLocation())
                                     .collect(Collectors.toSet());

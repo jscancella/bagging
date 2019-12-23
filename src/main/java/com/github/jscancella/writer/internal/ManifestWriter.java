@@ -29,6 +29,7 @@ public enum ManifestWriter{;//using enum to enforce singleton
    * @param manifests the payload{@link Manifest}s to write out
    * @param outputDir the root of where the manifest is being written to
    * @param charsetName the name of the encoding for the file
+   * @return the set of payload manifests that were just created
    * 
    * @throws IOException if there was a problem writing a file
    */
@@ -42,6 +43,7 @@ public enum ManifestWriter{;//using enum to enforce singleton
    * @param tagManifests the tag{@link Manifest}s to write out
    * @param outputDir the root of where the manifest is being written to
    * @param charsetName the name of the encoding for the file
+   * @return the set of tag manifests that were just created
    * 
    * @throws IOException if there was a problem writing a file
    */
@@ -53,7 +55,7 @@ public enum ManifestWriter{;//using enum to enforce singleton
    * Generic method to write manifests
    */
   private static Set<Path> writeManifests(final Set<Manifest> manifests, final Path outputDir, final String filenameBase, final Charset charsetName) throws IOException{
-    Set<Path> manifestFiles = new HashSet<>();
+    final Set<Path> manifestFiles = new HashSet<>();
     
     for(final Manifest manifest : manifests){
       final Path manifestPath = outputDir.resolve(filenameBase + manifest.getBagitAlgorithmName() + ".txt");

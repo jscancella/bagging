@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.security.NoSuchAlgorithmException;
 import java.text.Normalizer;
 import java.util.HashSet;
 import java.util.ResourceBundle;
@@ -42,10 +41,9 @@ public enum ManifestVerifier {; //using enum to enforce singleton
    * @throws MaliciousPathException if a path is outside the bag
    * @throws InvalidBagitFileFormatException if a manifest is not formatted correctly
    * @throws FileNotInPayloadDirectoryException if a file listed in a manifest is not in the payload directory
-   * @throws NoSuchAlgorithmException 
    */
   public static void verifyManifests(final Bag bag, final boolean ignoreHiddenFiles)
-      throws IOException, MaliciousPathException, InvalidBagitFileFormatException, FileNotInPayloadDirectoryException, NoSuchAlgorithmException {
+      throws IOException, MaliciousPathException, InvalidBagitFileFormatException, FileNotInPayloadDirectoryException {
     
     final Set<Path> allFilesListedInManifests = getAllFilesListedInManifests(bag);
     checkAllFilesListedInManifestExist(allFilesListedInManifests);

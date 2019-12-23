@@ -4,7 +4,6 @@ package com.github.jscancella.domain;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -26,10 +25,16 @@ public final class Manifest {
     this.entries = Collections.unmodifiableList(entries);
   }
 
+  /**
+   * @return the entries that this manifest specifies
+   */
   public List<ManifestEntry> getEntries() {
     return entries;
   }
 
+  /**
+   * @return the bagit specification all lowercase name
+   */
   public String getBagitAlgorithmName(){
     return bagitAlgorithmName;
   }
@@ -65,19 +70,21 @@ public final class Manifest {
    * Programmatically build a manifest
    */
   public static final class ManifestBuilder {
-    private String bagitAlgorithmName = null;
-    private Hasher hasher;
-    private List<ManifestEntry> entries = new ArrayList<>();
+    private transient String bagitAlgorithmName;
+    private transient Hasher hasher;
+    private transient final List<ManifestEntry> entries = new ArrayList<>();
     
-    public ManifestBuilder(String bagitAlgorithmName){
+    /**
+     * @param bagitAlgorithmName the bagit algorithm name
+     */
+    public ManifestBuilder(final String bagitAlgorithmName){
       this.bagitAlgorithmName(bagitAlgorithmName);
     }
     
     /**
      * Set the bagit algorithm name (example "md5"). Any previous set name will be overwritten.
-     * @param name
+     * @param name the name of the algorithm
      * @return this builder for chaining
-     * @throws NoSuchAlgorithmException if {@link BagitChecksumNameMapping} doesn't have an implmentation of that algorithm
      */
     public ManifestBuilder bagitAlgorithmName(final String name){
       this.hasher = BagitChecksumNameMapping.get(name);
@@ -88,8 +95,8 @@ public final class Manifest {
     
     /**
      * a convenience method for adding an entry from another manifest
-     * @param entry
-     * @return
+     * @param entry the entry
+     * @return this builder so as to chain commands
      */
     public ManifestBuilder addEntry(final ManifestEntry entry) {
       this.entries.add(entry);
@@ -121,8 +128,7 @@ public final class Manifest {
     }
     
     /**
-     * create the manifest
-     * @return
+     * @return the manifest
      */
     public Manifest build() {
       return new Manifest(bagitAlgorithmName, entries);

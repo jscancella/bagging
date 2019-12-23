@@ -39,9 +39,13 @@ import com.github.jscancella.exceptions.InvalidBagMetadataException;
 import com.github.jscancella.exceptions.InvalidBagitFileFormatException;
 import com.github.jscancella.exceptions.MaliciousPathException;
 import com.github.jscancella.exceptions.UnparsableVersionException;
+import com.github.jscancella.hash.BagitChecksumNameMapping;
 import com.github.jscancella.reader.internal.BagitTextFileReader;
 import com.github.jscancella.reader.internal.KeyValueReader;
 
+/**
+ * The main class for checking if a bag conforms to the specified profile or has other problems
+ */
 public enum BagLinter {
   ; // using enum to ensure singleton
   private static final Logger logger = LoggerFactory.getLogger(BagLinter.class);
@@ -97,7 +101,7 @@ public enum BagLinter {
    * @throws UnparsableVersionException if there was a problem parsing the version of the bag
    * @throws InvalidBagitFileFormatException if a file is not formatted correctly
    * @throws MaliciousPathException if the bag is trying to be malicious
-   * @throws NoSuchAlgorithmException 
+   * @throws NoSuchAlgorithmException if the algorithm hasn't bee mapped in {@link BagitChecksumNameMapping}
    */
   public static Set<BagitWarning> lintBag(final Path rootDir) throws IOException, UnparsableVersionException, InvalidBagitFileFormatException, MaliciousPathException, NoSuchAlgorithmException{
     return lintBag(rootDir, Collections.emptyList());
@@ -108,7 +112,7 @@ public enum BagLinter {
    * situations where something may be technically allowed, but should be
    * discouraged. This method checks a bag for potential problems, or other items
    * that are allowed but discouraged. This <strong>does not</strong> validate a
-   * bag. See {@link BagVerifier} instead.
+   * bag. See {@link Bag#isComplete(boolean)} instead.
    * 
    * @param bagitDir the firectory that contains a bag
    * @param warningsToIgnore a collection of warnings you would like the linter to ignore
@@ -119,7 +123,7 @@ public enum BagLinter {
    * @throws UnparsableVersionException if there was a problem parsing the version of the bag
    * @throws InvalidBagitFileFormatException if a file is not formatted correctly
    * @throws MaliciousPathException if the bag is trying to be maliciou
-   * @throws NoSuchAlgorithmException 
+   * @throws NoSuchAlgorithmException if the algorithm hasn't bee mapped in {@link BagitChecksumNameMapping}
    */
   public static Set<BagitWarning> lintBag(final Path bagitDir, final Collection<BagitWarning> warningsToIgnore) throws IOException, UnparsableVersionException, InvalidBagitFileFormatException, MaliciousPathException, NoSuchAlgorithmException{
     final Set<BagitWarning> warnings = new HashSet<>();

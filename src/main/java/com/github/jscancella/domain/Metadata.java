@@ -18,7 +18,7 @@ public final class Metadata {
   private static final String PAYLOAD_OXUM = "Payload-Oxum";
   private final Map<String, List<String>> map;
   private final List<SimpleImmutableEntry<String, String>> list;
-  private final String cachedString;
+  private transient final String cachedString;
   
   private Metadata(final Map<String, List<String>> map, final List<SimpleImmutableEntry<String, String>> list) {
     this.map = Collections.unmodifiableMap(map);
@@ -87,13 +87,20 @@ public final class Metadata {
    * Programmatically and dynamically create metadata
    */
   public static final class MetadataBuilder {
-    private Map<String, List<String>> map = new HashMap<>();
-    private List<SimpleImmutableEntry<String, String>> list = new ArrayList<>();
+    private transient final Map<String, List<String>> map = new HashMap<>();
+    private transient List<SimpleImmutableEntry<String, String>> list = new ArrayList<>();
     
+    /**
+     * programmatically build the metadata
+     */
     public MetadataBuilder() {
       //intentionally left empty
     }
     
+    /**
+     * programmatically build the metadata, but start off with the included metadata
+     * @param metadata the data to start with when building
+     */
     public MetadataBuilder(final Metadata metadata) {
       this.addAll(metadata.getAll());
     }
@@ -101,6 +108,7 @@ public final class Metadata {
      * remove the label and all its values
      * 
      * @param key the label to remove along with its value(s)
+     * @return this builder so to chain commands
      */
     public MetadataBuilder remove(final String key){
       map.remove(key.toUpperCase());
@@ -143,6 +151,7 @@ public final class Metadata {
      * add multiple metadata entries
      * 
      * @param data the metadata to add
+     * @return this builder so to chain commands
      */
     public MetadataBuilder addAll(final List<SimpleImmutableEntry<String, String>> data){
       for(final SimpleImmutableEntry<String, String> entry : data){
@@ -152,6 +161,9 @@ public final class Metadata {
       return this;
     }
     
+    /**
+     * @return create the metadata object
+     */
     public Metadata build() {
       return new Metadata(map, list);
     }

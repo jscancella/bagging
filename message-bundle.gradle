@@ -49,8 +49,6 @@ void checkAllMessageKeysAreUsed(Set<String> messageKeys){
   }
   
   if(messageKeys.size() > 0){
-    messageKeys.each{String key ->
-      throw new GradleException("[${key}] is listed in the internationalization message bundle but never actually used!")
-    }  
+  	throw new GradleException("[${messageKeys}] is listed in the internationalization message bundle but never actually used!")
   }
 }

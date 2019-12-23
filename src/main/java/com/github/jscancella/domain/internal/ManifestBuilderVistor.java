@@ -49,4 +49,16 @@ public final class ManifestBuilderVistor extends SimpleFileVisitor<Path> {
     
     return FileVisitResult.CONTINUE;
   }
+
+  public List<ManifestEntry> getEntries(){
+    return entries;
+  }
+
+  public Path getStartingPoint(){
+    return startingPoint;
+  }
+
+  public Hasher getHasher(){
+    return hasher;
+  }
 }

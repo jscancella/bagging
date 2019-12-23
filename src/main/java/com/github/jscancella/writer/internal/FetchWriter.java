@@ -27,6 +27,7 @@ public enum FetchWriter {;//using enum to enforce singleton
    * @param itemsToFetch the list of {@link FetchItem}s to write into the fetch.txt
    * @param bagitRootDir the path to the root of the bag
    * @param charsetName the name of the encoding for the file
+   * @return the path of the newly created fetch.txt file
    * 
    * @throws IOException if there was a problem writing a file
    */

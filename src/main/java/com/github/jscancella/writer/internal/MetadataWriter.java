@@ -29,6 +29,7 @@ public enum MetadataWriter {;//using enum to enforce singleton
    * @param version the version of the bag you are writing
    * @param outputDir the root of the bag
    * @param charsetName the name of the encoding for the file
+   * @return the path to the newly created package-info.txt or bag-info.txt
    * 
    * @throws IOException if there was a problem writing a file
    */

@@ -4,7 +4,6 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.NoSuchAlgorithmException;
 import java.security.Security;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -17,6 +16,7 @@ import com.github.jscancella.TestUtils;
 import com.github.jscancella.domain.Bag;
 import com.github.jscancella.exceptions.CorruptChecksumException;
 import com.github.jscancella.exceptions.FileNotInManifestException;
+import com.github.jscancella.exceptions.NoSuchBagitAlgorithmException;
 import com.github.jscancella.hash.BagitChecksumNameMapping;
 
 public class BagVeriferTest extends TempFolderTest {
@@ -132,7 +132,7 @@ public class BagVeriferTest extends TempFolderTest {
   public void testThrowsNoSuchAlgorithmExceptionWhenNotInHasherMap() throws Exception{
     Path sha3BagDir = Paths.get(getClass().getClassLoader().getResource("sha3Bag").toURI());
     
-    Assertions.assertThrows(NoSuchAlgorithmException.class, () -> { Bag.read(sha3BagDir); });
+    Assertions.assertThrows(NoSuchBagitAlgorithmException.class, () -> { Bag.read(sha3BagDir); });
   }
   
   @Test

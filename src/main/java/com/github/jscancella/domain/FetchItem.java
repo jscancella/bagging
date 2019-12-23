@@ -24,7 +24,7 @@ public final class FetchItem {
    */
   private final Path path;
   
-  private final String cachedString;
+  private transient final String cachedString;
   
   /**
    * 
@@ -60,14 +60,23 @@ public final class FetchItem {
     return cachedString;
   }
 
+  /**
+   * @return the URI part of a fetch item
+   */
   public URI getUri() {
     return uri;
   }
 
+  /**
+   * @return the length in bytes of the file
+   */
   public Long getLength() {
     return length;
   }
 
+  /**
+   * @return the path in the bag it should be downloaded to
+   */
   public Path getPath() {
     return path;
   }

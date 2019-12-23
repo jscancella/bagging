@@ -22,17 +22,16 @@ import com.github.jscancella.hash.BagitChecksumNameMapping;
  * Used to conveniently create a bag programmatically and incrementally
  */
 public final class BagBuilder {
-
   private static final Logger logger = LoggerFactory.getLogger(BagBuilder.class);
-  private Version version = Version.LATEST_BAGIT_VERSION();
-  private Charset fileEncoding = StandardCharsets.UTF_8;
-  private Set<Path> payloadFiles = new HashSet<>();
-  private Set<Path> tagFiles = new HashSet<>();
-  private Set<String> bagitAlgorithmNames = new HashSet<>();
-  private List<FetchItem> itemsToFetch = new ArrayList<>();
-  private final MetadataBuilder metadataBuilder = new MetadataBuilder();
+  private transient Version version = Version.LATEST_BAGIT_VERSION();
+  private transient Charset fileEncoding = StandardCharsets.UTF_8;
+  private transient final Set<Path> payloadFiles = new HashSet<>();
+  private transient final Set<Path> tagFiles = new HashSet<>();
+  private transient final Set<String> bagitAlgorithmNames = new HashSet<>();
+  private transient final List<FetchItem> itemsToFetch = new ArrayList<>();
+  private transient final MetadataBuilder metadataBuilder = new MetadataBuilder();
   //the current location of the bag on the filesystem
-  private Path rootDir = null;
+  private transient Path rootDir;
   
   /**
    * default encoding is UTF8
@@ -44,10 +43,10 @@ public final class BagBuilder {
   /**
    * Set the bagit specification version
    * 
-   * @param major
-   * @param minor
+   * @param major major version
+   * @param minor minor version
    * 
-   * @return
+   * @return this builder so as to chain commands
    */
   public BagBuilder version(final int major, final int minor) {
     this.version = new Version(major, minor);
@@ -57,8 +56,8 @@ public final class BagBuilder {
   /**
    * Set the bagit specification version
    * 
-   * @param version
-   * @return
+   * @param version the version
+   * @return this builder so as to chain commands
    */
   public BagBuilder version(final Version version) {
     this.version = new Version(version.major, version.minor);
@@ -67,8 +66,8 @@ public final class BagBuilder {
   
   /**
    * Set the tag file encoding. Defaults to UTF8
-   * @param fileEncoding
-   * @return
+   * @param fileEncoding the tag file encoding
+   * @return this builder so as to chain commands
    */
   public BagBuilder fileEncoding(final Charset fileEncoding) {
     this.fileEncoding = Charset.forName(fileEncoding.name());
@@ -78,8 +77,8 @@ public final class BagBuilder {
   //TODO change to allow writing to a particular directory
   /**
    * Add a file to the bag payload
-   * @param payload
-   * @return
+   * @param payload a file to add
+   * @return this builder so as to chain commands
    */
   public BagBuilder addPayloadFile(final Path payload) {
     this.payloadFiles.add(Paths.get(payload.toAbsolutePath().toString()));
@@ -88,8 +87,8 @@ public final class BagBuilder {
   
   /**
    * Add a file to the bag tags
-   * @param tag
-   * @return
+   * @param tag a tag file to add
+   * @return this builder so as to chain commands
    */
   public BagBuilder addTagFile(final Path tag) {
     this.tagFiles.add(Paths.get(tag.toAbsolutePath().toString()));
@@ -99,7 +98,7 @@ public final class BagBuilder {
   /**
    * add a bagit algorithm to use when computing the manifests
    * @param bagitAlgorithmName  the all lowercase name as specified in the bagit specification
-   * @return
+   * @return this builder so as to chain commands
    */
   public BagBuilder addAlgorithm(final String bagitAlgorithmName) {
     if(BagitChecksumNameMapping.isSupported(bagitAlgorithmName)) {
@@ -114,8 +113,8 @@ public final class BagBuilder {
   
   /**
    * Add an item to fetch. These fetch items must be downloaded before the bag is complete
-   * @param fetchItem
-   * @return
+   * @param fetchItem an item to fetch
+   * @return this builder so as to chain commands
    */
   public BagBuilder addItemToFetch(final FetchItem fetchItem) {
     this.itemsToFetch.add(fetchItem);
@@ -124,9 +123,9 @@ public final class BagBuilder {
   
   /**
    * Add a human understandable key value pair of information
-   * @param key
-   * @param value
-   * @return
+   * @param key metadata key
+   * @param value metadata value
+   * @return this builder so as to chain commands
    */
   public BagBuilder addMetadata(final String key, final String value) {
     metadataBuilder.add(key, value);
@@ -135,8 +134,8 @@ public final class BagBuilder {
   
   /**
    * Set the directory to use when creating a bag
-   * @param dir
-   * @return
+   * @param dir the root dir of a bag
+   * @return this builder so as to chain commands
    */
   public BagBuilder rootDir(final Path dir) {
     this.rootDir = Paths.get(dir.toAbsolutePath().toString());
@@ -145,10 +144,10 @@ public final class BagBuilder {
   
   /**
    * Write the bag out to a physical location (on disk)
-   * @return
-   * @throws Exception
+   * @return this builder so as to chain commands
+   * @throws IOException if there is a problem reading a file
    */
-  public Bag write() throws Exception{
+  public Bag write() throws IOException{
     if(rootDir == null) {
       throw new InvalidBagStateException("Bags must have a root directory");
     }
@@ -159,6 +158,7 @@ public final class BagBuilder {
     return bag;
   }
 
+  @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
   private Set<Manifest> createTagManifests() throws IOException{
     final Set<Manifest> manifests = new HashSet<>();
     
@@ -174,6 +174,7 @@ public final class BagBuilder {
     return manifests;
   }
 
+  @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
   private Set<Manifest> createPayloadManifests() throws IOException{
     final Set<Manifest> manifests = new HashSet<>();
     

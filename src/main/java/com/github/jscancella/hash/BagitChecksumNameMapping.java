@@ -60,7 +60,7 @@ public enum BagitChecksumNameMapping {
   
   /**
    * remove a particular implementation
-   * @param bagitAlgorithmName
+   * @param bagitAlgorithmName the name of the algorithm
    */
   public static void clear(final String bagitAlgorithmName) {
     INSTANCE.map.remove(bagitAlgorithmName);
@@ -68,8 +68,8 @@ public enum BagitChecksumNameMapping {
   
   /**
    * check if a bagit algorithm is supported
-   * @param bagitAlgorithmName
-   * @return
+   * @param bagitAlgorithmName the name of the algorithm
+   * @return true if a bagit algorithm is supported
    */
   public static boolean isSupported(final String bagitAlgorithmName) {
     return INSTANCE.map.containsKey(bagitAlgorithmName);
@@ -77,8 +77,8 @@ public enum BagitChecksumNameMapping {
   
   /**
    * Get a specific implementation associated with the bagit algorithm name
-   * @param bagitAlgorithmName
-   * @return
+   * @param bagitAlgorithmName the name of the algorithm
+   * @return specific implementation associated with the bagit algorithm name
    */
   public static Hasher get(final String bagitAlgorithmName){
     if(!INSTANCE.map.containsKey(bagitAlgorithmName)) {
