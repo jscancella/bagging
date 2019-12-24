@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.jscancella.domain.Manifest.ManifestBuilder;
 import com.github.jscancella.domain.Metadata.MetadataBuilder;
+import com.github.jscancella.domain.internal.PathPair;
 import com.github.jscancella.exceptions.InvalidBagStateException;
 import com.github.jscancella.hash.BagitChecksumNameMapping;
 
@@ -29,7 +30,7 @@ public final class BagBuilder {
   
   private Version specificationVersion = Version.LATEST_BAGIT_VERSION();
   private Charset tagFilesEncoding = StandardCharsets.UTF_8;
-  private final Set<Path> payloadFiles = new HashSet<>();
+  private final Set<PathPair> payloadFiles = new HashSet<>();
   private final Set<Path> tagFiles = new HashSet<>();
   private final Set<String> bagitAlgorithmNames = new HashSet<>();
   private final List<FetchItem> itemsToFetch = new ArrayList<>();
@@ -71,14 +72,26 @@ public final class BagBuilder {
     return this;
   }
   
-  //TODO change to allow writing to a particular directory
   /**
    * Add a file to the bag payload
    * @param payload a file to add
    * @return this builder so as to chain commands
    */
   public BagBuilder addPayloadFile(final Path payload) {
-    this.payloadFiles.add(Paths.get(payload.toAbsolutePath().toString()));
+//    this.payloadFiles.add(Paths.get(payload.toAbsolutePath().toString()));
+    this.addPayloadFile(payload.toAbsolutePath(), "data");
+    return this;
+  }
+  
+  /**
+   * Add a file to the bag payload. The file will be written to the relative location to the bag root.
+   * @param payload the file to add
+   * @param relative the location in the bag for the file to be written. relative to the bag root directory.
+   * NOTE: the data directory MUST be included as this is part of the relative path
+   * @return this builder so to chain commands
+   */
+  public BagBuilder addPayloadFile(final Path payload, final String relative) {
+    this.payloadFiles.add(new PathPair(payload, relative));
     return this;
   }
   
@@ -175,8 +188,8 @@ public final class BagBuilder {
     
     for(final String name : bagitAlgorithmNames) {
       final ManifestBuilder builder = new ManifestBuilder(name);
-      for(final Path payloadFile : payloadFiles) {        
-        builder.addFile(payloadFile, rootDir.resolve("data"));
+      for(final PathPair pair : payloadFiles) {        
+        builder.addFile(pair.payloadFile, rootDir.resolve(pair.relativeLocation));
       }
       
       manifests.add(builder.build());
