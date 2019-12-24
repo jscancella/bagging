@@ -11,4 +11,12 @@ public final class PathPair {
     this.payloadFile = payloadFile;
     this.relativeLocation = relativeLocation;
   }
+
+  public Path getPayloadFile(){
+    return payloadFile;
+  }
+
+  public String getRelativeLocation(){
+    return relativeLocation;
+  }
 }

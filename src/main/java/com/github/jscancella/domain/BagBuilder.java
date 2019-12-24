@@ -23,7 +23,7 @@ import com.github.jscancella.hash.BagitChecksumNameMapping;
 /**
  * Used to conveniently create a bag programmatically and incrementally
  */
-@SuppressWarnings({"PMD.TooManyMethods"})
+@SuppressWarnings({"PMD.TooManyMethods", "PMD.BeanMembersShouldSerialize"})
 public final class BagBuilder {
   private static final Logger logger = LoggerFactory.getLogger(BagBuilder.class);
   private static final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
@@ -197,5 +197,4 @@ public final class BagBuilder {
     
     return manifests;
   }
-
 }

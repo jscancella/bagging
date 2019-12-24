@@ -16,6 +16,7 @@ import com.github.jscancella.exceptions.FileNotInManifestException;
 /**
  * Implements {@link SimpleFileVisitor} to ensure that the encountered file is in one of the manifests.
  */
+@SuppressWarnings({"PMD.BeanMembersShouldSerialize"})
 public final class PayloadFileExistsInAtLeastOneManifestVistor extends AbstractPayloadFileExistsInManifestsVistor {
   private static final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
   private final Set<Path> filesListedInManifests;

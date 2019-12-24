@@ -24,7 +24,7 @@ public final class FetchItem {
    */
   private final Path path;
   
-  private final String cachedString;
+  private transient String cachedString;
   
   /**
    * 
@@ -57,6 +57,9 @@ public final class FetchItem {
 
   @Override
   public String toString() {
+    if(cachedString == null) {
+      this.cachedString = internalToString();
+    }
     return cachedString;
   }
 

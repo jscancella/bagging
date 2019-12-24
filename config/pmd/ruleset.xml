@@ -10,20 +10,10 @@
 
     <rule ref="category/java/bestpractices.xml"></rule>
     <rule ref="category/java/codestyle.xml">
-        <exclude name="MethodArgumentCouldBeFinal"/>
-        <exclude name="FieldNamingConventions"/>
-        <exclude name="LocalVariableCouldBeFinal"/>
-        <exclude name="ControlStatementBraces"/>
-        <exclude name="OnlyOneReturn"/>
-        <exclude name="ConfusingTernary"/>
-        <exclude name="AtLeastOneConstructor"/>
-        <exclude name="AvoidFinalLocalVariable"/>
-        <exclude name="ShortVariable"/>
-        <exclude name="ShortClassName"/>
-        <exclude name="LongVariable"/>
-        <exclude name="CommentDefaultAccessModifier"/>
-        <exclude name="DefaultPackage"/>
-        <exclude name="PrematureDeclaration"/>
+        <exclude name="FieldNamingConventions"/> <!--  because we don't follow the convention for static fields. Since this is merely stylistic there isn't much concern for it be exempted -->
+        <exclude name="AtLeastOneConstructor"/> <!-- because it seems pointless to have to have an empty default constructor -->
+        <exclude name="ShortClassName"/> <!-- because it thinks "Bag" is too short -->
+        <exclude name="LongVariable"/> <!-- I would rather have long variable names that are descriptive -->
     </rule>
     <rule ref="category/java/codestyle.xml/MethodNamingConventions">
         <properties>
@@ -35,29 +25,22 @@
         </properties>
     </rule>
     <rule ref="category/java/design.xml">
-        <exclude name="LawOfDemeter"/>
-        <exclude name="NcssCount"/>
-        <exclude name="UseUtilityClass"/>
-        <exclude name="NPathComplexity"/>
-        <exclude name="AvoidRethrowingException"/>
-        <exclude name="DataClass"/>
-        <exclude name="LoosePackageCoupling"/>
-        <exclude name="ExcessiveImports"/>
+        <exclude name="LawOfDemeter"/> <!-- because we often use other classes directly when they are singletons -->
+        <exclude name="DataClass"/> <!-- POJOs are fine -->
+        <exclude name="LoosePackageCoupling"/> <!-- requires configuration to be used correctly -->
+        <exclude name="ExcessiveImports"/> <!-- because we want to reuse code sometimes the imports can be high -->
     </rule>
     <rule ref="category/java/documentation.xml">
-        <exclude name="CommentRequired"/>
-        <exclude name="UncommentedEmptyConstructor"/>
-        <exclude name="CommentSize"/>
+        <exclude name="CommentRequired"/> <!-- TODO configure which ones we actually want -->
+        <exclude name="CommentSize"/> <!-- TODO configure to reasonable amounts -->
     </rule>
     <rule ref="category/java/errorprone.xml">
-        <exclude name="BeanMembersShouldSerialize"/>
-        <exclude name="DataflowAnomalyAnalysis"/>
-        <exclude name="AssignmentInOperand"/>
+        <exclude name="DataflowAnomalyAnalysis"/> <!-- Has a bug that doesn't recognize variables created in for-each loops and others that are valid. -->
     </rule>
     <rule ref="category/java/multithreading.xml">
     </rule>
     <rule ref="category/java/performance.xml">
-        <exclude name="AvoidInstantiatingObjectsInLoops"/>
+        <exclude name="AvoidInstantiatingObjectsInLoops"/> <!-- Where creating objects, how do you not create them in loops? -->
     </rule>
     <rule ref="category/java/security.xml">
     </rule>

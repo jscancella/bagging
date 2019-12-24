@@ -14,7 +14,7 @@ public final class Version implements Comparable<Version>{
    * the minor version of the bagit specification
    */
   public final int minor;
-  private final String cachedToString;
+  private transient String cachedToString;
   
   /**
    * @param major the major version of the bagit specification
@@ -49,6 +49,9 @@ public final class Version implements Comparable<Version>{
 
   @Override
   public String toString() {
+    if(cachedToString == null) {
+      cachedToString = major + "." + minor;
+    }
     return cachedToString;
   }
 

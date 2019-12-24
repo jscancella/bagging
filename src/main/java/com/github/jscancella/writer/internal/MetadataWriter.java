@@ -41,7 +41,7 @@ public enum MetadataWriter {;//using enum to enforce singleton
     logger.debug(messages.getString("writing_metadata_to_path"), bagInfoFilePath.getFileName(), outputDir);
 
     try(BufferedWriter writer = Files.newBufferedWriter(bagInfoFilePath, charsetName, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE)){
-      for(final SimpleImmutableEntry<String, String> entry : metadata.getAll()){
+      for(final SimpleImmutableEntry<String, String> entry : metadata.getList()){
         final String line = entry.getKey() + ": " + entry.getValue() + System.lineSeparator();
         logger.debug(messages.getString("writing_line_to_file"), line, bagInfoFilePath);
         writer.append(line);

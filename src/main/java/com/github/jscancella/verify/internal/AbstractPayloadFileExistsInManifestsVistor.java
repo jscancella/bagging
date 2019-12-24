@@ -15,6 +15,7 @@ import com.github.jscancella.internal.PathUtils;
 /**
  * Implements {@link SimpleFileVisitor} to ensure that the encountered file is in one of the manifests.
  */
+@SuppressWarnings({"PMD.BeanMembersShouldSerialize"})
 abstract public class AbstractPayloadFileExistsInManifestsVistor extends SimpleFileVisitor<Path> {
   protected static final Logger logger = LoggerFactory.getLogger(AbstractPayloadFileExistsInManifestsVistor.class);
   protected static final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");

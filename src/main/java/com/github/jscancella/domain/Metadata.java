@@ -18,7 +18,7 @@ public class Metadata {
   private static final String PAYLOAD_OXUM = "Payload-Oxum";
   private final Map<String, List<String>> map;
   private final List<SimpleImmutableEntry<String, String>> list;
-  private final String cachedString;
+  private transient String cachedString;
   
   private Metadata(final Map<String, List<String>> map, final List<SimpleImmutableEntry<String, String>> list) {
     this.map = Collections.unmodifiableMap(map);
@@ -28,6 +28,9 @@ public class Metadata {
   
   @Override
   public String toString() {
+    if(cachedString == null) {
+      cachedString = String.join(",", list.stream().map(o -> o.toString()).collect(Collectors.toList()));
+    }
     return cachedString;
   }
 
@@ -53,7 +56,7 @@ public class Metadata {
    * 
    * @return return the order and case preserved metadata
    */
-  public List<SimpleImmutableEntry<String, String>> getAll(){
+  public List<SimpleImmutableEntry<String, String>> getList(){
     return list;
   }
   
@@ -88,6 +91,7 @@ public class Metadata {
   /**
    * Programmatically and dynamically create metadata
    */
+  @SuppressWarnings({"PMD.BeanMembersShouldSerialize"})
   public static final class MetadataBuilder {
     private final Map<String, List<String>> map = new HashMap<>();
     private List<SimpleImmutableEntry<String, String>> list = new ArrayList<>();
@@ -104,7 +108,7 @@ public class Metadata {
      * @param metadata the data to start with when building
      */
     public MetadataBuilder(final Metadata metadata) {
-      this.addAll(metadata.getAll());
+      this.addAll(metadata.getList());
     }
     /**
      * remove the label and all its values
@@ -169,5 +173,12 @@ public class Metadata {
     public Metadata build() {
       return new Metadata(map, list);
     }
+  }
+
+  /**
+   * @return get a map version of the metadata
+   */
+  public Map<String, List<String>> getMap(){
+    return map;
   }
 }

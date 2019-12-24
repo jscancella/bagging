@@ -63,6 +63,7 @@ public final class Manifest {
   /**
    * Programmatically build a manifest
    */
+  @SuppressWarnings({"PMD.BeanMembersShouldSerialize"})
   public static final class ManifestBuilder {
     private String algorithmName;
     private Hasher hasher;
