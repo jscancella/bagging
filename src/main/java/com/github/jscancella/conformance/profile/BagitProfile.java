@@ -32,24 +32,26 @@ public class BagitProfile {
   
   @Override
   public boolean equals(final Object other) {
-    if (!(other instanceof BagitProfile)) {
-      return false;
+    boolean isEqual = false;
+    if (other instanceof BagitProfile) {
+      final BagitProfile castOther = (BagitProfile) other;
+      isEqual = Objects.equals(bagitProfileIdentifier, castOther.bagitProfileIdentifier)
+          && Objects.equals(sourceOrganization, castOther.sourceOrganization)
+          && Objects.equals(externalDescription, castOther.externalDescription)
+          && Objects.equals(contactName, castOther.contactName) && Objects.equals(contactEmail, castOther.contactEmail)
+          && Objects.equals(contactPhone, castOther.contactPhone)
+          && Objects.equals(version, castOther.version)
+          && Objects.equals(bagInfoRequirements, castOther.bagInfoRequirements)
+          && Objects.equals(manifestTypesRequired, castOther.manifestTypesRequired)
+          && Objects.equals(fetchFileAllowed, castOther.fetchFileAllowed)
+          && Objects.equals(serialization, castOther.serialization)
+          && Objects.equals(acceptableMIMESerializationTypes, castOther.acceptableMIMESerializationTypes)
+          && Objects.equals(acceptableBagitVersions, castOther.acceptableBagitVersions)
+          && Objects.equals(tagManifestTypesRequired, castOther.tagManifestTypesRequired)
+          && Objects.equals(tagFilesRequired, castOther.tagFilesRequired);
     }
-    final BagitProfile castOther = (BagitProfile) other;
-    return Objects.equals(bagitProfileIdentifier, castOther.bagitProfileIdentifier)
-        && Objects.equals(sourceOrganization, castOther.sourceOrganization)
-        && Objects.equals(externalDescription, castOther.externalDescription)
-        && Objects.equals(contactName, castOther.contactName) && Objects.equals(contactEmail, castOther.contactEmail)
-        && Objects.equals(contactPhone, castOther.contactPhone)
-        && Objects.equals(version, castOther.version)
-        && Objects.equals(bagInfoRequirements, castOther.bagInfoRequirements)
-        && Objects.equals(manifestTypesRequired, castOther.manifestTypesRequired)
-        && Objects.equals(fetchFileAllowed, castOther.fetchFileAllowed)
-        && Objects.equals(serialization, castOther.serialization)
-        && Objects.equals(acceptableMIMESerializationTypes, castOther.acceptableMIMESerializationTypes)
-        && Objects.equals(acceptableBagitVersions, castOther.acceptableBagitVersions)
-        && Objects.equals(tagManifestTypesRequired, castOther.tagManifestTypesRequired)
-        && Objects.equals(tagFilesRequired, castOther.tagFilesRequired);
+    
+    return isEqual;
   }
   @Override
   public int hashCode() {

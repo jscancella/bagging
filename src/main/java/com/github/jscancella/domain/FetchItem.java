@@ -40,19 +40,19 @@ public final class FetchItem {
   }
   
   private String internalToString() {
-    final StringBuilder sb = new StringBuilder();
-    sb.append(uri).append(' ');
+    final StringBuilder builder = new StringBuilder();
+    builder.append(uri).append(' ');
     
     if(length == null || length < 0){
-      sb.append("- ");
+      builder.append("- ");
     }
     else{
-      sb.append(length).append(' ');
+      builder.append(length).append(' ');
     }
     
-    sb.append(path);
+    builder.append(path);
       
-    return sb.toString();
+    return builder.toString();
   }
 
   @Override
@@ -88,18 +88,12 @@ public final class FetchItem {
 
   @Override
   public boolean equals(final Object obj) {
-    if (this == obj){
-      return true;
-    }
-    if (obj == null){
-      return false;
-    }
-    if (!(obj instanceof FetchItem)){
-      return false;
+    boolean isEqual = false;
+    if (obj instanceof FetchItem){
+      final FetchItem other = (FetchItem) obj;
+      isEqual = Objects.equals(uri, other.getUri()) && Objects.equals(length, other.getLength()) && Objects.equals(path, other.getPath()); 
     }
     
-    final FetchItem other = (FetchItem) obj;
-    
-    return Objects.equals(uri, other.getUri()) && Objects.equals(length, other.getLength()) && Objects.equals(path, other.getPath()); 
+    return isEqual;
   }
 }

@@ -18,13 +18,14 @@ public class BagInfoRequirement {
 
   @Override
   public boolean equals(final Object other) {
-    if (!(other instanceof BagInfoRequirement)) {
-      return false;
+    boolean isEqual = false;
+    if (other instanceof BagInfoRequirement) {
+      final BagInfoRequirement castOther = (BagInfoRequirement) other;
+      isEqual = Objects.equals(required, castOther.required)
+              && Objects.equals(acceptableValues, castOther.acceptableValues)
+              && Objects.equals(repeatable, castOther.repeatable);
     }
-    final BagInfoRequirement castOther = (BagInfoRequirement) other;
-    return Objects.equals(required, castOther.required)
-            && Objects.equals(acceptableValues, castOther.acceptableValues)
-            && Objects.equals(repeatable, castOther.repeatable);
+    return isEqual;
   }
 
   @Override

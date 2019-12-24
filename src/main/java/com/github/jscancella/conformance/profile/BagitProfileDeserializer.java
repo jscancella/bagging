@@ -30,15 +30,15 @@ public class BagitProfileDeserializer extends StdDeserializer<BagitProfile> {
     this(null);
   }
 
-  public BagitProfileDeserializer(final Class<?> vc) {
-    super(vc);
+  public BagitProfileDeserializer(final Class<?> valueClass) {
+    super(valueClass);
   }
 
   @Override
-  public BagitProfile deserialize(final JsonParser p, final DeserializationContext ctxt)
+  public BagitProfile deserialize(final JsonParser jsonParser, final DeserializationContext context)
       throws IOException, JsonProcessingException {
     final BagitProfile profile = new BagitProfile();
-    final JsonNode node = p.getCodec().readTree(p);
+    final JsonNode node = jsonParser.getCodec().readTree(jsonParser);
     
     parseBagitProfileInfo(node, profile);
     

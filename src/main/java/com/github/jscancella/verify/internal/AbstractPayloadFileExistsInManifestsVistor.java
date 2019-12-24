@@ -27,11 +27,13 @@ abstract public class AbstractPayloadFileExistsInManifestsVistor extends SimpleF
   
   @Override
   public FileVisitResult preVisitDirectory(final Path dir, final BasicFileAttributes attrs) throws IOException {
+    FileVisitResult result = FileVisitResult.CONTINUE;
+    
     if(ignoreHiddenFiles && PathUtils.isHidden(dir)){
       logger.debug(messages.getString("skipping_hidden_file"), dir);
-      return FileVisitResult.SKIP_SUBTREE;
+      result = FileVisitResult.SKIP_SUBTREE;
     }
     
-    return FileVisitResult.CONTINUE;
+    return result;
   }
 }

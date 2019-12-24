@@ -57,20 +57,15 @@ public final class ManifestEntry {
 
   @Override
   public boolean equals(final Object obj){
-    if (this == obj){
-      return true;
+    boolean isEqual = false;
+    if (obj instanceof ManifestEntry){
+      final ManifestEntry other = (ManifestEntry) obj;
+      
+      isEqual = Objects.equals(physicalLocation, other.getPhysicalLocation()) 
+          && Objects.equals(relativeLocation, other.getRelativeLocation()) 
+          && Objects.equals(checksum, other.getChecksum()); 
     }
-    if (obj == null){
-      return false;
-    }
-    if (!(obj instanceof ManifestEntry)){
-      return false;
-    }
+    return isEqual;
     
-    final ManifestEntry other = (ManifestEntry) obj;
-    
-    return Objects.equals(physicalLocation, other.getPhysicalLocation()) 
-        && Objects.equals(relativeLocation, other.getRelativeLocation()) 
-        && Objects.equals(checksum, other.getChecksum()); 
   }
 }

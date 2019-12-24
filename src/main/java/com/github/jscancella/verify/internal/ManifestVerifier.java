@@ -99,6 +99,7 @@ public enum ManifestVerifier {; //using enum to enforce singleton
    * @return true if the normalized filename matches one on disk in the specified folder
    */
   private static boolean existsNormalized(final Path file){
+    boolean existsNormalized = false;
     final String normalizedFile = Normalizer.normalize(file.toString(), Normalizer.Form.NFD);
     final Path parent = file.getParent();
     if(parent != null){
@@ -106,7 +107,8 @@ public enum ManifestVerifier {; //using enum to enforce singleton
         for(final Path fileToCheck : files){
           final String normalizedFileToCheck = Normalizer.normalize(fileToCheck.toString(), Normalizer.Form.NFD);
           if(normalizedFile.equals(normalizedFileToCheck)){
-            return true;
+            existsNormalized = true;
+            break;
           }
         }
       }
@@ -115,7 +117,7 @@ public enum ManifestVerifier {; //using enum to enforce singleton
       }
     }
     
-    return false;
+    return existsNormalized;
   }
 
   /*

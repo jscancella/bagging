@@ -44,15 +44,15 @@ public enum ManifestReader {;//using enum to enforce singleton
     
     final ManifestBuilder manifestBuilder = new ManifestBuilder(algorithm);
     
-    try(BufferedReader br = Files.newBufferedReader(manifestFile, charset)){
-      String line = br.readLine();
+    try(BufferedReader reader = Files.newBufferedReader(manifestFile, charset)){
+      String line = reader.readLine();
       while(line != null){
         final String[] parts = line.split("\\s+", 2);
         final Path file = TagFileReader.createFileFromManifest(bagRootDir, parts[1]);
         final Path relative = bagRootDir.relativize(file);
         final ManifestEntry entry = new ManifestEntry(file, relative, parts[0]);
         manifestBuilder.addEntry(entry);
-        line = br.readLine();
+        line = reader.readLine();
       }
     }
     

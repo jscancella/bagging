@@ -53,18 +53,19 @@ public final class Version implements Comparable<Version>{
   }
 
   @Override
-  public int compareTo(final Version o) {
+  public int compareTo(final Version other) {
+    int returnValue = -1;
     //a negative integer - this is less than specified object
     //zero - equal to specified object
     //positive - greater than the specified object
-    if(major > o.major || major == o.major && minor > o.minor){
-      return 1;
+    if(major > other.major || major == other.major && minor > other.minor){
+      returnValue = 1;
     }
-    if(major == o.major && minor == o.minor){
-      return 0;
+    if(major == other.major && minor == other.minor){
+      returnValue = 0;
     }
     
-    return -1;
+    return returnValue;
   }
 
   @Override
@@ -74,19 +75,14 @@ public final class Version implements Comparable<Version>{
 
   @Override
   public boolean equals(final Object obj) {
-    if (this == obj){
-      return true;
-    }
-    if (obj == null){
-      return false;
-    }
-    if (!(obj instanceof Version)){
-      return false;
+    boolean isEqual = false;
+    if (obj instanceof Version){
+      final Version other = (Version) obj;
+      
+      isEqual = Objects.equals(major, other.major) && Objects.equals(minor, other.minor); 
     }
     
-    final Version other = (Version) obj;
-    
-    return Objects.equals(major, other.major) && Objects.equals(minor, other.minor); 
+    return isEqual;
   }
   
   /**

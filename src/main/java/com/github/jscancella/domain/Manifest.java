@@ -51,19 +51,13 @@ public final class Manifest {
 
   @Override
   public boolean equals(final Object obj) {
-    if (this == obj){
-      return true;
-    }
-    if (obj == null){
-      return false;
-    }
-    if (!(obj instanceof Manifest)){
-      return false;
+    boolean isEqual = false;
+    if (obj instanceof Manifest){
+      final Manifest other = (Manifest) obj;
+      isEqual = Objects.equals(bagitAlgorithmName, other.getBagitAlgorithmName()) && entries.equals(other.getEntries()); 
     }
     
-    final Manifest other = (Manifest) obj;
-    
-    return Objects.equals(bagitAlgorithmName, other.getBagitAlgorithmName()) && entries.equals(other.getEntries()); 
+    return isEqual;
   }
   
   /**

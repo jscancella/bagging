@@ -160,21 +160,21 @@ public final class Bag {
 
   @Override
   public String toString() {
-    final StringBuilder sb = new StringBuilder(95);
-    sb.append("Bag [version=").append(version)
+    final StringBuilder builder = new StringBuilder(95);
+    builder.append("Bag [version=").append(version)
     .append(", fileEncoding=").append(fileEncoding)
     .append(", payLoadManifests=[");
     for(final Manifest payloadManifest : payLoadManifests){
-      sb.append(payloadManifest).append(' ');
+      builder.append(payloadManifest).append(' ');
     }
-    sb.append("], tagManifests=[");
+    builder.append("], tagManifests=[");
     for(final Manifest tagManifest : tagManifests){
-      sb.append(tagManifest).append(' ');
+      builder.append(tagManifest).append(' ');
     }
-    sb.append("], itemsToFetch=").append(itemsToFetch)
+    builder.append("], itemsToFetch=").append(itemsToFetch)
     .append(", metadata=").append(metadata).append(']');
     
-    return sb.toString();
+    return builder.toString();
   }
 
   @Override
@@ -185,23 +185,19 @@ public final class Bag {
 
   @Override
   public boolean equals(final Object obj) {
-    if (this == obj){
-      return true;
-    }
-    if (obj == null){
-      return false;
-    }
-    if (!(obj instanceof Bag)){
-      return false;
+    boolean isEqual = false;
+    
+    if (obj instanceof Bag){
+      final Bag other = (Bag) obj;
+      isEqual = Objects.equals(this.version, other.getVersion()) && 
+          Objects.equals(this.fileEncoding, other.getFileEncoding()) &&
+          Objects.equals(this.payLoadManifests, other.getPayLoadManifests()) && 
+          Objects.equals(this.tagManifests, other.getTagManifests()) &&
+          Objects.equals(this.itemsToFetch, other.getItemsToFetch()) &&
+          Objects.equals(this.metadata, other.getMetadata());
     }
     
-    final Bag other = (Bag) obj;
-    return Objects.equals(this.version, other.getVersion()) && 
-        Objects.equals(this.fileEncoding, other.getFileEncoding()) &&
-        Objects.equals(this.payLoadManifests, other.getPayLoadManifests()) && 
-        Objects.equals(this.tagManifests, other.getTagManifests()) &&
-        Objects.equals(this.itemsToFetch, other.getItemsToFetch()) &&
-        Objects.equals(this.metadata, other.getMetadata());
+    return isEqual;
   }
   
   /**

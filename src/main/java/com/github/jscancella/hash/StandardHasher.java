@@ -60,13 +60,13 @@ public enum StandardHasher implements Hasher {
   }
   
   private static void updateMessageDigest(final Path path, final MessageDigest messageDigest) throws IOException{
-    try(InputStream is = new BufferedInputStream(Files.newInputStream(path, StandardOpenOption.READ))){
+    try(InputStream inputStream = new BufferedInputStream(Files.newInputStream(path, StandardOpenOption.READ))){
       final byte[] buffer = new byte[CHUNK_SIZE];
-      int read = is.read(buffer);
+      int read = inputStream.read(buffer);
 
       while(read != -1){
         messageDigest.update(buffer, 0, read);
-        read = is.read(buffer);
+        read = inputStream.read(buffer);
       }
     }
   }

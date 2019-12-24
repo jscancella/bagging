@@ -47,19 +47,19 @@ public enum FetchWriter {;//using enum to enforce singleton
   }
   
   private static String formatFetchLine(final FetchItem fetchItem, final Path bagitRootDir){
-    final StringBuilder sb = new StringBuilder();
-    sb.append(fetchItem.getUri()).append(' ');
+    final StringBuilder fetchLineBuilder = new StringBuilder();
+    fetchLineBuilder.append(fetchItem.getUri()).append(' ');
     
     if(fetchItem.getLength() == null || fetchItem.getLength() < 0){
-      sb.append("- ");
+      fetchLineBuilder.append("- ");
     }
     else{
-      sb.append(fetchItem.getLength()).append(' ');
+      fetchLineBuilder.append(fetchItem.getLength()).append(' ');
     }
     
-    sb.append(formatRelativePathString(bagitRootDir, fetchItem.getPath()));
+    fetchLineBuilder.append(formatRelativePathString(bagitRootDir, fetchItem.getPath()));
       
-    return sb.toString();
+    return fetchLineBuilder.toString();
   }
   
   /**

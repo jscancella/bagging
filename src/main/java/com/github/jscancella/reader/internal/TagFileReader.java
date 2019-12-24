@@ -64,9 +64,8 @@ public enum TagFileReader {;//using enum to enforce singleton
   private static String removeAsteriskIfExists(final String path){
     if(path.charAt(0) == '*'){
       logger.warn(messages.getString("removing_asterisk"));
-      return  path.substring(1); //remove the * from the path
     }
-    return path;
+    return path.replaceFirst("\\*", "");
   }
   
   /*
@@ -76,6 +75,7 @@ public enum TagFileReader {;//using enum to enforce singleton
     return encoded.replaceAll("%0A", "\n").replaceAll("%0D", "\r");
   }
 
+  @SuppressWarnings("PMD.OnlyOneReturn")
   private static Path createPath(final String path, final Path bagRootDir){
     if(path.startsWith("file://")){
       try {

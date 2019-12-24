@@ -38,12 +38,14 @@ public class Metadata {
 
   @Override
   public boolean equals(final Object obj) {
-    if (this == obj){return true;}
-    if (obj == null){return false;}
-    if (!(obj instanceof Metadata)){return false;}
+    boolean isEqual = false;
     
-    final Metadata other = (Metadata) obj;
-    return Objects.equals(this.list, other.list);
+    if(obj instanceof Metadata){
+      final Metadata other = (Metadata) obj;
+      isEqual = Objects.equals(this.list, other.list);
+    }
+    
+    return isEqual;
   }
   
   /**
