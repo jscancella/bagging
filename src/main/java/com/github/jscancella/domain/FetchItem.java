@@ -24,7 +24,7 @@ public final class FetchItem {
    */
   private final Path path;
   
-  private transient final String cachedString;
+  private final String cachedString;
   
   /**
    * 

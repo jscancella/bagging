@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,8 @@ import com.github.jscancella.hash.Hasher;
  */
 public final class ManifestBuilderVistor extends SimpleFileVisitor<Path> {
   private static final Logger logger = LoggerFactory.getLogger(ManifestBuilderVistor.class);
+  private static final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
+  
   private final List<ManifestEntry> entries;
   private final Path startingPoint;
   private final Hasher hasher;
@@ -31,6 +34,7 @@ public final class ManifestBuilderVistor extends SimpleFileVisitor<Path> {
    * @param hasher the hashing implementation
    */
   public ManifestBuilderVistor(final List<ManifestEntry> entries, final Path startingPoint, final Hasher hasher) {
+    super();
     this.entries = entries;
     this.startingPoint = Paths.get(startingPoint.toAbsolutePath().toString());
     this.hasher = hasher;
@@ -43,7 +47,7 @@ public final class ManifestBuilderVistor extends SimpleFileVisitor<Path> {
     final String checksum = hasher.hash(physicalLocation);
     final ManifestEntry entry = new ManifestEntry(physicalLocation, relativeLocation, checksum);
     
-    logger.debug("Adding new manifest entry [{}] to manifest", entry);
+    logger.debug(messages.getString("adding_manifest_entry"), entry);
     
     entries.add(entry);
     

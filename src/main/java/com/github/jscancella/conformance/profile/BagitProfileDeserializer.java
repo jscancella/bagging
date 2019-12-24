@@ -168,7 +168,7 @@ public class BagitProfileDeserializer extends StdDeserializer<BagitProfile> {
         }
       }
       
-      logger.debug("{}: {}", node.getKey(), entry);
+      logger.debug(messages.getString("parsed_key_value"), node.getKey(), entry);
       bagInfo.put(node.getKey(), entry);
     }
     

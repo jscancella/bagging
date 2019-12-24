@@ -7,13 +7,13 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.security.NoSuchAlgorithmException;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.ResourceBundle;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -49,6 +49,7 @@ import com.github.jscancella.writer.internal.MetadataWriter;
  */
 public final class Bag {  
   private static final Logger logger = LoggerFactory.getLogger(Bag.class);
+  private static final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
   
   //The original version of the bag
   private final Version version;
@@ -215,16 +216,13 @@ public final class Bag {
    * 
    * @throws InvalidBagitFileFormatException if the file(s) are not formatted correctly
    * @throws IOException if there is a problem reading a file
-   * @throws NoSuchAlgorithmException if the algorithm hasn't bee mapped in {@link BagitChecksumNameMapping}
    * @throws CorruptChecksumException the checksum doesn't match what was listed in the manifest
    * @throws FileNotInPayloadDirectoryException file listed in manifest but doesn't exist
    * @throws MissingBagitFileException the bagit.txt file is missing
    * @throws MissingPayloadDirectoryException if a bag is missing a payload directory
    * @throws MissingPayloadManifestException if there is no payload manifest
    */
-  public boolean isValid(final boolean ignoreHiddenFiles) throws InvalidBagitFileFormatException, 
-  IOException, NoSuchAlgorithmException, CorruptChecksumException, FileNotInPayloadDirectoryException, 
-  MissingBagitFileException, MissingPayloadDirectoryException, MissingPayloadManifestException {
+  public boolean isValid(final boolean ignoreHiddenFiles) throws IOException {
     boolean isValid = true;
     
     BagitTextFileVerifier.checkBagitTextFile(this);
@@ -241,7 +239,7 @@ public final class Bag {
     return isValid;
   }
   
-  private boolean checkHashes(final Manifest manifest) throws IOException, CorruptChecksumException{
+  private boolean checkHashes(final Manifest manifest) throws IOException{
     final Hasher hasher = BagitChecksumNameMapping.get(manifest.getBagitAlgorithmName());
     
     for(final ManifestEntry entry : manifest.getEntries()) {
@@ -277,7 +275,6 @@ public final class Bag {
    * 
    * @throws InvalidBagitFileFormatException if the file(s) are not formatted correctly
    * @throws IOException if there is a problem reading a file
-   * @throws NoSuchAlgorithmException if the algorithm hasn't bee mapped in {@link BagitChecksumNameMapping}
    * @throws CorruptChecksumException the checksum doesn't match what was listed in the manifest
    * @throws FileNotInPayloadDirectoryException file listed in manifest but doesn't exist
    * @throws MissingBagitFileException the bagit.txt file is missing
@@ -285,9 +282,7 @@ public final class Bag {
    * @throws MissingPayloadManifestException if there is no payload manifest
    * @throws MaliciousPathException if the path is specifying a path outside the bag
    */
-  public boolean isComplete(final boolean ignoreHiddenFiles) throws FileNotInPayloadDirectoryException, MissingBagitFileException, 
-  MissingPayloadDirectoryException, MissingPayloadManifestException, IOException, MaliciousPathException, 
-  InvalidBagitFileFormatException, NoSuchAlgorithmException {
+  public boolean isComplete(final boolean ignoreHiddenFiles) throws IOException {
     
     MandatoryVerifier.checkFetchItemsExist(itemsToFetch, rootDir);
     MandatoryVerifier.checkBagitFileExists(this);
@@ -308,11 +303,10 @@ public final class Bag {
    */
   public Bag write(final Path writeTo) throws IOException {
     if(Files.exists(rootDir) && writeTo.equals(rootDir)) {
-      //TODO warn writing to same location, so we will not do anything
-      logger.warn("Trying to write to the same location as the bag currently is at. Skipping writting bag to [{}]", writeTo);
+      logger.warn(messages.getString("skipping_write_to_same_location"), writeTo);
     }
     
-//    logger.info("Writing bag to [{}]", rootDir);
+    logger.info(messages.getString("writing_bag_to_path"), rootDir);
     Files.createDirectories(writeTo);
     
     BagitFileWriter.writeBagitFile(version, fileEncoding, writeTo);
@@ -355,11 +349,15 @@ public final class Bag {
     final ManifestEntry newEntry = new ManifestEntry(writeTo.resolve(entry.getRelativeLocation()), entry.getRelativeLocation(), entry.getChecksum());
     manifestBuilder.addEntry(newEntry);
     //copy to new location
-    final Path newParentLocation = newEntry.getPhysicalLocation().getParent();
-    if(!Files.exists(newParentLocation)) {
+    createDirectoriesIfNeeded(newEntry);
+    Files.copy(entry.getPhysicalLocation(), newEntry.getPhysicalLocation(), StandardCopyOption.REPLACE_EXISTING);
+  }
+  
+  private void createDirectoriesIfNeeded(final ManifestEntry entry) throws IOException {
+    final Path newParentLocation = entry.getPhysicalLocation().getParent();
+    if(newParentLocation != null && !Files.exists(newParentLocation)) {
       Files.createDirectories(newParentLocation);
     }
-    Files.copy(entry.getPhysicalLocation(), newEntry.getPhysicalLocation(), StandardCopyOption.REPLACE_EXISTING);
   }
   
   /**
@@ -396,7 +394,7 @@ public final class Bag {
     
     final Set<Manifest> payloadManifests = new HashSet<>();
     final Set<Manifest> tagManifests = new HashSet<>();
-    try(final DirectoryStream<Path> manifests = Files.newDirectoryStream(rootDir, new ManifestFilter())){
+    try(DirectoryStream<Path> manifests = Files.newDirectoryStream(rootDir, new ManifestFilter())){
       for (final Path path : manifests){
         final String filename = PathUtils.getFilename(path);
         

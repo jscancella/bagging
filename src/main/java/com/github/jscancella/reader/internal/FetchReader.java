@@ -38,7 +38,7 @@ public enum FetchReader {;//using enum to enforce singleton
    * @throws InvalidBagitFileFormatException if the fetch format does not follow the bagit specification
    */
   @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-  public static List<FetchItem> readFetch(final Path fetchFile, final Charset encoding, final Path bagRootDir) throws IOException, MaliciousPathException, InvalidBagitFileFormatException{
+  public static List<FetchItem> readFetch(final Path fetchFile, final Charset encoding, final Path bagRootDir) throws IOException{
     logger.info(messages.getString("reading_fetch_file"), fetchFile);
     final List<FetchItem> itemsToFetch = new ArrayList<>();
     

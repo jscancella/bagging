@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.security.NoSuchAlgorithmException;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Collection;
 import java.util.Collections;
@@ -35,11 +34,9 @@ import com.github.jscancella.conformance.internal.VersionChecker;
 import com.github.jscancella.conformance.profile.BagitProfile;
 import com.github.jscancella.domain.Bag;
 import com.github.jscancella.domain.Version;
-import com.github.jscancella.exceptions.InvalidBagMetadataException;
 import com.github.jscancella.exceptions.InvalidBagitFileFormatException;
 import com.github.jscancella.exceptions.MaliciousPathException;
 import com.github.jscancella.exceptions.UnparsableVersionException;
-import com.github.jscancella.hash.BagitChecksumNameMapping;
 import com.github.jscancella.reader.internal.BagitTextFileReader;
 import com.github.jscancella.reader.internal.KeyValueReader;
 
@@ -101,9 +98,8 @@ public enum BagLinter {
    * @throws UnparsableVersionException if there was a problem parsing the version of the bag
    * @throws InvalidBagitFileFormatException if a file is not formatted correctly
    * @throws MaliciousPathException if the bag is trying to be malicious
-   * @throws NoSuchAlgorithmException if the algorithm hasn't bee mapped in {@link BagitChecksumNameMapping}
    */
-  public static Set<BagitWarning> lintBag(final Path rootDir) throws IOException, UnparsableVersionException, InvalidBagitFileFormatException, MaliciousPathException, NoSuchAlgorithmException{
+  public static Set<BagitWarning> lintBag(final Path rootDir) throws IOException{
     return lintBag(rootDir, Collections.emptyList());
   }
 
@@ -123,9 +119,8 @@ public enum BagLinter {
    * @throws UnparsableVersionException if there was a problem parsing the version of the bag
    * @throws InvalidBagitFileFormatException if a file is not formatted correctly
    * @throws MaliciousPathException if the bag is trying to be maliciou
-   * @throws NoSuchAlgorithmException if the algorithm hasn't bee mapped in {@link BagitChecksumNameMapping}
    */
-  public static Set<BagitWarning> lintBag(final Path bagitDir, final Collection<BagitWarning> warningsToIgnore) throws IOException, UnparsableVersionException, InvalidBagitFileFormatException, MaliciousPathException, NoSuchAlgorithmException{
+  public static Set<BagitWarning> lintBag(final Path bagitDir, final Collection<BagitWarning> warningsToIgnore) throws IOException{
     final Set<BagitWarning> warnings = new HashSet<>();
 
     final Path bagitFile = bagitDir.resolve("bagit.txt");
@@ -153,7 +148,7 @@ public enum BagLinter {
   /*
    * After version 1.0 the specification read that the bagit.txt MUST contain EXACTLY 2 lines
    */
-  private static void checkForExtraLines(final Path bagitFile, final Collection<BagitWarning> warnings, final Collection<BagitWarning> warningsToIgnore) throws InvalidBagMetadataException, IOException, UnparsableVersionException {
+  private static void checkForExtraLines(final Path bagitFile, final Collection<BagitWarning> warnings, final Collection<BagitWarning> warningsToIgnore) throws IOException{
     if(warningsToIgnore.contains(BagitWarning.EXTRA_LINES_IN_BAGIT_FILES)){
       logger.debug(messages.getString("skipping_check_extra_lines"));
       return;

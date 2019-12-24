@@ -38,7 +38,7 @@ public enum BagitTextFileReader {;//using enum to enforce singleton
    * @throws InvalidBagMetadataException if the bagit.txt file does not conform to "key: value"
    * @throws InvalidBagitFileFormatException if the bagit.txt file does not conform to the bagit spec
    */
-  public static SimpleImmutableEntry<Version, Charset> readBagitTextFile(final Path bagitFile) throws IOException, UnparsableVersionException, InvalidBagMetadataException, InvalidBagitFileFormatException{
+  public static SimpleImmutableEntry<Version, Charset> readBagitTextFile(final Path bagitFile) throws IOException{
     logger.debug(messages.getString("reading_version_and_encoding"), bagitFile);
     throwErrorIfByteOrderMarkIsPresent(bagitFile);
     final List<SimpleImmutableEntry<String, String>> pairs = KeyValueReader.readKeyValuesFromFile(bagitFile, ":", StandardCharsets.UTF_8);
@@ -68,7 +68,7 @@ public enum BagitTextFileReader {;//using enum to enforce singleton
   /*
    * As per the specification, a BOM is not allowed in the bagit.txt file
    */
-  private static void throwErrorIfByteOrderMarkIsPresent(final Path bagitFile) throws IOException, InvalidBagitFileFormatException{
+  private static void throwErrorIfByteOrderMarkIsPresent(final Path bagitFile) throws IOException{
     final byte[] firstFewBytesInFile = Arrays.copyOfRange(Files.readAllBytes(bagitFile), 0, BOM.length);
     if(Arrays.equals(BOM, firstFewBytesInFile)){
       final String formattedMessage = messages.getString("bom_present_error");
@@ -85,7 +85,7 @@ public enum BagitTextFileReader {;//using enum to enforce singleton
    * 
    * @throws UnparsableVersionException if not successful in parsing version
    */
-  public static Version parseVersion(final String version) throws UnparsableVersionException{
+  public static Version parseVersion(final String version){
     if(!version.contains(".")){
       throw new UnparsableVersionException(messages.getString("unparsable_version_error"), version);
     }

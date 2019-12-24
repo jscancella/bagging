@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -21,24 +22,20 @@ import com.github.jscancella.hash.BagitChecksumNameMapping;
 /**
  * Used to conveniently create a bag programmatically and incrementally
  */
+@SuppressWarnings({"PMD.TooManyMethods"})
 public final class BagBuilder {
   private static final Logger logger = LoggerFactory.getLogger(BagBuilder.class);
-  private transient Version version = Version.LATEST_BAGIT_VERSION();
-  private transient Charset fileEncoding = StandardCharsets.UTF_8;
-  private transient final Set<Path> payloadFiles = new HashSet<>();
-  private transient final Set<Path> tagFiles = new HashSet<>();
-  private transient final Set<String> bagitAlgorithmNames = new HashSet<>();
-  private transient final List<FetchItem> itemsToFetch = new ArrayList<>();
-  private transient final MetadataBuilder metadataBuilder = new MetadataBuilder();
-  //the current location of the bag on the filesystem
-  private transient Path rootDir;
+  private static final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
   
-  /**
-   * default encoding is UTF8
-   */
-  public BagBuilder() {
-    //intentionally left empty
-  }
+  private Version specificationVersion = Version.LATEST_BAGIT_VERSION();
+  private Charset tagFilesEncoding = StandardCharsets.UTF_8;
+  private final Set<Path> payloadFiles = new HashSet<>();
+  private final Set<Path> tagFiles = new HashSet<>();
+  private final Set<String> bagitAlgorithmNames = new HashSet<>();
+  private final List<FetchItem> itemsToFetch = new ArrayList<>();
+  private final MetadataBuilder metadataBuilder = new MetadataBuilder();
+  //the current location of the bag on the filesystem
+  private Path rootDir;
   
   /**
    * Set the bagit specification version
@@ -49,7 +46,7 @@ public final class BagBuilder {
    * @return this builder so as to chain commands
    */
   public BagBuilder version(final int major, final int minor) {
-    this.version = new Version(major, minor);
+    this.specificationVersion = new Version(major, minor);
     return this;
   }
   
@@ -60,7 +57,7 @@ public final class BagBuilder {
    * @return this builder so as to chain commands
    */
   public BagBuilder version(final Version version) {
-    this.version = new Version(version.major, version.minor);
+    this.specificationVersion = new Version(version.major, version.minor);
     return this;
   }
   
@@ -70,7 +67,7 @@ public final class BagBuilder {
    * @return this builder so as to chain commands
    */
   public BagBuilder fileEncoding(final Charset fileEncoding) {
-    this.fileEncoding = Charset.forName(fileEncoding.name());
+    this.tagFilesEncoding = Charset.forName(fileEncoding.name());
     return this;
   }
   
@@ -105,8 +102,7 @@ public final class BagBuilder {
       this.bagitAlgorithmNames.add(bagitAlgorithmName);
     }
     else {
-      logger.error("[{}] is not supported so it will be ignored. "
-          + "Please add an implementation to BagitChecksumNameMapping.java if you wish to use [{}]", bagitAlgorithmName, bagitAlgorithmName);
+      logger.error(messages.getString("algorithm_not_supported"), bagitAlgorithmName, bagitAlgorithmName);
     }
     return this;
   }
@@ -137,7 +133,7 @@ public final class BagBuilder {
    * @param dir the root dir of a bag
    * @return this builder so as to chain commands
    */
-  public BagBuilder rootDir(final Path dir) {
+  public BagBuilder bagLocation(final Path dir) {
     this.rootDir = Paths.get(dir.toAbsolutePath().toString());
     return this;
   }
@@ -152,10 +148,9 @@ public final class BagBuilder {
       throw new InvalidBagStateException("Bags must have a root directory");
     }
     
-    final Bag bag = new Bag(this.version, this.fileEncoding, createPayloadManifests(), createTagManifests(), this.itemsToFetch, metadataBuilder.build(), this.rootDir);
-    bag.write(this.rootDir);
+    final Bag bag = new Bag(this.specificationVersion, this.tagFilesEncoding, createPayloadManifests(), createTagManifests(), this.itemsToFetch, metadataBuilder.build(), this.rootDir);
     
-    return bag;
+    return bag.write(this.rootDir);
   }
 
   @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")

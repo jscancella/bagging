@@ -6,7 +6,6 @@ import java.nio.charset.Charset;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.security.NoSuchAlgorithmException;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,7 +24,6 @@ import com.github.jscancella.conformance.BagitWarning;
 import com.github.jscancella.domain.Manifest;
 import com.github.jscancella.exceptions.InvalidBagitFileFormatException;
 import com.github.jscancella.exceptions.MaliciousPathException;
-import com.github.jscancella.hash.BagitChecksumNameMapping;
 import com.github.jscancella.internal.PathUtils;
 import com.github.jscancella.reader.internal.ManifestReader;
 
@@ -58,10 +56,9 @@ public enum ManifestChecker {;// using enum to enforce singleton
    * @throws IOException if there is a problem reading a file
    * @throws InvalidBagitFileFormatException if a bag file is not formatted correctly
    * @throws MaliciousPathException if the bag is trying to access a file outside the bag
-   * @throws NoSuchAlgorithmException if the algorithm hasn't bee mapped in {@link BagitChecksumNameMapping}
    */
   public static void checkManifests(final Path bagitDir, final Charset encoding, final Set<BagitWarning> warnings, 
-      final Collection<BagitWarning> warningsToIgnore) throws IOException, InvalidBagitFileFormatException, MaliciousPathException, NoSuchAlgorithmException{
+      final Collection<BagitWarning> warningsToIgnore) throws IOException{
         
     boolean missingTagManifest = true;
     final List<Path> payloadManifests = new ArrayList<>();
@@ -84,9 +81,11 @@ public enum ManifestChecker {;// using enum to enforce singleton
     }
   }
   
-  private static boolean checkManifest(final Path file, final List<Path> payloadManifests, final List<Path> tagManifests, 
+  private static boolean checkManifest(final Path file, final List<Path> payloadManifests, 
+      final List<Path> tagManifests, 
       final Charset encoding, final Set<BagitWarning> warnings, 
-      final Collection<BagitWarning> warningsToIgnore) throws IOException, InvalidBagitFileFormatException{
+      final Collection<BagitWarning> warningsToIgnore) throws IOException{
+    
     boolean missingTagManifest = true;
     final String filename = PathUtils.getFilename(file);
     if(filename.contains("manifest-")){
@@ -111,8 +110,7 @@ public enum ManifestChecker {;// using enum to enforce singleton
    * Check for a "bag within a bag", relative paths, and OS specific files in the manifests
    */
   private static void checkManifestPayload(final Path manifestFile, final Charset encoding, final Set<BagitWarning> warnings, 
-      final Collection<BagitWarning> warningsToIgnore, final boolean isPayloadManifest) 
-          throws IOException, InvalidBagitFileFormatException{
+      final Collection<BagitWarning> warningsToIgnore, final boolean isPayloadManifest) throws IOException{
     
     try(BufferedReader reader = Files.newBufferedReader(manifestFile, encoding)){
       final Set<String> paths = new HashSet<>();
@@ -141,7 +139,7 @@ public enum ManifestChecker {;// using enum to enforce singleton
   /*
    * Check to make sure it conforms to <hash> <path>
    */
-  static String parsePath(final String line) throws InvalidBagitFileFormatException{
+  static String parsePath(final String line){
     final String[] parts = line.split("\\s+", 2);
     if(parts.length < PARSED_PATH_PARTS){
       final String formattedMessage = messages.getString("manifest_line_violated_spec_error");
@@ -263,7 +261,7 @@ public enum ManifestChecker {;// using enum to enforce singleton
   }
   
   //starting with version 1.0 all manifest types (tag, payload) MUST list the same set of files, but for older versions it SHOULD list all files
-  static void checkManifestsListSameSetOfFiles(final Set<BagitWarning> warnings, final List<Path> manifestPaths, final Charset charset) throws IOException, MaliciousPathException, InvalidBagitFileFormatException{
+  static void checkManifestsListSameSetOfFiles(final Set<BagitWarning> warnings, final List<Path> manifestPaths, final Charset charset) throws IOException{
     
     Manifest compareToManifest = null;
     Path compareToManifestPath = null;

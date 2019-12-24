@@ -14,7 +14,7 @@ public final class Version implements Comparable<Version>{
    * the minor version of the bagit specification
    */
   public final int minor;
-  private transient final String cachedToString;
+  private final String cachedToString;
   
   /**
    * @param major the major version of the bagit specification

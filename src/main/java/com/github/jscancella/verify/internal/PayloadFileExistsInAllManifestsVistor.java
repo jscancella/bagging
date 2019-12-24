@@ -17,8 +17,8 @@ import com.github.jscancella.exceptions.FileNotInManifestException;
  * Implements {@link SimpleFileVisitor} to ensure that the encountered file is in one of the manifests.
  */
 public final class PayloadFileExistsInAllManifestsVistor extends AbstractPayloadFileExistsInManifestsVistor {
-  private transient final Set<Manifest> manifests;
-  private transient final Path rootDir;
+  private final Set<Manifest> manifests;
+  private final Path rootDir;
 
   public PayloadFileExistsInAllManifestsVistor(final Set<Manifest> manifests, final Path rootDir, final boolean ignoreHiddenFiles) {
     super(ignoreHiddenFiles);
@@ -27,7 +27,7 @@ public final class PayloadFileExistsInAllManifestsVistor extends AbstractPayload
   }
 
   @Override
-  public FileVisitResult visitFile(final Path path, final BasicFileAttributes attrs)throws FileNotInManifestException{
+  public FileVisitResult visitFile(final Path path, final BasicFileAttributes attrs){
     if(Files.isRegularFile(path)){
       for(final Manifest manifest : manifests){
         final Set<Path> relativePaths = manifest

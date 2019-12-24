@@ -10,8 +10,8 @@ import java.nio.file.attribute.BasicFileAttributes;
 import org.junit.jupiter.api.Assertions;
 
 public class FileExistsVistor extends SimpleFileVisitor<Path>{
-  private transient final Path originalBag;
-  private transient final Path newBag;
+  private final Path originalBag;
+  private final Path newBag;
   
   public FileExistsVistor(final Path originalBag, final Path newBag){
     this.originalBag = originalBag;

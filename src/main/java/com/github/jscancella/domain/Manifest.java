@@ -70,9 +70,9 @@ public final class Manifest {
    * Programmatically build a manifest
    */
   public static final class ManifestBuilder {
-    private transient String bagitAlgorithmName;
-    private transient Hasher hasher;
-    private transient final List<ManifestEntry> entries = new ArrayList<>();
+    private String algorithmName;
+    private Hasher hasher;
+    private final List<ManifestEntry> entries = new ArrayList<>();
     
     /**
      * @param bagitAlgorithmName the bagit algorithm name
@@ -88,7 +88,7 @@ public final class Manifest {
      */
     public ManifestBuilder bagitAlgorithmName(final String name){
       this.hasher = BagitChecksumNameMapping.get(name);
-      this.bagitAlgorithmName = name;
+      this.algorithmName = name;
       
       return this;
     }
@@ -131,7 +131,7 @@ public final class Manifest {
      * @return the manifest
      */
     public Manifest build() {
-      return new Manifest(bagitAlgorithmName, entries);
+      return new Manifest(algorithmName, entries);
     }
   }
 }

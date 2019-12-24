@@ -38,14 +38,13 @@ public enum ManifestReader {;//using enum to enforce singleton
    * @throws InvalidBagitFileFormatException if the manifest is not formatted correctly
    */
   @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-  public static Manifest readManifest(final Path manifestFile, final Path bagRootDir, final Charset charset) 
-          throws IOException, MaliciousPathException, InvalidBagitFileFormatException{
+  public static Manifest readManifest(final Path manifestFile, final Path bagRootDir, final Charset charset) throws IOException{
     logger.debug(messages.getString("reading_manifest"), manifestFile);
     final String algorithm = PathUtils.getFilename(manifestFile).split("[-\\.]")[1];
     
     final ManifestBuilder manifestBuilder = new ManifestBuilder(algorithm);
     
-    try(final BufferedReader br = Files.newBufferedReader(manifestFile, charset)){
+    try(BufferedReader br = Files.newBufferedReader(manifestFile, charset)){
       String line = br.readLine();
       while(line != null){
         final String[] parts = line.split("\\s+", 2);

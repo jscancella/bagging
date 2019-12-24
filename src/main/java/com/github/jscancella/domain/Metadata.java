@@ -18,7 +18,7 @@ public class Metadata {
   private static final String PAYLOAD_OXUM = "Payload-Oxum";
   private final Map<String, List<String>> map;
   private final List<SimpleImmutableEntry<String, String>> list;
-  private transient final String cachedString;
+  private final String cachedString;
   
   private Metadata(final Map<String, List<String>> map, final List<SimpleImmutableEntry<String, String>> list) {
     this.map = Collections.unmodifiableMap(map);
@@ -87,8 +87,8 @@ public class Metadata {
    * Programmatically and dynamically create metadata
    */
   public static final class MetadataBuilder {
-    private transient final Map<String, List<String>> map = new HashMap<>();
-    private transient List<SimpleImmutableEntry<String, String>> list = new ArrayList<>();
+    private final Map<String, List<String>> map = new HashMap<>();
+    private List<SimpleImmutableEntry<String, String>> list = new ArrayList<>();
     
     /**
      * programmatically build the metadata

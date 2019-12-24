@@ -21,7 +21,7 @@ public class ReaderWriterVerifierIntegrationTest extends TempFolderTest {
     .addAlgorithm("md5")
     .addMetadata("foo", "bar")
     .addPayloadFile(Paths.get(this.getClass().getClassLoader().getResource("bags/v0_93/bag/data/test1.txt").toURI()))
-    .rootDir(originalBagDir)
+    .bagLocation(originalBagDir)
     .write();
     
     Bag bag = Bag.read(originalBagDir);
@@ -43,7 +43,7 @@ public class ReaderWriterVerifierIntegrationTest extends TempFolderTest {
     .addAlgorithm("md5")
     .addMetadata("foo", "bar")
     .addPayloadFile(Paths.get(this.getClass().getClassLoader().getResource("bags/v0_94/bag/data/test1.txt").toURI()))
-    .rootDir(originalBagDir)
+    .bagLocation(originalBagDir)
     .write();
     
     Bag bag = Bag.read(originalBagDir);
@@ -65,7 +65,7 @@ public class ReaderWriterVerifierIntegrationTest extends TempFolderTest {
     .addAlgorithm("md5")
     .addMetadata("foo", "bar")
     .addPayloadFile(Paths.get(this.getClass().getClassLoader().getResource("bags/v0_95/bag/data/test1.txt").toURI()))
-    .rootDir(originalBagDir)
+    .bagLocation(originalBagDir)
     .write();
     
     Bag bag = Bag.read(originalBagDir);
@@ -87,7 +87,7 @@ public class ReaderWriterVerifierIntegrationTest extends TempFolderTest {
     .addAlgorithm("md5")
     .addMetadata("foo", "bar")
     .addPayloadFile(Paths.get(this.getClass().getClassLoader().getResource("bags/v0_96/bag/data/test1.txt").toURI()))
-    .rootDir(originalBagDir)
+    .bagLocation(originalBagDir)
     .write();
     
     Bag bag = Bag.read(originalBagDir);
@@ -109,7 +109,7 @@ public class ReaderWriterVerifierIntegrationTest extends TempFolderTest {
     .addAlgorithm("md5")
     .addMetadata("foo", "bar")
     .addPayloadFile(Paths.get(this.getClass().getClassLoader().getResource("bags/v0_97/bag/data/test1.txt").toURI()))
-    .rootDir(originalBagDir)
+    .bagLocation(originalBagDir)
     .write();
     
     Bag bag = Bag.read(originalBagDir);
@@ -131,7 +131,7 @@ public class ReaderWriterVerifierIntegrationTest extends TempFolderTest {
     .addAlgorithm("md5")
     .addMetadata("foo", "bar")
     .addPayloadFile(Paths.get(this.getClass().getClassLoader().getResource("bags/v1_0/bag/data/foo.txt").toURI()))
-    .rootDir(originalBagDir)
+    .bagLocation(originalBagDir)
     .write();
     
     Bag bag = Bag.read(originalBagDir);

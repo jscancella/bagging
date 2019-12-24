@@ -42,8 +42,7 @@ public enum ManifestVerifier {; //using enum to enforce singleton
    * @throws InvalidBagitFileFormatException if a manifest is not formatted correctly
    * @throws FileNotInPayloadDirectoryException if a file listed in a manifest is not in the payload directory
    */
-  public static void verifyManifests(final Bag bag, final boolean ignoreHiddenFiles)
-      throws IOException, MaliciousPathException, InvalidBagitFileFormatException, FileNotInPayloadDirectoryException {
+  public static void verifyManifests(final Bag bag, final boolean ignoreHiddenFiles)throws IOException{
     
     final Set<Path> allFilesListedInManifests = getAllFilesListedInManifests(bag);
     checkAllFilesListedInManifestExist(allFilesListedInManifests);
@@ -58,7 +57,7 @@ public enum ManifestVerifier {; //using enum to enforce singleton
   /*
    * get the full path (absolute) of all the files listed in all the manifests
    */
-  private static Set<Path> getAllFilesListedInManifests(final Bag bag) throws IOException, MaliciousPathException, InvalidBagitFileFormatException {
+  private static Set<Path> getAllFilesListedInManifests(final Bag bag) throws IOException {
     logger.debug(messages.getString("all_files_in_manifests"));
     
     final Set<Path> filesListedInManifests = new HashSet<>();
@@ -77,7 +76,7 @@ public enum ManifestVerifier {; //using enum to enforce singleton
   /*
    * Make sure all the listed files actually exist
    */
-  private static void checkAllFilesListedInManifestExist(final Set<Path> files) throws FileNotInPayloadDirectoryException {
+  private static void checkAllFilesListedInManifestExist(final Set<Path> files) {
     logger.info(messages.getString("check_all_files_in_manifests_exist"));
     
     for (final Path file : files) {
