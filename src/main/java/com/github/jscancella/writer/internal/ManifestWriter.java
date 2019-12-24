@@ -38,8 +38,7 @@ public enum ManifestWriter {
    * @throws IOException
    *           if there was a problem writing a file
    */
-  public static Set<Path> writePayloadManifests(final Set<Manifest> manifests, final Path outputDir,
-      final Charset charsetName) throws IOException{
+  public static Set<Path> writePayloadManifests(final Set<Manifest> manifests, final Path outputDir, final Charset charsetName) throws IOException{
     return writeManifests(manifests, outputDir, "manifest-", charsetName);
   }
 
@@ -57,16 +56,16 @@ public enum ManifestWriter {
    * @throws IOException
    *           if there was a problem writing a file
    */
-  public static Set<Path> writeTagManifests(final Set<Manifest> tagManifests, final Path outputDir,
-      final Charset charsetName) throws IOException{
+  public static Set<Path> writeTagManifests(final Set<Manifest> tagManifests, final Path outputDir, final Charset charsetName) throws IOException{
     return writeManifests(tagManifests, outputDir, "tagmanifest-", charsetName);
   }
 
   /*
    * Generic method to write manifests
    */
-  private static Set<Path> writeManifests(final Set<Manifest> manifests, final Path outputDir,
-      final String filenameBase, final Charset charsetName) throws IOException{
+  private static Set<Path> writeManifests(
+      final Set<Manifest> manifests, final Path outputDir, final String filenameBase, final Charset charsetName) throws IOException{
+    
     final Set<Path> manifestFiles = new HashSet<>();
 
     for(final Manifest manifest : manifests){
