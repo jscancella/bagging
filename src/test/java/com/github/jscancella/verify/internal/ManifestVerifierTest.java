@@ -10,8 +10,6 @@ import org.junit.jupiter.api.Test;
 import com.github.jscancella.domain.Bag;
 import com.github.jscancella.exceptions.FileNotInManifestException;
 import com.github.jscancella.exceptions.FileNotInPayloadDirectoryException;
-import com.github.jscancella.reader.BagReader;
-import com.github.jscancella.verify.internal.ManifestVerifier;
 
 public class ManifestVerifierTest {
   
@@ -20,7 +18,7 @@ public class ManifestVerifierTest {
   @Test
   public void testErrorWhenManifestListFileThatDoesntExist() throws Exception{
     rootDir = Paths.get(new File("src/test/resources/filesInManifestDontExist").toURI());
-    Bag bag = BagReader.read(rootDir);
+    Bag bag = Bag.read(rootDir);
     
     Assertions.assertThrows(FileNotInPayloadDirectoryException.class, 
         () -> { ManifestVerifier.verifyManifests(bag, true); });
@@ -29,7 +27,7 @@ public class ManifestVerifierTest {
   @Test
   public void testErrorWhenFileIsntInManifest() throws Exception{
     rootDir = Paths.get(new File("src/test/resources/filesInPayloadDirAreNotInManifest").toURI());
-    Bag bag = BagReader.read(rootDir);
+    Bag bag = Bag.read(rootDir);
     
     Assertions.assertThrows(FileNotInManifestException.class, 
         () -> { ManifestVerifier.verifyManifests(bag, true); });
@@ -38,7 +36,7 @@ public class ManifestVerifierTest {
   @Test
   public void testBagWithTagFilesInPayloadIsValid() throws Exception{
     rootDir = Paths.get(new File("src/test/resources/bags/v0_96/bag-with-tagfiles-in-payload-manifest").toURI());
-    Bag bag = BagReader.read(rootDir);
+    Bag bag = Bag.read(rootDir);
     
     ManifestVerifier.verifyManifests(bag, true);
   }
@@ -46,7 +44,7 @@ public class ManifestVerifierTest {
   @Test
   public void testNotALlFilesListedInAllManifestsThrowsException() throws Exception{
     Path bagDir = Paths.get(new File("src/test/resources/notAllFilesListedInAllManifestsBag").toURI());
-    Bag bag = BagReader.read(bagDir);
+    Bag bag = Bag.read(bagDir);
     Assertions.assertThrows(FileNotInManifestException.class, 
         () -> { ManifestVerifier.verifyManifests(bag, true); });
   }

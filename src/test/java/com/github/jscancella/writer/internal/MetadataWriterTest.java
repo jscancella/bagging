@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import com.github.jscancella.TempFolderTest;
 import com.github.jscancella.domain.Metadata;
 import com.github.jscancella.domain.Version;
+import com.github.jscancella.domain.Metadata.MetadataBuilder;
 
 public class MetadataWriterTest extends TempFolderTest {
   
@@ -19,10 +20,11 @@ public class MetadataWriterTest extends TempFolderTest {
     Path rootDir = createDirectory("writeBagitInfo");
     Path bagInfo = rootDir.resolve("bag-info.txt");
     Path packageInfo = rootDir.resolve("package-info.txt");
-    Metadata metadata = new Metadata();
-    metadata.add("key1", "value1");
-    metadata.add("key2", "value2");
-    metadata.add("key3", "value3");
+    Metadata metadata = new MetadataBuilder()
+      .add("key1", "value1")
+      .add("key2", "value2")
+      .add("key3", "value3")
+      .build();
     
     Assertions.assertFalse(Files.exists(bagInfo));
     Assertions.assertFalse(Files.exists(packageInfo));

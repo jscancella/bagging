@@ -18,7 +18,7 @@ public enum BagitTextFileVerifier {; //using to enforce singleton
   private static final String LINE2_REGEX = "(Tag-File-Character-Encoding: )\\S*";
   private static final int NUMBER_OF_LINES = 2; //there should be exactly 2 lines in the bagit.txt file
   
-  public static void checkBagitTextFile(final Bag bag) throws IOException, InvalidBagitFileFormatException {
+  public static void checkBagitTextFile(final Bag bag) throws IOException {
     if(Version.VERSION_1_0().isSameOrNewer(bag.getVersion())){
       final List<String> lines = Files.readAllLines(bag.getRootDir().resolve("bagit.txt"), StandardCharsets.UTF_8);
       throwErrorIfLinesDoNotMatchStrict(lines);
@@ -30,7 +30,7 @@ public enum BagitTextFileVerifier {; //using to enforce singleton
    * BagIt-Version: <M.N>
    * Tag-File-Character-Encoding: <ENCODING>
    */
-  static void throwErrorIfLinesDoNotMatchStrict(final List<String> lines) throws InvalidBagitFileFormatException{
+  static void throwErrorIfLinesDoNotMatchStrict(final List<String> lines){
     if(lines.size() > NUMBER_OF_LINES){
       final List<String> offendingLines = lines.subList(2, lines.size()-1);
       throw new InvalidBagitFileFormatException(MessageFormatter

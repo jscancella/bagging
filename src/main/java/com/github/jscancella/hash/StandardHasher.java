@@ -11,7 +11,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Formatter;
 
 /**
- * Constant definitions for the standard {@link Hasher}. Pretty much every computer will be able to implement these
+ * Constant definitions for the standard {@link Hasher}. Pretty much every computer will be able to implement these.
  */
 public enum StandardHasher implements Hasher {
   MD5("MD5", "md5"),

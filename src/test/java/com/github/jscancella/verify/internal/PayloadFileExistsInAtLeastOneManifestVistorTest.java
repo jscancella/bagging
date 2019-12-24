@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 
 import com.github.jscancella.TempFolderTest;
 import com.github.jscancella.exceptions.FileNotInManifestException;
-import com.github.jscancella.verify.internal.PayloadFileExistsInAtLeastOneManifestVistor;
 
 public class PayloadFileExistsInAtLeastOneManifestVistorTest extends TempFolderTest {
 

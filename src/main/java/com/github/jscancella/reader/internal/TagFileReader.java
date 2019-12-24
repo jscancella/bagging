@@ -33,7 +33,7 @@ public enum TagFileReader {;//using enum to enforce singleton
    * @throws MaliciousPathException if the path is trying to reference a place outside the bag
    * @throws InvalidBagitFileFormatException if the path is invalid
    */
-  public static Path createFileFromManifest(final Path bagRootDir, final String path) throws MaliciousPathException, InvalidBagitFileFormatException{
+  public static Path createFileFromManifest(final Path bagRootDir, final String path) {
     checkPathSeparator(path);
     checkTildaMaliciousPath(path);
 
@@ -47,14 +47,14 @@ public enum TagFileReader {;//using enum to enforce singleton
     return file;
   }
 
-  private static void checkPathSeparator(final String path) throws InvalidBagitFileFormatException{
+  private static void checkPathSeparator(final String path){
     if(path.contains("\\")){
       final String formattedMessage = messages.getString("blackslash_used_as_path_separator_error");
       throw new InvalidBagitFileFormatException(MessageFormatter.format(formattedMessage, path).getMessage());
     }
   }
 
-  private static void checkTildaMaliciousPath(final String path) throws MaliciousPathException{
+  private static void checkTildaMaliciousPath(final String path){
     if(path.contains("~/")){
       final String formattedMessage = messages.getString("malicious_path_error");
       throw new MaliciousPathException(MessageFormatter.format(formattedMessage, path).getMessage());
@@ -76,7 +76,7 @@ public enum TagFileReader {;//using enum to enforce singleton
     return encoded.replaceAll("%0A", "\n").replaceAll("%0D", "\r");
   }
 
-  private static Path createPath(final String path, final Path bagRootDir) throws InvalidBagitFileFormatException{
+  private static Path createPath(final String path, final Path bagRootDir){
     if(path.startsWith("file://")){
       try {
         return Paths.get(new URI(path));
@@ -85,12 +85,10 @@ public enum TagFileReader {;//using enum to enforce singleton
         throw new InvalidBagitFileFormatException(MessageFormatter.format(formattedMessage, path).getMessage(), e);
       }
     }
-    else{
-      return bagRootDir.resolve(path).normalize();
-    }
+    return bagRootDir.resolve(path).normalize();
   }
 
-  private static void checkNormalizedPathIsInBag(final Path file, final Path bagRootDir) throws MaliciousPathException{
+  private static void checkNormalizedPathIsInBag(final Path file, final Path bagRootDir){
     if(!file.normalize().startsWith(bagRootDir)){
       final String formattedMessage = messages.getString("malicious_path_error");
       throw new MaliciousPathException(MessageFormatter.format(formattedMessage, file).getMessage());

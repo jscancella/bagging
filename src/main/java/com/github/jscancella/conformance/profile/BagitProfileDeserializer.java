@@ -73,7 +73,7 @@ public class BagitProfileDeserializer extends StdDeserializer<BagitProfile> {
 
   /**
    * Parse required tags due to specification version 1.1.0 defined at
-   * {@link https://github.com/bagit-profiles/bagit-profiles-specification/tree/1.1.0}
+   * {@link "https://github.com/bagit-profiles/bagit-profiles-specification/tree/1.1.0"}
    * Note: If one of the tags is missing, a NullPointerException is thrown.
    *
    * @param bagitProfileInfoNode Root node of the bagit profile info section.
@@ -104,7 +104,7 @@ public class BagitProfileDeserializer extends StdDeserializer<BagitProfile> {
 
   /**
    * Parse optional tags due to examples at specification version 1.1.0 defined at
-   * {@link https://github.com/bagit-profiles/bagit-profiles-specification/tree/1.1.0}
+   * {@link "https://github.com/bagit-profiles/bagit-profiles-specification/tree/1.1.0"}
    *
    * @param bagitProfileInfoNode Root node of the bagit profile info section.
    * @param profile Representation of bagit profile .
@@ -168,7 +168,7 @@ public class BagitProfileDeserializer extends StdDeserializer<BagitProfile> {
         }
       }
       
-      logger.debug("{}: {}", node.getKey(), entry);
+      logger.debug(messages.getString("parsed_key_value"), node.getKey(), entry);
       bagInfo.put(node.getKey(), entry);
     }
     

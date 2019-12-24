@@ -18,7 +18,7 @@ import com.github.jscancella.exceptions.FileNotInManifestException;
  */
 public final class PayloadFileExistsInAtLeastOneManifestVistor extends AbstractPayloadFileExistsInManifestsVistor {
   private static final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
-  private transient final Set<Path> filesListedInManifests;
+  private final Set<Path> filesListedInManifests;
 
   public PayloadFileExistsInAtLeastOneManifestVistor(final Set<Path> filesListedInManifests, final boolean ignoreHiddenFiles) {
     super(ignoreHiddenFiles);
@@ -26,12 +26,12 @@ public final class PayloadFileExistsInAtLeastOneManifestVistor extends AbstractP
   }
 
   @Override
-  public FileVisitResult visitFile(final Path path, final BasicFileAttributes attrs)throws IOException, FileNotInManifestException{
+  public FileVisitResult visitFile(final Path path, final BasicFileAttributes attrs)throws IOException{
 	if(Files.isHidden(path) && ignoreHiddenFiles){
 	  logger.debug(messages.getString("skipping_hidden_file"), path);
   }
 	else {
-	  if(Files.isRegularFile(path) && !filesListedInManifests.contains(path.normalize())){
+	  if(Files.isRegularFile(path) && !filesListedInManifests.contains(path.toAbsolutePath())){
       final String formattedMessage = messages.getString("file_not_in_any_manifest_error");
       throw new FileNotInManifestException(MessageFormatter.format(formattedMessage, path).getMessage());
     }

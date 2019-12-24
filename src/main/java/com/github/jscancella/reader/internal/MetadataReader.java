@@ -31,7 +31,7 @@ public enum MetadataReader {;//using enum to enforce singleton
    * @throws IOException if there is a problem reading a file
    * @throws InvalidBagMetadataException if the metadata file does not conform to the bagit spec
    */
-  public static List<SimpleImmutableEntry<String, String>> readBagMetadata(final Path rootDir, final Charset encoding) throws IOException, InvalidBagMetadataException{
+  public static List<SimpleImmutableEntry<String, String>> readBagMetadata(final Path rootDir, final Charset encoding) throws IOException{
     logger.info(messages.getString("attempting_read_metadata"));
     List<SimpleImmutableEntry<String, String>> metadata = new ArrayList<>();
     

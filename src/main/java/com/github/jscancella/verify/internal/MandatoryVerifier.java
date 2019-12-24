@@ -34,7 +34,7 @@ public enum MandatoryVerifier {; //using enum to enforce singleton
    * 
    * @throws FileNotInPayloadDirectoryException if one or more of the fetch items don't exist
    */
-  public static void checkFetchItemsExist(final List<FetchItem> items, final Path bagDir) throws FileNotInPayloadDirectoryException{
+  public static void checkFetchItemsExist(final List<FetchItem> items, final Path bagDir){
     logger.info(messages.getString("checking_fetch_items_exist"), items.size(), bagDir);
     for(final FetchItem item : items){
       if(!Files.exists(item.getPath())){
@@ -50,7 +50,7 @@ public enum MandatoryVerifier {; //using enum to enforce singleton
    * @param bag the bag to check
    * @throws MissingBagitFileException if the bag does not contain the bagit.txt file as required by the bagit specification
    */
-  public static void checkBagitFileExists(final Bag bag) throws MissingBagitFileException{
+  public static void checkBagitFileExists(final Bag bag){
     logger.info(messages.getString("checking_bagit_text_file_exists"));
     final Path bagitFile = bag.getTagFileDir().resolve("bagit.txt");
     
@@ -67,7 +67,7 @@ public enum MandatoryVerifier {; //using enum to enforce singleton
    * 
    * @throws MissingPayloadDirectoryException if the bag does not contain the payload directory
    */
-  public static void checkPayloadDirectoryExists(final Bag bag) throws MissingPayloadDirectoryException{
+  public static void checkPayloadDirectoryExists(final Bag bag){
     logger.info(messages.getString("checking_payload_directory_exists"));
     final Path dataDir = bag.getDataDir();
     
@@ -85,7 +85,7 @@ public enum MandatoryVerifier {; //using enum to enforce singleton
    * @throws MissingPayloadManifestException if there are no payload manifests in the bag
    * @throws IOException if there was an error reading a file
    */
-  public static void checkIfAtLeastOnePayloadManifestsExist(final Bag bag) throws MissingPayloadManifestException, IOException{
+  public static void checkIfAtLeastOnePayloadManifestsExist(final Bag bag) throws IOException{
     logger.info(messages.getString("checking_payload_manifest_count"), bag.getRootDir());
     
     try(DirectoryStream<Path> directoryStream = Files.newDirectoryStream(bag.getTagFileDir())){

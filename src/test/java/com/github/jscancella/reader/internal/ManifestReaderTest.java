@@ -10,48 +10,51 @@ import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
 import com.github.jscancella.TempFolderTest;
-import com.github.jscancella.domain.Bag;
+import com.github.jscancella.domain.Manifest;
 import com.github.jscancella.exceptions.InvalidBagitFileFormatException;
 import com.github.jscancella.exceptions.MaliciousPathException;
 
-public class ManifestReaderTest extends TempFolderTest {
-  
+public class ManifestReaderTest extends TempFolderTest {  
   @Test
-  public void testReadAllManifests() throws Exception{
+  public void testReadManifest() throws Exception {
     Path rootBag = Paths.get(getClass().getClassLoader().getResource("bags/v0_97/bag").toURI());
-    Bag bag = new Bag();
-    bag.setRootDir(rootBag);
-    ManifestReader.readAllManifests(rootBag, bag);
-    Assertions.assertEquals(1, bag.getPayLoadManifests().size());
-    Assertions.assertEquals(1, bag.getTagManifests().size());
+    Path manifestFile = rootBag.resolve("manifest-md5.txt");
+    Manifest manifest = ManifestReader.readManifest(manifestFile, rootBag, StandardCharsets.UTF_8);
+    Assertions.assertEquals(5, manifest.getEntries().size());
+    Assertions.assertEquals("md5", manifest.getBagitAlgorithmName());
+    
+    manifestFile = rootBag.resolve("tagmanifest-md5.txt");
+    manifest = ManifestReader.readManifest(manifestFile, rootBag, StandardCharsets.UTF_8);
+    Assertions.assertEquals(4, manifest.getEntries().size());
+    Assertions.assertEquals("md5", manifest.getBagitAlgorithmName());
   }
   
   @Test
   public void testReadUpDirectoryMaliciousManifestThrowsException() throws Exception{
-    Path manifestFile = Paths.get(getClass().getClassLoader().getResource("maliciousManifestFile/upAdirectoryReference.txt").toURI());
+    Path manifestFile = Paths.get(getClass().getClassLoader().getResource("maliciousManifestFile/upAdirectoryReference-md5.txt").toURI());
     Assertions.assertThrows(MaliciousPathException.class, 
-        () -> { ManifestReader.readChecksumFileMap(manifestFile, Paths.get("/foo"), StandardCharsets.UTF_8); });
+        () -> { ManifestReader.readManifest(manifestFile, manifestFile.getParent(), StandardCharsets.UTF_8); });
   }
   
   @Test
   public void testReadTildeMaliciousManifestThrowsException() throws Exception{
-    Path manifestFile = Paths.get(getClass().getClassLoader().getResource("maliciousManifestFile/tildeReference.txt").toURI());
+    Path manifestFile = Paths.get(getClass().getClassLoader().getResource("maliciousManifestFile/tildeReference-md5.txt").toURI());
     Assertions.assertThrows(MaliciousPathException.class, 
-        () -> { ManifestReader.readChecksumFileMap(manifestFile, Paths.get("/foo"), StandardCharsets.UTF_8); });
+        () -> { ManifestReader.readManifest(manifestFile, manifestFile.getParent(), StandardCharsets.UTF_8); });
   }
   
   @Test
   @EnabledOnOs(OS.WINDOWS)
   public void testReadFileUrlMaliciousManifestThrowsException() throws Exception{
-    Path manifestFile = Paths.get(getClass().getClassLoader().getResource("maliciousManifestFile/fileUrl.txt").toURI());
+    Path manifestFile = Paths.get(getClass().getClassLoader().getResource("maliciousManifestFile/fileUrl-md5.txt").toURI());
     Assertions.assertThrows(MaliciousPathException.class, 
-        () -> {  ManifestReader.readChecksumFileMap(manifestFile, Paths.get("/bar"), StandardCharsets.UTF_8); });
+        () -> {  ManifestReader.readManifest(manifestFile, Paths.get("/bar"), StandardCharsets.UTF_8); });
   }
   
   @Test
   public void testReadWindowsSpecialDirMaliciousManifestThrowsException() throws Exception{
-    Path manifestFile = Paths.get(getClass().getClassLoader().getResource("maliciousManifestFile/windowsSpecialDirectoryName.txt").toURI());
+    Path manifestFile = Paths.get(getClass().getClassLoader().getResource("maliciousManifestFile/windowsSpecialDirectoryName-md5.txt").toURI());
     Assertions.assertThrows(InvalidBagitFileFormatException.class, 
-        () -> { ManifestReader.readChecksumFileMap(manifestFile, Paths.get("/foo"), StandardCharsets.UTF_8); });
+        () -> { ManifestReader.readManifest(manifestFile, manifestFile.getParent(), StandardCharsets.UTF_8); });
   }
 }

@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.MessageFormatter;
 
+import com.github.jscancella.exceptions.NoSuchBagitAlgorithmException;
+
 /**
  * Responsible for mapping between the bagit algorithm name and the actual implementation of that checksum.
  * By default this includes implementations from {@link StandardHasher}. 
@@ -37,6 +39,12 @@ public enum BagitChecksumNameMapping {
     }
   }
   
+  /**
+   * map an implementation to the bagit algorithm name 
+   * @param bagitAlgorithmName the all lowercase name as defined in the specification
+   * @param implementation the implementation that will be used to compute the checksum
+   * @return if the implementation was successfully added
+   */
   public static boolean add(final String bagitAlgorithmName, final Hasher implementation) {
     try {
       implementation.initialize();
@@ -50,15 +58,33 @@ public enum BagitChecksumNameMapping {
     return false;
   }
   
+  /**
+   * remove a particular implementation
+   * @param bagitAlgorithmName the name of the algorithm
+   */
   public static void clear(final String bagitAlgorithmName) {
     INSTANCE.map.remove(bagitAlgorithmName);
   }
   
-  public static Hasher get(final String bagitAlgorithmName) throws NoSuchAlgorithmException {
+  /**
+   * check if a bagit algorithm is supported
+   * @param bagitAlgorithmName the name of the algorithm
+   * @return true if a bagit algorithm is supported
+   */
+  public static boolean isSupported(final String bagitAlgorithmName) {
+    return INSTANCE.map.containsKey(bagitAlgorithmName);
+  }
+  
+  /**
+   * Get a specific implementation associated with the bagit algorithm name
+   * @param bagitAlgorithmName the name of the algorithm
+   * @return specific implementation associated with the bagit algorithm name
+   */
+  public static Hasher get(final String bagitAlgorithmName){
     if(!INSTANCE.map.containsKey(bagitAlgorithmName)) {
       final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
       final String message = MessageFormatter.format(messages.getString("no_implementation_error"), bagitAlgorithmName, INSTANCE.toString()).getMessage();
-      throw new NoSuchAlgorithmException(message);
+      throw new NoSuchBagitAlgorithmException(message);
     }
     return INSTANCE.map.get(bagitAlgorithmName);
   }

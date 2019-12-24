@@ -38,7 +38,9 @@ public enum KeyValueReader {;//using enum to enforce singleton
    * @throws InvalidBagMetadataException if the file does not conform to pattern of key value
    */
   @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-  public static List<SimpleImmutableEntry<String, String>> readKeyValuesFromFile(final Path file, final String splitRegex, final Charset charset) throws IOException, InvalidBagMetadataException{
+  public static List<SimpleImmutableEntry<String, String>> 
+    readKeyValuesFromFile(final Path file, final String splitRegex, final Charset charset) throws IOException{
+    
     final List<SimpleImmutableEntry<String, String>> keyValues = new ArrayList<>();
     
     try(BufferedReader reader = Files.newBufferedReader(file, charset)){
@@ -73,7 +75,7 @@ public enum KeyValueReader {;//using enum to enforce singleton
     logger.debug(messages.getString("found_indented_line"), oldKeyValue.getKey());
   }
   
-  private static String[] checkLineFormat(final String line, final String splitRegex) throws InvalidBagMetadataException{
+  private static String[] checkLineFormat(final String line, final String splitRegex){
     final String[] parts = line.split(splitRegex, PARSED_LINE_LENGTH);
     
     if(parts.length != PARSED_LINE_LENGTH){

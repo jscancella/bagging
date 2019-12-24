@@ -18,7 +18,6 @@ import com.github.jscancella.conformance.exceptions.RequiredManifestNotPresentEx
 import com.github.jscancella.conformance.exceptions.RequiredMetadataFieldNotPresentException;
 import com.github.jscancella.conformance.exceptions.RequiredTagFileNotPresentException;
 import com.github.jscancella.domain.Bag;
-import com.github.jscancella.reader.BagReader;
 
 public class BagProfileCheckerTest extends TempFolderTest {
   private static final Path profileJson = new File("src/test/resources/bagitProfiles/exampleProfile.json").toPath();
@@ -26,7 +25,7 @@ public class BagProfileCheckerTest extends TempFolderTest {
   @Test
   public void testBagConformsToProfile() throws Exception{
     Path bagRootPath = new File("src/test/resources/bagitProfileTestBags/profileConformantBag").toPath();
-    Bag bag = BagReader.read(bagRootPath);
+    Bag bag = Bag.read(bagRootPath);
     
     try(InputStream inputStream = Files.newInputStream(profileJson, StandardOpenOption.READ)){
       BagProfileChecker.bagConformsToProfile(inputStream, bag);
@@ -36,7 +35,7 @@ public class BagProfileCheckerTest extends TempFolderTest {
   @Test
   public void testFetchFileNotAllowedException() throws Exception{
     Path bagRootPath = new File("src/test/resources/bagitProfileTestBags/failFetchBag").toPath();
-    Bag bag = BagReader.read(bagRootPath);
+    Bag bag = Bag.read(bagRootPath);
     
     try(InputStream inputStream = Files.newInputStream(profileJson, StandardOpenOption.READ)){
       Assertions.assertThrows(FetchFileNotAllowedException.class, 
@@ -47,7 +46,7 @@ public class BagProfileCheckerTest extends TempFolderTest {
   @Test
   public void testRequiredMetadataFieldNotPresentException() throws Exception{
     Path bagRootPath = new File("src/test/resources/bagitProfileTestBags/emailFieldMissingBag").toPath();
-    Bag bag = BagReader.read(bagRootPath);
+    Bag bag = Bag.read(bagRootPath);
     
     try(InputStream inputStream = Files.newInputStream(profileJson, StandardOpenOption.READ)){
       Assertions.assertThrows(RequiredMetadataFieldNotPresentException.class, 
@@ -58,7 +57,7 @@ public class BagProfileCheckerTest extends TempFolderTest {
   @Test
   public void testMetatdataValueIsNotAcceptableException() throws Exception{
     Path bagRootPath = new File("src/test/resources/bagitProfileTestBags/wrongValueForContactNameBag").toPath();
-    Bag bag = BagReader.read(bagRootPath);
+    Bag bag = Bag.read(bagRootPath);
     
     try(InputStream inputStream = Files.newInputStream(profileJson, StandardOpenOption.READ)){
       Assertions.assertThrows(MetatdataValueIsNotAcceptableException.class, 
@@ -69,7 +68,7 @@ public class BagProfileCheckerTest extends TempFolderTest {
   @Test
   public void testMetadataValueIsNotRepeatableException() throws Exception{
     Path bagRootPath = new File("src/test/resources/bagitProfileTestBags/repeatedMetadataBag").toPath();
-    Bag bag = BagReader.read(bagRootPath);
+    Bag bag = Bag.read(bagRootPath);
     
     try(InputStream inputStream = Files.newInputStream(profileJson, StandardOpenOption.READ)){
       Assertions.assertThrows(MetatdataValueIsNotRepeatableException.class, 
@@ -80,7 +79,7 @@ public class BagProfileCheckerTest extends TempFolderTest {
   @Test
   public void testRequiredPayloadManifestNotPresentException() throws Exception{
     Path bagRootPath = new File("src/test/resources/bagitProfileTestBags/missingRequiredPayloadManifestBag").toPath();
-    Bag bag = BagReader.read(bagRootPath);
+    Bag bag = Bag.read(bagRootPath);
     
     try(InputStream inputStream = Files.newInputStream(profileJson, StandardOpenOption.READ)){
       Assertions.assertThrows(RequiredManifestNotPresentException.class, 
@@ -91,7 +90,7 @@ public class BagProfileCheckerTest extends TempFolderTest {
   @Test
   public void testRequiredTagManifestNotPresentException() throws Exception{
     Path bagRootPath = new File("src/test/resources/bagitProfileTestBags/missingRequiredTagManifestBag").toPath();
-    Bag bag = BagReader.read(bagRootPath);
+    Bag bag = Bag.read(bagRootPath);
     
     try(InputStream inputStream = Files.newInputStream(profileJson, StandardOpenOption.READ)){
       Assertions.assertThrows(RequiredManifestNotPresentException.class, 
@@ -102,7 +101,7 @@ public class BagProfileCheckerTest extends TempFolderTest {
   @Test
   public void testRequiredTagFileNotPresentException() throws Exception{
     Path bagRootPath = new File("src/test/resources/bagitProfileTestBags/missingRequiredTagFileBag").toPath();
-    Bag bag = BagReader.read(bagRootPath);
+    Bag bag = Bag.read(bagRootPath);
     
     try(InputStream inputStream = Files.newInputStream(profileJson, StandardOpenOption.READ)){
       Assertions.assertThrows(RequiredTagFileNotPresentException.class, 
@@ -113,7 +112,7 @@ public class BagProfileCheckerTest extends TempFolderTest {
   @Test
   public void testBagitVersionIsNotAcceptableException() throws Exception{
     Path bagRootPath = new File("src/test/resources/bagitProfileTestBags/wrongBagitVersionBag").toPath();
-    Bag bag = BagReader.read(bagRootPath);
+    Bag bag = Bag.read(bagRootPath);
     
     try(InputStream inputStream = Files.newInputStream(profileJson, StandardOpenOption.READ)){
       Assertions.assertThrows(BagitVersionIsNotAcceptableException.class, 

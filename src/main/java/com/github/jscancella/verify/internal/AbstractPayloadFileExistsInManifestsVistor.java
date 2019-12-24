@@ -18,7 +18,7 @@ import com.github.jscancella.internal.PathUtils;
 abstract public class AbstractPayloadFileExistsInManifestsVistor extends SimpleFileVisitor<Path> {
   protected static final Logger logger = LoggerFactory.getLogger(AbstractPayloadFileExistsInManifestsVistor.class);
   protected static final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
-  protected transient final boolean ignoreHiddenFiles;
+  protected final boolean ignoreHiddenFiles;
 
   public AbstractPayloadFileExistsInManifestsVistor(final boolean ignoreHiddenFiles) {
     super();

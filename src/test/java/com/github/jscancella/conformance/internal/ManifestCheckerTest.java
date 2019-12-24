@@ -4,21 +4,44 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.Security;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import com.github.jscancella.TempFolderTest;
 import com.github.jscancella.conformance.BagitWarning;
 import com.github.jscancella.exceptions.InvalidBagitFileFormatException;
+import com.github.jscancella.hash.BagitChecksumNameMapping;
+import com.github.jscancella.verify.SHA3Hasher;
 
 public class ManifestCheckerTest extends TempFolderTest{
   
+  static {
+    if (Security.getProvider("BC") == null) {
+      Security.addProvider(new BouncyCastleProvider());
+    }
+  }
+  
   private final Path rootDir = Paths.get("src","test","resources","linterTestBag");
+  
+  @BeforeAll
+  public static void setup() {
+    boolean successful = BagitChecksumNameMapping.add("sha3", SHA3Hasher.INSTANCE);
+    Assertions.assertTrue(successful);
+  }
+  
+  @AfterAll
+  public static void teardown() {
+    BagitChecksumNameMapping.clear("sha3");
+  }
   
   @Test
   public void testCheckManifests() throws Exception{

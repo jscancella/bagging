@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.jscancella.conformance.BagitWarning;
-import com.github.jscancella.exceptions.InvalidBagMetadataException;
 import com.github.jscancella.reader.internal.MetadataReader;
 
 /**
@@ -25,7 +24,7 @@ public enum MetadataChecker { ;// using enum to enforce singleton
   private static final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
   
   public static void checkBagMetadata(final Path bagitDir, final Charset encoding, final Set<BagitWarning> warnings, 
-      final Collection<BagitWarning> warningsToIgnore) throws IOException, InvalidBagMetadataException{
+      final Collection<BagitWarning> warningsToIgnore) throws IOException{
     checkForPayloadOxumMetadata(bagitDir, encoding, warnings, warningsToIgnore);
   }
   
@@ -33,7 +32,7 @@ public enum MetadataChecker { ;// using enum to enforce singleton
    * Check that the metadata contains the Payload-Oxum key-value pair
    */
   private static void checkForPayloadOxumMetadata(final Path bagitDir, final Charset encoding, final Set<BagitWarning> warnings, 
-      final Collection<BagitWarning> warningsToIgnore) throws IOException, InvalidBagMetadataException{
+      final Collection<BagitWarning> warningsToIgnore) throws IOException{
     if(!warningsToIgnore.contains(BagitWarning.PAYLOAD_OXUM_MISSING)){
       final List<SimpleImmutableEntry<String, String>> metadata = MetadataReader.readBagMetadata(bagitDir, encoding);
       boolean containsPayloadOxum = false;

@@ -18,8 +18,6 @@ import com.github.jscancella.exceptions.FileNotInPayloadDirectoryException;
 import com.github.jscancella.exceptions.MissingBagitFileException;
 import com.github.jscancella.exceptions.MissingPayloadDirectoryException;
 import com.github.jscancella.exceptions.MissingPayloadManifestException;
-import com.github.jscancella.reader.BagReader;
-import com.github.jscancella.verify.internal.MandatoryVerifier;
 
 public class MandatoryVerifierTest extends TempFolderTest{
   
@@ -28,7 +26,7 @@ public class MandatoryVerifierTest extends TempFolderTest{
   @Test
   public void testErrorWhenFetchItemsDontExist() throws Exception{
     rootDir = Paths.get(new File("src/test/resources/bad-fetch-bag").toURI());
-    Bag bag = BagReader.read(rootDir);
+    Bag bag = Bag.read(rootDir);
     
     Assertions.assertThrows(FileNotInPayloadDirectoryException.class, 
         () -> { MandatoryVerifier.checkFetchItemsExist(bag.getItemsToFetch(), bag.getRootDir()); });
@@ -37,7 +35,7 @@ public class MandatoryVerifierTest extends TempFolderTest{
   @Test
   public void testErrorWhenMissingPayloadDirectory() throws Exception{
     copyBagToTestFolder();
-    Bag bag = BagReader.read(folder);
+    Bag bag = Bag.read(folder);
     Path dataDir = createDirectory("data");
     deleteDirectory(dataDir);
     
@@ -48,7 +46,7 @@ public class MandatoryVerifierTest extends TempFolderTest{
   @Test
   public void testErrorWhenMissingPayloadManifest() throws Exception{
     copyBagToTestFolder();
-    Bag bag = BagReader.read(folder);
+    Bag bag = Bag.read(folder);
     Path manifestFile = folder.resolve("manifest-md5.txt");
     Files.delete(manifestFile);
     
@@ -59,7 +57,7 @@ public class MandatoryVerifierTest extends TempFolderTest{
   @Test
   public void testErrorWhenMissingBagitTextFile() throws Exception{
     copyBagToTestFolder();
-    Bag bag = BagReader.read(folder);
+    Bag bag = Bag.read(folder);
     Path bagitFile = folder.resolve("bagit.txt");
     Files.delete(bagitFile);
     
