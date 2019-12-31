@@ -182,6 +182,9 @@ One of the inspirations for writing this library was to create a simple to use i
 * while gradle may work running from your IDE this has not been tested and isn't really supported. Instead run all gradle commands from the commandline using the `gradlew` script root directory.
 * Before submitting a pull request run `./gradlew.bat clean check` and there are no errors.
 
+#### Building a release
+run `./gradlew bintrayUpload -Pversion=<VERSION YOU ARE CALLING THIS RELEASE>`
+
 #### Classes/Methods not to use outside this project
 There are many classes that were not designed to be used outside this project, the rules for this are:
 * If a class/method does not contain a javadoc.
