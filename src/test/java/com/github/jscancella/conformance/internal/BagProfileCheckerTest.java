@@ -20,7 +20,7 @@ import com.github.jscancella.conformance.exceptions.RequiredTagFileNotPresentExc
 import com.github.jscancella.domain.Bag;
 
 public class BagProfileCheckerTest extends TempFolderTest {
-  private static final Path profileJson = new File("src/test/resources/bagitProfiles/exampleProfile.json").toPath();
+  private static final Path profileJson = new File("src/test/resources/bagitProfiles/allOptionalFieldsProfile_v1.2.0.json").toPath();
   
   @Test
   public void testBagConformsToProfile() throws Exception{
@@ -45,7 +45,7 @@ public class BagProfileCheckerTest extends TempFolderTest {
   
   @Test
   public void testRequiredMetadataFieldNotPresentException() throws Exception{
-    Path bagRootPath = new File("src/test/resources/bagitProfileTestBags/emailFieldMissingBag").toPath();
+    Path bagRootPath = new File("src/test/resources/bagitProfileTestBags/sourceOrganizationMissingBag").toPath();
     Bag bag = Bag.read(bagRootPath);
     
     try(InputStream inputStream = Files.newInputStream(profileJson, StandardOpenOption.READ)){

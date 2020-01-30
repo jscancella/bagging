@@ -163,7 +163,7 @@ public class BagLinterTest {
   
   @Test
   public void testCheckAgainstProfile() throws Exception{
-    Path profileJson = new File("src/test/resources/bagitProfiles/exampleProfile.json").toPath();
+    Path profileJson = new File("src/test/resources/bagitProfiles/OnlyRequiredFieldsProfile_v1.2.0.json").toPath();
     Path bagRootPath = new File("src/test/resources/bagitProfileTestBags/profileConformantBag").toPath();
     Bag bag = Bag.read(bagRootPath);
     

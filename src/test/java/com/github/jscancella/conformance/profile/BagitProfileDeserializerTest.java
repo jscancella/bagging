@@ -6,28 +6,49 @@
 package com.github.jscancella.conformance.profile;
 
 import java.io.File;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import com.github.jscancella.domain.Version;
 
 
 public class BagitProfileDeserializerTest extends AbstractBagitProfileTest{
 
   @Test
-  public void testDeserialize() throws Exception{
-    BagitProfile expectedProfile = createExpectedProfile();
+  public void testDeserializeMinimalVersion1_2_0() throws Exception{
+    BagitProfile expectedProfile = createMinimalProfile("1.2.0");
     
-    BagitProfile profile = mapper.readValue(new File("src/test/resources/bagitProfiles/exampleProfile.json"), BagitProfile.class);
+    BagitProfile profile = mapper.readValue(new File("src/test/resources/bagitProfiles/OnlyRequiredFieldsProfile_v1.2.0.json"), BagitProfile.class);
     
-    Assertions.assertTrue(expectedProfile.equals(profile));
+    Assertions.assertEquals(expectedProfile, profile);
   }
   
   @Test
-  public void testDeserializeWithoutOptionalTags() throws Exception{
-    BagitProfile minimalProfile = createMinimalProfile();
+  public void testDeserializeMinimalVersion1_3_0() throws Exception{
+    BagitProfile expectedProfile = createMinimalProfile("1.3.0");
     
-    BagitProfile profile = mapper.readValue(new File("src/test/resources/bagitProfiles/exampleProfileOnlyRequiredFields.json"), BagitProfile.class);
-    Assertions.assertTrue(minimalProfile.equals(profile));
+    BagitProfile profile = mapper.readValue(new File("src/test/resources/bagitProfiles/OnlyRequiredFieldsProfile_v1.3.0.json"), BagitProfile.class);
+    
+    Assertions.assertEquals(expectedProfile, profile);
   }
   
+  @Test
+  public void testDeserializeAllOptionsVersion1_2_0() throws Exception{
+    BagitProfile expectedProfile = createExpectedProfile(new Version(1,2));
+    
+    BagitProfile profile = mapper.readValue(new File("src/test/resources/bagitProfiles/allOptionalFieldsProfile_v1.2.0.json"), BagitProfile.class);
+    
+    Assertions.assertEquals(expectedProfile, profile);
+  }
+  
+  @Test
+  public void testDeserializeAllOptionsVersion1_3_0() throws Exception{
+    BagitProfile expectedProfile = createExpectedProfile(new Version(1,3));
+    
+    BagitProfile profile = mapper.readValue(new File("src/test/resources/bagitProfiles/allOptionalFieldsProfile_v1.3.0.json"), BagitProfile.class);
+    
+    Assertions.assertEquals(expectedProfile, profile);
+  }
   
 }

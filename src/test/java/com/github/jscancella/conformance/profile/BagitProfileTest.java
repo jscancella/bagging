@@ -1,6 +1,7 @@
 package com.github.jscancella.conformance.profile;
 
 import java.lang.reflect.Field;
+import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -8,12 +9,14 @@ import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import com.github.jscancella.domain.Version;
+
 public class BagitProfileTest extends AbstractBagitProfileTest {
 	
   @Test
   public void testLogicallySameObjectsAreEqual() {
-    BagitProfile profile = createExpectedProfile();
-    BagitProfile identicalProfile = createExpectedProfile();
+    BagitProfile profile = createExpectedProfile(new Version(1,2));
+    BagitProfile identicalProfile = createExpectedProfile(new Version(1,2));
     Assertions.assertTrue(profile.equals(identicalProfile));
   }
 
@@ -23,12 +26,12 @@ public class BagitProfileTest extends AbstractBagitProfileTest {
    */
   @Test
   public void testEveryVariableIsIncludedInEqualsMethod1() throws Exception {
-    BagitProfile sut = createExpectedProfile();
+    BagitProfile sut = createExpectedProfile(new Version(1,2));
+    BagitProfile otherProfile = createExpectedProfile(new Version(1,2));
     
     Class<BagitProfile> testModelClass = BagitProfile.class;
     Field[] fields = testModelClass.getDeclaredFields();
     for(Field field : fields) {
-      BagitProfile otherProfile = createExpectedProfile();
       field.setAccessible(true);
       
       if(String.class.isAssignableFrom(field.getType())) {
@@ -45,6 +48,9 @@ public class BagitProfileTest extends AbstractBagitProfileTest {
       }
       else if(Serialization.class.isAssignableFrom(field.getType())) {
         field.set(otherProfile, Serialization.optional);
+      }
+      else if(URI.class.isAssignableFrom(field.getType())) {
+        field.set(otherProfile, null);
       }
       else if(field.getName().equalsIgnoreCase("$jacocoData")) {
         //skip as this is only applicable during testing time

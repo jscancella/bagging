@@ -17,7 +17,7 @@ It currently supports version 0.93 through 1.0.
 
 ## Documentation
 We strive to have great documentation! Thus this file follows recommendations from https://www.divio.com/blog/documentation/
-Editors and grammar aficionados are welcome and encouraged to edit this content to make it even better! See "Helping Contribute" below.
+Editors and grammar aficionados are welcome and encouraged to edit this content to make it even better! See `Helping Contribute` below.
 
 ### Explanation
 #### What is a "bag"?
@@ -28,6 +28,9 @@ Typically you need to send files out of band (i.e. not using the internet) and y
 
 #### What is fetching?
 To save on transferring all the files (or multiple copies of the same file) you can use a fetch.txt file. This special file lists where those other files are located on the internet. This library does not handle trying to retrieve these files due to the complicated nature of retrieving files over the internet.
+
+#### What is a BagIt-Profile?
+A BagIt-Profile is a [specification](http://www.bagit-profiles.github.io/bagit-profile-specification) that allows creators and consumers agree on what should be included in a bag. These agreements are saved in a bagit-profile file formatted in JSON and available from a URI (see the specification for more details/requirements). See the `How to verify against a profile?` section for more information
 
 #### How do I include information about the bag within the bag? (metadata)
 There is a special file called bag-info.txt (or package-info.txt for older versions) that is formatted for easy reading by humans. This file is just a list of key value pairs, and with some very few exceptions has no bearing on the bag other than to give additional information.
