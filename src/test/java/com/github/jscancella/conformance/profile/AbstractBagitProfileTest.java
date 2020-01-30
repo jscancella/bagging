@@ -1,13 +1,14 @@
 package com.github.jscancella.conformance.profile;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.github.jscancella.domain.Version;
 
 public abstract class AbstractBagitProfileTest {
   protected ObjectMapper mapper;
@@ -20,66 +21,58 @@ public abstract class AbstractBagitProfileTest {
     mapper.registerModule(module);
   }
   
-  protected BagitProfile createExpectedProfile(){
-    BagitProfile expectedProfile = new BagitProfile();
+  protected BagitProfile createExpectedProfile(Version version){
+    BagitProfileBuilder builder = new BagitProfileBuilder();
     
-    expectedProfile.setBagitProfileIdentifier("http://canadiana.org/standards/bagit/tdr_ingest.json");
-    expectedProfile.setContactEmail("tdr@canadiana.com");
-    expectedProfile.setContactName("William Wueppelmann");
-    expectedProfile.setContactPhone("+1 613 907 7040");
-    expectedProfile.setExternalDescription("BagIt profile for ingesting content into the C.O. TDR loading dock.");
-    expectedProfile.setSourceOrganization("Candiana.org");
-    expectedProfile.setVersion("1.2");
+    try{
+      builder.setBagitProfileIdentifier(new URI("http://canadiana.org/standards/bagit/tdr_ingest.json"))
+      .setSourceOrganization("Candiana.org")
+      .seContactName("William Wueppelmann")
+      .setContactEmail("tdr@canadiana.com")      
+      .setContactPhone("+1 613 907 7040")
+      .setExternalDescription("BagIt profile for ingesting content into the C.O. TDR loading dock.")      
+      .setVersion("1.2")
+      .setBagitProfileVersion(version.toString() + ".0")
+      .addManifestTypesRequired("md5")
+      .setFetchFileAllowed(false)
+      .setSerialization(Serialization.forbidden)
+      .addAcceptableMIMESerializationType("application/zip")
+      .addTagManifestTypeRequired("md5")
+      .addTagFileRequired("DPN/dpnFirstNode.txt").addTagFileRequired("DPN/dpnRegistry")
+      .addAcceptableBagitVersion("0.96");
+    } catch(URISyntaxException e){
+      throw new RuntimeException(e);
+    }
     
-    expectedProfile.setBagInfoRequirements(createBagInfo());
-    expectedProfile.setManifestTypesRequired(Arrays.asList("md5"));
-    expectedProfile.setFetchFileAllowed(false);
-    expectedProfile.setSerialization(Serialization.forbidden);
-    expectedProfile.setAcceptableMIMESerializationTypes(Arrays.asList("application/zip"));
-    expectedProfile.setAcceptableBagitVersions(Arrays.asList("0.96"));
-    expectedProfile.setTagManifestTypesRequired(Arrays.asList("md5"));
-    expectedProfile.setTagFilesRequired(Arrays.asList("DPN/dpnFirstNode.txt", "DPN/dpnRegistry"));
+    //starting with version 1.3.0 these were added
+    if(new Version(1, 3).isSameOrOlder(version)) {
+      builder.addManifestTypesAllowed("sha1").addManifestTypesAllowed("md5")
+      .addTagManifestTypeAllowed("sha1").addTagManifestTypeAllowed("md5")
+      .addTagFileAllowed("DPN/dpnFirstNode.txt").addTagFileAllowed("DPN/dpnRegistry");
+      
+      builder.addBagInfoRequirement("Source-Organization", new BagInfoRequirement(true, Arrays.asList("Simon Fraser University", "York University"), false, "the originator of the bag"));
+    }
+    else {
+      builder.addBagInfoRequirement("Source-Organization", new BagInfoRequirement(true, Arrays.asList("Simon Fraser University", "York University"), false, ""));
+    }
     
-    return expectedProfile;
+    return builder.build();
   }
   
-  protected BagitProfile createMinimalProfile(){
-    BagitProfile expectedProfile = new BagitProfile();
+  protected BagitProfile createMinimalProfile(String version){
+    BagitProfileBuilder builder = new BagitProfileBuilder();
     
-    expectedProfile.setBagitProfileIdentifier("http://canadiana.org/standards/bagit/tdr_ingest.json");
-    expectedProfile.setExternalDescription("BagIt profile for ingesting content into the C.O. TDR loading dock.");
-    expectedProfile.setSourceOrganization("Candiana.org");
-    expectedProfile.setVersion("1.2");
+    try{
+      builder.setBagitProfileIdentifier(new URI("http://canadiana.org/standards/bagit/tdr_ingest.json"))
+      .setSourceOrganization("Candiana.org")
+      .setExternalDescription("BagIt profile for ingesting content into the C.O. TDR loading dock.")
+      .setVersion("1.2")
+      .setBagitProfileVersion(version)
+      .addAcceptableBagitVersion("0.96");      
+    } catch(URISyntaxException e){
+      throw new RuntimeException(e);
+    }
     
-    expectedProfile.setBagInfoRequirements(createBagInfo());
-    expectedProfile.setManifestTypesRequired(Arrays.asList("md5"));
-    expectedProfile.setFetchFileAllowed(false);
-    expectedProfile.setSerialization(Serialization.forbidden);
-    expectedProfile.setAcceptableMIMESerializationTypes(Arrays.asList("application/zip"));
-    expectedProfile.setAcceptableBagitVersions(Arrays.asList("0.96"));
-    
-    return expectedProfile;
-  }
-  
-  protected Map<String, BagInfoRequirement> createBagInfo(){
-    Map<String, BagInfoRequirement> info = new HashMap<>();
-    
-    info.put("Source-Organization", new BagInfoRequirement(true, Arrays.asList("Simon Fraser University", "York University"), false));
-    info.put("Organization-Address", new BagInfoRequirement(true, 
-        Arrays.asList("8888 University Drive Burnaby, B.C. V5A 1S6 Canada", "4700 Keele Street Toronto, Ontario M3J 1P3 Canada"), false));
-    info.put("Contact-Name", new BagInfoRequirement(true, Arrays.asList("Mark Jordan", "Nick Ruest"), false));
-    info.put("Contact-Phone", new BagInfoRequirement(false, Arrays.asList(), false));
-    info.put("Contact-Email", new BagInfoRequirement(true, Arrays.asList(), false));
-    info.put("External-Description", new BagInfoRequirement(true, Arrays.asList(), false));
-    info.put("External-Identifier", new BagInfoRequirement(false, Arrays.asList(), false));
-    info.put("Bag-Size", new BagInfoRequirement(true, Arrays.asList(), false));
-    info.put("Bag-Group-Identifier", new BagInfoRequirement(false, Arrays.asList(), false));
-    info.put("Bag-Count", new BagInfoRequirement(true, Arrays.asList(), false));
-    info.put("Internal-Sender-Identifier", new BagInfoRequirement(false, Arrays.asList(), false));
-    info.put("Internal-Sender-Description", new BagInfoRequirement(false, Arrays.asList(), false));
-    info.put("Bagging-Date", new BagInfoRequirement(true, Arrays.asList(), false));
-    info.put("Payload-Oxum", new BagInfoRequirement(true, Arrays.asList(), false));
-
-    return info;
+    return builder.build();
   }
 }

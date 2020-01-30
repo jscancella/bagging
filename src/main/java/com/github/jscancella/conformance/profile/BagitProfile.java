@@ -1,163 +1,204 @@
 package com.github.jscancella.conformance.profile;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.net.URI;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 /**
- * POJO for all the bagit profile fields. 
- * A bagit profile is used to ensure the bag metadata contains all required elements and optional elements follow allowed values
+ * An immutable object for all the bagit profile fields. 
+ * A bagit profile is used to ensure the bag contains all required elements and optional elements specified
  */
-@SuppressWarnings("PMD.UseConcurrentHashMap")
+@SuppressWarnings({"PMD.UseConcurrentHashMap", "PMD.TooManyFields"})
 public class BagitProfile {
-  private String bagitProfileIdentifier = "";
-  private String sourceOrganization = "";
-  private String externalDescription = "";
-  private String contactName = "";
-  private String contactEmail = "";
-  private String contactPhone = "";
-  private String version = "";
+  //required elements
+  private final URI bagitProfileIdentifier;
+  private final String sourceOrganization;
+  private final String externalDescription;
+  private final String version;
+  private final String bagitProfileVersion;
   
-  private Map<String, BagInfoRequirement> bagInfoRequirements = new HashMap<>();
-  private List<String> manifestTypesRequired = new ArrayList<>();
-  private boolean fetchFileAllowed; //defaults to false
-  private Serialization serialization = Serialization.optional;
-  private List<String> acceptableMIMESerializationTypes = new ArrayList<>();
-  private List<String> acceptableBagitVersions = new ArrayList<>();
-  private List<String> tagManifestTypesRequired = new ArrayList<>();
-  private List<String> tagFilesRequired = new ArrayList<>();
+  //optional elements
+  private final String contactName;
+  private final String contactEmail;
+  private final String contactPhone;
+  private final Map<String, BagInfoRequirement> bagInfoRequirements;
+  private final List<String> manifestTypesRequired;
+  private final List<String> manifestTypesAllowed;
+  private final boolean fetchFileAllowed; //defaults to false
+  private final Serialization serialization;
+  private final List<String> acceptableMIMESerializationTypes;
+  private final List<String> acceptableBagitVersions;
+  private final List<String> tagManifestTypesRequired;
+  private final List<String> tagManifestTypesAllowed;
+  private final List<String> tagFilesRequired;
+  private final List<String> tagFilesAllowed; //glob style, defaults to ["*"] which is all
   
-  
-  @Override
-  public boolean equals(final Object other) {
-    boolean isEqual = false;
-    if (other instanceof BagitProfile) {
-      final BagitProfile castOther = (BagitProfile) other;
-      isEqual = Objects.equals(bagitProfileIdentifier, castOther.bagitProfileIdentifier)
-          && Objects.equals(sourceOrganization, castOther.sourceOrganization)
-          && Objects.equals(externalDescription, castOther.externalDescription)
-          && Objects.equals(contactName, castOther.contactName) && Objects.equals(contactEmail, castOther.contactEmail)
-          && Objects.equals(contactPhone, castOther.contactPhone)
-          && Objects.equals(version, castOther.version)
-          && Objects.equals(bagInfoRequirements, castOther.bagInfoRequirements)
-          && Objects.equals(manifestTypesRequired, castOther.manifestTypesRequired)
-          && Objects.equals(fetchFileAllowed, castOther.fetchFileAllowed)
-          && Objects.equals(serialization, castOther.serialization)
-          && Objects.equals(acceptableMIMESerializationTypes, castOther.acceptableMIMESerializationTypes)
-          && Objects.equals(acceptableBagitVersions, castOther.acceptableBagitVersions)
-          && Objects.equals(tagManifestTypesRequired, castOther.tagManifestTypesRequired)
-          && Objects.equals(tagFilesRequired, castOther.tagFilesRequired);
-    }
+  @SuppressWarnings("PMD.ExcessiveParameterList")
+  public BagitProfile(final URI bagitProfileIdentifier, 
+      final String sourceOrganization, 
+      final String externalDescription, 
+      final String version,
+      final String bagitProfileVersion, 
+      final String contactName, 
+      final String contactEmail, 
+      final String contactPhone,
+      final Map<String, BagInfoRequirement> bagInfoRequirements, 
+      final List<String> manifestTypesRequired,
+      final List<String> manifestTypesAllowed, 
+      final boolean fetchFileAllowed, 
+      final Serialization serialization,
+      final List<String> acceptableMIMESerializationTypes, 
+      final List<String> acceptableBagitVersions,
+      final List<String> tagManifestTypesRequired, 
+      final List<String> tagManifestTypesAllowed, 
+      final List<String> tagFilesRequired,
+      final List<String> tagFilesAllowed) {
     
-    return isEqual;
-  }
-  @Override
-  public int hashCode() {
-    return Objects.hash(bagitProfileIdentifier, sourceOrganization, externalDescription, contactName, contactEmail, contactPhone,
-        version, bagInfoRequirements, manifestTypesRequired, fetchFileAllowed, serialization,
-        acceptableMIMESerializationTypes, acceptableBagitVersions, tagManifestTypesRequired, tagFilesRequired);
-  }
-  @Override
-  public String toString() {
-    return "BagitProfile [bagitProfileIdentifier=" + bagitProfileIdentifier + ", sourceOrganization="
-        + sourceOrganization + ", externalDescription=" + externalDescription + ", contactName=" + contactName
-        + ", contactEmail=" + contactEmail + ", contactPhone=" + contactPhone + ", version=" + version + ", bagInfoRequirements=" + bagInfoRequirements
-        + ", manifestTypesRequired=" + manifestTypesRequired + ", fetchFileAllowed=" + fetchFileAllowed
-        + ", serialization=" + serialization + ", acceptableMIMESerializationTypes=" + acceptableMIMESerializationTypes
-        + ", acceptableBagitVersions=" + acceptableBagitVersions + ", tagManifestTypesRequired="
-        + tagManifestTypesRequired + ", tagFilesRequired=" + tagFilesRequired + "]";
-  }
-  
-  public Map<String,BagInfoRequirement> getBagInfoRequirements() {
-    return bagInfoRequirements;
-  }
-  public void setBagInfoRequirements(final Map<String, BagInfoRequirement> bagInfo) {
-    this.bagInfoRequirements = bagInfo;
-  }
-  public List<String> getManifestTypesRequired() {
-    return manifestTypesRequired;
-  }
-  public void setManifestTypesRequired(final List<String> manifestsRequired) {
-    this.manifestTypesRequired = manifestsRequired;
-  }
-  public boolean isFetchFileAllowed() {
-    return fetchFileAllowed;
-  }
-  public void setFetchFileAllowed(final boolean allowFetchFile) {
-    this.fetchFileAllowed = allowFetchFile;
-  }
-  public Serialization getSerialization() {
-    return serialization;
-  }
-  public void setSerialization(final Serialization serialization) {
+    super();
+    this.bagitProfileIdentifier = bagitProfileIdentifier;
+    this.sourceOrganization = sourceOrganization;
+    this.externalDescription = externalDescription;
+    this.version = version;
+    this.bagitProfileVersion = bagitProfileVersion;
+    this.contactName = contactName;
+    this.contactEmail = contactEmail;
+    this.contactPhone = contactPhone;
+    this.bagInfoRequirements = Collections.unmodifiableMap(bagInfoRequirements);
+    this.manifestTypesRequired = Collections.unmodifiableList(manifestTypesRequired);
+    this.manifestTypesAllowed = Collections.unmodifiableList(manifestTypesAllowed);
+    this.fetchFileAllowed = fetchFileAllowed;
     this.serialization = serialization;
+    this.acceptableMIMESerializationTypes = Collections.unmodifiableList(acceptableMIMESerializationTypes);
+    this.acceptableBagitVersions = Collections.unmodifiableList(acceptableBagitVersions);
+    this.tagManifestTypesRequired = Collections.unmodifiableList(tagManifestTypesRequired);
+    this.tagManifestTypesAllowed = Collections.unmodifiableList(tagManifestTypesAllowed);
+    this.tagFilesRequired = Collections.unmodifiableList(tagFilesRequired);
+    this.tagFilesAllowed = Collections.unmodifiableList(tagFilesAllowed);
   }
-  public List<String> getAcceptableMIMESerializationTypes() {
-    return acceptableMIMESerializationTypes;
-  }
-  public void setAcceptableMIMESerializationTypes(final List<String> acceptSerialization) {
-    this.acceptableMIMESerializationTypes = acceptSerialization;
-  }
-  public List<String> getAcceptableBagitVersions() {
-    return acceptableBagitVersions;
-  }
-  public void setAcceptableBagitVersions(final List<String> acceptBagitVersion) {
-    this.acceptableBagitVersions = acceptBagitVersion;
-  }
-  public List<String> getTagManifestTypesRequired() {
-    return tagManifestTypesRequired;
-  }
-  public void setTagManifestTypesRequired(final List<String> tagManifestsRequired) {
-    this.tagManifestTypesRequired = tagManifestsRequired;
-  }
-  public List<String> getTagFilesRequired() {
-    return tagFilesRequired;
-  }
-  public void setTagFilesRequired(final List<String> tagFilesRequired) {
-    this.tagFilesRequired = tagFilesRequired;
-  }
-  public String getBagitProfileIdentifier() {
+
+  public URI getBagitProfileIdentifier(){
     return bagitProfileIdentifier;
   }
-  public void setBagitProfileIdentifier(final String bagitProfileIdentifier) {
-    this.bagitProfileIdentifier = bagitProfileIdentifier;
-  }
-  public String getSourceOrganization() {
+
+  public String getSourceOrganization(){
     return sourceOrganization;
   }
-  public void setSourceOrganization(final String sourceOrganization) {
-    this.sourceOrganization = sourceOrganization;
-  }
-  public String getExternalDescription() {
+
+  public String getExternalDescription(){
     return externalDescription;
   }
-  public void setExternalDescription(final String externalDescription) {
-    this.externalDescription = externalDescription;
-  }
-  public String getContactName() {
-    return contactName;
-  }
-  public void setContactName(final String contactName) {
-    this.contactName = contactName;
-  }
-  public String getContactEmail() {
-    return contactEmail;
-  }
-  public void setContactEmail(final String contactEmail) {
-    this.contactEmail = contactEmail;
-  }
-  public String getContactPhone() {
-    return contactPhone;
-  }
-  public void setContactPhone(final String contactPhone) {
-    this.contactPhone = contactPhone;
-  }
-  public String getVersion() {
+
+  public String getVersion(){
     return version;
   }
-  public void setVersion(final String version) {
-    this.version = version;
+
+  public String getBagitProfileVersion(){
+    return bagitProfileVersion;
+  }
+
+  public String getContactName(){
+    return contactName;
+  }
+
+  public String getContactEmail(){
+    return contactEmail;
+  }
+
+  public String getContactPhone(){
+    return contactPhone;
+  }
+
+  public Map<String, BagInfoRequirement> getBagInfoRequirements(){
+    return bagInfoRequirements;
+  }
+
+  public List<String> getManifestTypesRequired(){
+    return manifestTypesRequired;
+  }
+
+  public List<String> getManifestTypesAllowed(){
+    return manifestTypesAllowed;
+  }
+
+  public boolean isFetchFileAllowed(){
+    return fetchFileAllowed;
+  }
+
+  public Serialization getSerialization(){
+    return serialization;
+  }
+
+  public List<String> getAcceptableMIMESerializationTypes(){
+    return acceptableMIMESerializationTypes;
+  }
+
+  public List<String> getAcceptableBagitVersions(){
+    return acceptableBagitVersions;
+  }
+
+  public List<String> getTagManifestTypesRequired(){
+    return tagManifestTypesRequired;
+  }
+
+  public List<String> getTagManifestTypesAllowed(){
+    return tagManifestTypesAllowed;
+  }
+
+  public List<String> getTagFilesRequired(){
+    return tagFilesRequired;
+  }
+
+  public List<String> getTagFilesAllowed(){
+    return tagFilesAllowed;
+  }
+  
+  @Override
+  public String toString(){
+    return "BagitProfile [bagitProfileIdentifier=" + bagitProfileIdentifier + ", sourceOrganization="
+        + sourceOrganization + ", externalDescription=" + externalDescription + ", version=" + version
+        + ", bagitProfileVersion=" + bagitProfileVersion + ", contactName=" + contactName + ", contactEmail="
+        + contactEmail + ", contactPhone=" + contactPhone + ", bagInfoRequirements=" + bagInfoRequirements
+        + ", manifestTypesRequired=" + manifestTypesRequired + ", manifestTypesAllowed=" + manifestTypesAllowed
+        + ", fetchFileAllowed=" + fetchFileAllowed + ", serialization=" + serialization
+        + ", acceptableMIMESerializationTypes=" + acceptableMIMESerializationTypes + ", acceptableBagitVersions="
+        + acceptableBagitVersions + ", tagManifestTypesRequired=" + tagManifestTypesRequired
+        + ", tagManifestTypesAllowed=" + tagManifestTypesAllowed + ", tagFilesRequired=" + tagFilesRequired
+        + ", tagFilesAllowed=" + tagFilesAllowed + "]";
+  }
+
+  @Override
+  public int hashCode(){
+    return Objects.hash(acceptableBagitVersions, acceptableMIMESerializationTypes, bagInfoRequirements,
+        bagitProfileIdentifier, bagitProfileVersion, contactEmail, contactName, contactPhone, externalDescription,
+        fetchFileAllowed, manifestTypesAllowed, manifestTypesRequired, serialization, sourceOrganization,
+        tagFilesAllowed, tagFilesRequired, tagManifestTypesAllowed, tagManifestTypesRequired, version);
+  }
+
+  @Override
+  public boolean equals(final Object obj){
+    boolean isEqual = false;
+    
+    if(obj instanceof BagitProfile) {
+      final BagitProfile other = (BagitProfile) obj;
+      isEqual = Objects.equals(acceptableBagitVersions, other.acceptableBagitVersions)
+        && Objects.equals(acceptableMIMESerializationTypes, other.acceptableMIMESerializationTypes)
+        && Objects.equals(bagInfoRequirements, other.bagInfoRequirements)
+        && Objects.equals(bagitProfileIdentifier, other.bagitProfileIdentifier)
+        && Objects.equals(bagitProfileVersion, other.bagitProfileVersion)
+        && Objects.equals(contactEmail, other.contactEmail) && Objects.equals(contactName, other.contactName)
+        && Objects.equals(contactPhone, other.contactPhone)
+        && Objects.equals(externalDescription, other.externalDescription) && fetchFileAllowed == other.fetchFileAllowed
+        && Objects.equals(manifestTypesAllowed, other.manifestTypesAllowed)
+        && Objects.equals(manifestTypesRequired, other.manifestTypesRequired) && serialization == other.serialization
+        && Objects.equals(sourceOrganization, other.sourceOrganization)
+        && Objects.equals(tagFilesAllowed, other.tagFilesAllowed)
+        && Objects.equals(tagFilesRequired, other.tagFilesRequired)
+        && Objects.equals(tagManifestTypesAllowed, other.tagManifestTypesAllowed)
+        && Objects.equals(tagManifestTypesRequired, other.tagManifestTypesRequired)
+        && Objects.equals(version, other.version);
+    }
+    return isEqual;
   }
 }

@@ -1,0 +1,12 @@
+{
+  "BagIt-Profile-Info": {
+    "BagIt-Profile-Identifier": "http://canadiana.org/standards/bagit/tdr_ingest.json",
+    "Source-Organization": "Candiana.org",
+    "External-Description": "BagIt profile for ingesting content into the C.O. TDR loading dock.",
+    "Version": "1.2",
+    "BagIt-Profile-Version": "1.3.0"
+  },
+  "Accept-BagIt-Version": [
+    "0.96"
+  ]
+}
