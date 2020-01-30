@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.node.NullNode;
 /**
  * Deserialize bagit profile json to a {@link BagitProfile} 
  */
+@SuppressWarnings("PMD.TooManyMethods") //TODO refactor into smaller classes instead of so many methods
 public class BagitProfileDeserializer extends StdDeserializer<BagitProfile> {
   private static final long serialVersionUID = 1L;
   private static final Logger logger = LoggerFactory.getLogger(BagitProfileDeserializer.class);
@@ -39,7 +40,7 @@ public class BagitProfileDeserializer extends StdDeserializer<BagitProfile> {
   public BagitProfile deserialize(final JsonParser jsonParser, final DeserializationContext context)
       throws IOException, JsonProcessingException {
     final JsonNode node = jsonParser.getCodec().readTree(jsonParser);
-    BagitProfileBuilder builder = new BagitProfileBuilder();
+    final BagitProfileBuilder builder = new BagitProfileBuilder();
     
     try{
       parseBagitProfileInfo(node, builder);
@@ -55,13 +56,13 @@ public class BagitProfileDeserializer extends StdDeserializer<BagitProfile> {
     
     final JsonNode fetchIsAllowed = node.get("Allow-Fetch.txt");
     if(fetchIsAllowed != null && !(fetchIsAllowed instanceof NullNode)) {
-      builder.fetchFileAllowed(fetchIsAllowed.asBoolean());
+      builder.setFetchFileAllowed(fetchIsAllowed.asBoolean());
     }
     logger.debug(messages.getString("fetch_allowed"), builder.isFetchAllowed());
     
     final JsonNode serialization = node.get("Serialization");
     if(serialization != null && !(serialization instanceof NullNode)) {
-      builder.serialization(Serialization.valueOf(serialization.asText()));
+      builder.setSerialization(Serialization.valueOf(serialization.asText()));
     }
     logger.debug(messages.getString("serialization_allowed"),builder.getSerializationType());
     
@@ -105,24 +106,24 @@ public class BagitProfileDeserializer extends StdDeserializer<BagitProfile> {
     final String profileIdentifierText = bagitProfileInfoNode.get("BagIt-Profile-Identifier").asText();
     final URI profileIdentifier = new URI(profileIdentifierText);
     logger.debug(messages.getString("identifier"), profileIdentifierText);
-    builder.bagitProfileIdentifier(profileIdentifier);
+    builder.setBagitProfileIdentifier(profileIdentifier);
     
     final String sourceOrg = bagitProfileInfoNode.get("Source-Organization").asText();
     logger.debug(messages.getString("source_organization"), sourceOrg);
-    builder.sourceOrganization(sourceOrg);
+    builder.setSourceOrganization(sourceOrg);
     
     final String extDescript = bagitProfileInfoNode.get("External-Description").asText();
     logger.debug(messages.getString("external_description"), extDescript);
-    builder.externalDescription(extDescript);
+    builder.setExternalDescription(extDescript);
     
     final String version = bagitProfileInfoNode.get("Version").asText();
     logger.debug(messages.getString("version"), version);
-    builder.version(version);
+    builder.setVersion(version);
     
     //since version 1.2.0
     final String profileVersion = bagitProfileInfoNode.get("BagIt-Profile-Version").asText("1.1.0");
     logger.debug(messages.getString("profile_version"), profileVersion);
-    builder.bagitProfileVersion(profileVersion);
+    builder.setBagitProfileVersion(profileVersion);
   }
   
   private static void parseOptionalTagsOfBagitProfileInfo(final JsonNode bagitProfileInfoNode, final BagitProfileBuilder builder) {
@@ -132,21 +133,21 @@ public class BagitProfileDeserializer extends StdDeserializer<BagitProfile> {
     if (contactNameNode != null && !(contactNameNode instanceof NullNode)) {
       final String contactName = contactNameNode.asText();
       logger.debug(messages.getString("contact_name"), contactName);
-      builder.contactName(contactName);
+      builder.seContactName(contactName);
     }
 
     final JsonNode contactEmailNode = bagitProfileInfoNode.get("Contact-Email");
     if (contactEmailNode != null && !(contactEmailNode instanceof NullNode)) {
       final String contactEmail = contactEmailNode.asText();
       logger.debug(messages.getString("contact_email"), contactEmail);
-      builder.contactEmail(contactEmail);
+      builder.setContactEmail(contactEmail);
     }
 
     final JsonNode contactPhoneNode = bagitProfileInfoNode.get("Contact-Phone");
     if (contactPhoneNode != null && !(contactPhoneNode instanceof NullNode)) {
       final String contactPhone = contactPhoneNode.asText();
       logger.debug(messages.getString("contact_phone"), contactPhone);
-      builder.contactPhone(contactPhone);
+      builder.setContactPhone(contactPhone);
     }
   }
   
@@ -218,7 +219,7 @@ public class BagitProfileDeserializer extends StdDeserializer<BagitProfile> {
     logger.debug(messages.getString("allowed_manifest_types"), builder.getManifestTypesRequired());
   }
   
-  private static void parseAcceptableSerializationFormats(final JsonNode node, BagitProfileBuilder builder){
+  private static void parseAcceptableSerializationFormats(final JsonNode node, final BagitProfileBuilder builder){
     final JsonNode serialiationFormats = node.get("Accept-Serialization");
     if(serialiationFormats != null && !(serialiationFormats instanceof NullNode)) {
       for (final JsonNode serialiationFormat : serialiationFormats) {
@@ -228,7 +229,7 @@ public class BagitProfileDeserializer extends StdDeserializer<BagitProfile> {
     logger.debug(messages.getString("acceptable_serialization_mime_types"), builder.getAcceptableMIMETypes());
   }
   
-  private static void parseRequiredTagmanifestTypes(final JsonNode node, BagitProfileBuilder builder){
+  private static void parseRequiredTagmanifestTypes(final JsonNode node, final BagitProfileBuilder builder){
     final JsonNode tagManifestsRequiredNodes = node.get("Tag-Manifests-Required");
     if (tagManifestsRequiredNodes != null && !(tagManifestsRequiredNodes instanceof NullNode)) {
       for (final JsonNode tagManifestsRequiredNode : tagManifestsRequiredNodes) {
@@ -238,7 +239,7 @@ public class BagitProfileDeserializer extends StdDeserializer<BagitProfile> {
     logger.debug(messages.getString("required_tagmanifest_types"), builder.getTagManifestTypesRequired());
   }
   
-  private static void parseAllowedTagmanifestTypes(final JsonNode node, BagitProfileBuilder builder){
+  private static void parseAllowedTagmanifestTypes(final JsonNode node, final BagitProfileBuilder builder){
     final JsonNode tagManifestsAllowedNodes = node.get("Tag-Manifests-Allowed");
     if (tagManifestsAllowedNodes != null && !(tagManifestsAllowedNodes instanceof NullNode)) {
       for (final JsonNode tagManifestsRequiredNode : tagManifestsAllowedNodes) {
@@ -248,7 +249,7 @@ public class BagitProfileDeserializer extends StdDeserializer<BagitProfile> {
     logger.debug(messages.getString("required_tagmanifest_types"), builder.getTagManifestTypesRequired());
   }
   
-  private static void parseRequiredTagFiles(final JsonNode node, BagitProfileBuilder builder){
+  private static void parseRequiredTagFiles(final JsonNode node, final BagitProfileBuilder builder){
     final JsonNode tagFilesRequiredNodes = node.get("Tag-Files-Required");
 
     if (tagFilesRequiredNodes != null && !(tagFilesRequiredNodes instanceof NullNode)) {
@@ -259,7 +260,7 @@ public class BagitProfileDeserializer extends StdDeserializer<BagitProfile> {
     logger.debug(messages.getString("tag_files_required"), builder.getTagFilesRequired());
   }
   
-  private static void parseAllowedTagFiles(final JsonNode node, BagitProfileBuilder builder){
+  private static void parseAllowedTagFiles(final JsonNode node, final BagitProfileBuilder builder){
     final JsonNode tagFilesAllowedNodes = node.get("Tag-Files-Allowed");
 
     if (tagFilesAllowedNodes != null && !(tagFilesAllowedNodes instanceof NullNode)) {

@@ -10,7 +10,7 @@ import java.util.Objects;
  * An immutable object for all the bagit profile fields. 
  * A bagit profile is used to ensure the bag contains all required elements and optional elements specified
  */
-@SuppressWarnings("PMD.UseConcurrentHashMap")
+@SuppressWarnings({"PMD.UseConcurrentHashMap", "PMD.TooManyFields"})
 public class BagitProfile {
   //required elements
   private final URI bagitProfileIdentifier;
@@ -35,6 +35,7 @@ public class BagitProfile {
   private final List<String> tagFilesRequired;
   private final List<String> tagFilesAllowed; //glob style, defaults to ["*"] which is all
   
+  @SuppressWarnings("PMD.ExcessiveParameterList")
   public BagitProfile(final URI bagitProfileIdentifier, 
       final String sourceOrganization, 
       final String externalDescription, 
@@ -176,11 +177,11 @@ public class BagitProfile {
   }
 
   @Override
-  public boolean equals(Object obj){
+  public boolean equals(final Object obj){
     boolean isEqual = false;
     
-    if((obj instanceof BagitProfile)) {
-      BagitProfile other = (BagitProfile) obj;
+    if(obj instanceof BagitProfile) {
+      final BagitProfile other = (BagitProfile) obj;
       isEqual = Objects.equals(acceptableBagitVersions, other.acceptableBagitVersions)
         && Objects.equals(acceptableMIMESerializationTypes, other.acceptableMIMESerializationTypes)
         && Objects.equals(bagInfoRequirements, other.bagInfoRequirements)

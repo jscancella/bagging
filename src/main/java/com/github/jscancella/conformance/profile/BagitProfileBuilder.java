@@ -6,6 +6,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@SuppressWarnings({"PMD.TooManyMethods", "PMD.TooManyFields", "PMD.BeanMembersShouldSerialize", "PMD.LinguisticNaming"})
+/**
+ * Used to create a bagit profile programmatically and incrementally
+ */
 public class BagitProfileBuilder {
   private URI bagitProfileIdentifier;
   private String sourceOrganization = "";
@@ -17,17 +21,17 @@ public class BagitProfileBuilder {
   private String contactName = "";
   private String contactEmail = "";
   private String contactPhone = "";
-  private Map<String, BagInfoRequirement> bagInfoRequirements = new ConcurrentHashMap<>();
-  private List<String> manifestTypesRequired = new ArrayList<>();
-  private List<String> manifestTypesAllowed = new ArrayList<>();
+  private final Map<String, BagInfoRequirement> bagInfoRequirements = new ConcurrentHashMap<>();
+  private final List<String> manifestTypesRequired = new ArrayList<>();
+  private final List<String> manifestTypesAllowed = new ArrayList<>();
   private boolean fetchFileAllowed; //defaults to false
   private Serialization serialization = Serialization.optional;
-  private List<String> acceptableMIMESerializationTypes = new ArrayList<>();
-  private List<String> acceptableBagitVersions = new ArrayList<>();
-  private List<String> tagManifestTypesRequired = new ArrayList<>();
-  private List<String> tagManifestTypesAllowed = new ArrayList<>();
-  private List<String> tagFilesRequired = new ArrayList<>();
-  private List<String> tagFilesAllowed = new ArrayList<>(); //glob style, defaults to ["*"] which is all
+  private final List<String> acceptableMIMESerializationTypes = new ArrayList<>();
+  private final List<String> acceptableBagitVersions = new ArrayList<>();
+  private final List<String> tagManifestTypesRequired = new ArrayList<>();
+  private final List<String> tagManifestTypesAllowed = new ArrayList<>();
+  private final List<String> tagFilesRequired = new ArrayList<>();
+  private final List<String> tagFilesAllowed = new ArrayList<>(); //glob style, defaults to ["*"] which is all
   
   public BagitProfile build() {
     return new BagitProfile(bagitProfileIdentifier, sourceOrganization, externalDescription, version, bagitProfileVersion, 
@@ -36,42 +40,42 @@ public class BagitProfileBuilder {
         tagFilesRequired, tagFilesAllowed);
   }
   
-  public BagitProfileBuilder bagitProfileIdentifier(final URI bagitProfileIdentifier) {
+  public BagitProfileBuilder setBagitProfileIdentifier(final URI bagitProfileIdentifier) {
     this.bagitProfileIdentifier = bagitProfileIdentifier;
     return this;
   }
   
-  public BagitProfileBuilder sourceOrganization(final String sourceOrganization) {
+  public BagitProfileBuilder setSourceOrganization(final String sourceOrganization) {
     this.sourceOrganization = sourceOrganization;
     return this;
   }
   
-  public BagitProfileBuilder externalDescription(final String externalDescription) {
+  public BagitProfileBuilder setExternalDescription(final String externalDescription) {
     this.externalDescription = externalDescription;
     return this;
   }
   
-  public BagitProfileBuilder version(final String version) {
+  public BagitProfileBuilder setVersion(final String version) {
     this.version = version;
     return this;
   }
   
-  public BagitProfileBuilder bagitProfileVersion(final String bagitProfileVersion) {
+  public BagitProfileBuilder setBagitProfileVersion(final String bagitProfileVersion) {
     this.bagitProfileVersion = bagitProfileVersion;
     return this;
   }
   
-  public BagitProfileBuilder contactName(final String contactName) {
+  public BagitProfileBuilder seContactName(final String contactName) {
     this.contactName = contactName;
     return this;
   }
   
-  public BagitProfileBuilder contactEmail(final String contactEmail) {
+  public BagitProfileBuilder setContactEmail(final String contactEmail) {
     this.contactEmail = contactEmail;
     return this;
   }
   
-  public BagitProfileBuilder contactPhone(final String contactPhone) {
+  public BagitProfileBuilder setContactPhone(final String contactPhone) {
     this.contactPhone = contactPhone;
     return this;
   }
@@ -91,12 +95,12 @@ public class BagitProfileBuilder {
     return this;
   }
   
-  public BagitProfileBuilder fetchFileAllowed(final boolean isAllowed) {
+  public BagitProfileBuilder setFetchFileAllowed(final boolean isAllowed) {
     this.fetchFileAllowed = isAllowed;
     return this;
   }
   
-  public BagitProfileBuilder serialization(final Serialization serialization) {
+  public BagitProfileBuilder setSerialization(final Serialization serialization) {
     this.serialization = serialization;
     return this;
   }

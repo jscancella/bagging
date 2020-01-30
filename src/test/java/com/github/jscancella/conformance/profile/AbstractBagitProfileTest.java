@@ -25,17 +25,17 @@ public abstract class AbstractBagitProfileTest {
     BagitProfileBuilder builder = new BagitProfileBuilder();
     
     try{
-      builder.bagitProfileIdentifier(new URI("http://canadiana.org/standards/bagit/tdr_ingest.json"))
-      .sourceOrganization("Candiana.org")
-      .contactName("William Wueppelmann")
-      .contactEmail("tdr@canadiana.com")      
-      .contactPhone("+1 613 907 7040")
-      .externalDescription("BagIt profile for ingesting content into the C.O. TDR loading dock.")      
-      .version("1.2")
-      .bagitProfileVersion(version.toString() + ".0")
+      builder.setBagitProfileIdentifier(new URI("http://canadiana.org/standards/bagit/tdr_ingest.json"))
+      .setSourceOrganization("Candiana.org")
+      .seContactName("William Wueppelmann")
+      .setContactEmail("tdr@canadiana.com")      
+      .setContactPhone("+1 613 907 7040")
+      .setExternalDescription("BagIt profile for ingesting content into the C.O. TDR loading dock.")      
+      .setVersion("1.2")
+      .setBagitProfileVersion(version.toString() + ".0")
       .addManifestTypesRequired("md5")
-      .fetchFileAllowed(false)
-      .serialization(Serialization.forbidden)
+      .setFetchFileAllowed(false)
+      .setSerialization(Serialization.forbidden)
       .addAcceptableMIMESerializationType("application/zip")
       .addTagManifestTypeRequired("md5")
       .addTagFileRequired("DPN/dpnFirstNode.txt").addTagFileRequired("DPN/dpnRegistry")
@@ -63,11 +63,11 @@ public abstract class AbstractBagitProfileTest {
     BagitProfileBuilder builder = new BagitProfileBuilder();
     
     try{
-      builder.bagitProfileIdentifier(new URI("http://canadiana.org/standards/bagit/tdr_ingest.json"))
-      .sourceOrganization("Candiana.org")
-      .externalDescription("BagIt profile for ingesting content into the C.O. TDR loading dock.")
-      .version("1.2")
-      .bagitProfileVersion(version)
+      builder.setBagitProfileIdentifier(new URI("http://canadiana.org/standards/bagit/tdr_ingest.json"))
+      .setSourceOrganization("Candiana.org")
+      .setExternalDescription("BagIt profile for ingesting content into the C.O. TDR loading dock.")
+      .setVersion("1.2")
+      .setBagitProfileVersion(version)
       .addAcceptableBagitVersion("0.96");      
     } catch(URISyntaxException e){
       throw new RuntimeException(e);
