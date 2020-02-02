@@ -32,7 +32,7 @@ public enum LargeBagChecker { ; //using enum to enforce singleton
   private static final long LARGE_PAYLOAD_SIZE = ONE_TERABYTE; 
   
   /**
-   * Check if a bag is "large", which is: </br>
+   * Check if a bag is "large", which is: <br>
    * * A large number of files
    * * A large total size of the bag
    * * A large number of manifests
