@@ -20,8 +20,8 @@ public enum BagitTextFileVerifier {; //using to enforce singleton
   
   /**
    * Starting with version 1.0, the bagit.txt file must be EXACTLY 2 lines.
-   * @param bag
-   * @throws IOException
+   * @param bag the bag containing the bagit.txt file to verify
+   * @throws IOException if the bagit.txt file cannot be read
    */
   public static void checkBagitTextFile(final Bag bag) throws IOException {
     if(Version.VERSION_1_0().isSameOrNewer(bag.getVersion())){
