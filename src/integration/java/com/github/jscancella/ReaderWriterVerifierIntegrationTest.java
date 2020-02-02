@@ -10,6 +10,10 @@ import org.junit.jupiter.api.Test;
 import com.github.jscancella.domain.Bag;
 import com.github.jscancella.domain.BagBuilder;
 
+/**
+ * This class deals with testing that reading and then writing a bag are equal.
+ * Or to put it another way, the bag I just read it, when I write it out, is equal to the original bag I read.
+ */
 public class ReaderWriterVerifierIntegrationTest extends TempFolderTest {
   
   @Test

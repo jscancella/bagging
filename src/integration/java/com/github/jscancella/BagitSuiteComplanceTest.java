@@ -41,6 +41,17 @@ public class BagitSuiteComplanceTest extends TempFolderTest {
     Files.walkFileTree(complianceRepoRootDir, visitor);
   }
   
+  /*
+   * The structure of the bagit-compliance git repo is </br>
+   * bagit specification version</br>
+   * |  valid bags (These bags are valid bags according to the version specification)</br>
+   * |  invalid bags (These bags are NOT valid bags according to the version specification)</br>
+   * |  linux only bags (These bags deal with paths that only work for linux)</br>
+   * |  windows only bags (These bags deal with paths that only work for windows)</br>
+   * \- warnings (These are bags that will cause warnings if the bag is linted)</br>
+   * </br>
+   * This test checks all the valid bags to make sure they don't throw some error.
+   */
   @Test
   public void testValidBags() throws Exception{
     Bag bag;
@@ -51,6 +62,17 @@ public class BagitSuiteComplanceTest extends TempFolderTest {
     }
   }
   
+  /*
+   * The structure of the bagit-compliance git repo is </br>
+   * bagit specification version</br>
+   * |  valid bags (These bags are valid bags according to the version specification)</br>
+   * |  invalid bags (These bags are NOT valid bags according to the version specification)</br>
+   * |  linux only bags (These bags deal with paths that only work for linux)</br>
+   * |  windows only bags (These bags deal with paths that only work for windows)</br>
+   * \- warnings (These are bags that will cause warnings if the bag is linted)</br>
+   * </br>
+   * This test checks all the invalid bags to make sure they throw some error.
+   */
   @Test
   public void testInvalidBags(){
     int errorCount = 0;
@@ -75,6 +97,17 @@ public class BagitSuiteComplanceTest extends TempFolderTest {
     logger.debug("Count of all errors found in generic invalid cases: {}", map);
   }
   
+  /*
+   * The structure of the bagit-compliance git repo is </br>
+   * bagit specification version</br>
+   * |  valid bags (These bags are valid bags according to the version specification)</br>
+   * |  invalid bags (These bags are NOT valid bags according to the version specification)</br>
+   * |  linux only bags (These bags deal with paths that only work for linux)</br>
+   * |  windows only bags (These bags deal with paths that only work for windows)</br>
+   * \- warnings (These are bags that will cause warnings if the bag is linted)</br>
+   * </br>
+   * This test checks all the windows only bags to make sure they throw some error.
+   */
   @Test
   public void testInvalidOperatingSystemSpecificBags(){
     int errorCount = 0;
@@ -103,6 +136,17 @@ public class BagitSuiteComplanceTest extends TempFolderTest {
     logger.debug("Count of all errors found in os specific invalid cases: {}", map);
   }
   
+  /*
+   * The structure of the bagit-compliance git repo is </br>
+   * bagit specification version</br>
+   * |  valid bags (These bags are valid bags according to the version specification)</br>
+   * |  invalid bags (These bags are NOT valid bags according to the version specification)</br>
+   * |  linux only bags (These bags deal with paths that only work for linux)</br>
+   * |  windows only bags (These bags deal with paths that only work for windows)</br>
+   * \- warnings (These are bags that will cause warnings if the bag is linted)</br>
+   * </br>
+   * This test checks all the warnings bags to make sure they throw some warnings.
+   */
   @Test
   public void testWarnings() throws Exception{
     Set<BagitWarning> warnings;

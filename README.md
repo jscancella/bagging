@@ -167,27 +167,6 @@ BagitChecksumNameMapping.add("sha3256", SHA3Hasher.INSTANCE);
 #### How to create a new conformance profile 
 This is beyond the scope of this project, however please see https://github.com/bagit-profiles/bagit-profiles for in-depth documentation on profiles. 
 
-### Technical Reference
-One of the inspirations for writing this library was to create a simple to use interface for creating, reading, writing, verifying, and linting BagIt specification bags. The coding therefore tries to adhere with the best practices in [Effective Java by Joshua Bloch](https://www.amazon.com/Effective-Java-Joshua-Bloch/dp/0134685997) as well as experiences from the team members.
-
-#### Windows Development Notes
-* Install JDK 8+
-* while gradle may work running from your IDE this has not been tested and isn't really supported. Instead run all gradle commands from the commandline using the `gradlew.bat` script root directory. git-bash seems to generally work, but sometimes crashes for unknown reasons.
-* Before submitting a pull request run `./gradlew.bat clean check` and there are no errors.
-
-#### Mac Development Notes
-* Install JDK 8+
-* while gradle may work running from your IDE this has not been tested and isn't really supported. Instead run all gradle commands from the commandline using the `gradlew` script root directory.
-* Before submitting a pull request run `./gradlew.bat clean check` and there are no errors.
-
-#### Linux Development Notes
-* Install JDK 8+
-* while gradle may work running from your IDE this has not been tested and isn't really supported. Instead run all gradle commands from the commandline using the `gradlew` script root directory.
-* Before submitting a pull request run `./gradlew.bat clean check` and there are no errors.
-
-#### Building a release
-run `./gradlew bintrayUpload -Pversion=<VERSION YOU ARE CALLING THIS RELEASE>`
-
 #### Classes/Methods not to use outside this project
 There are many classes that were not designed to be used outside this project, the rules for this are:
 * If a class/method does not contain a javadoc.
@@ -262,6 +241,28 @@ From the start Bagging was built knowing that not all people speak English. If y
 
 #### Community
 There is a very active community around digital archiving. One of which is The Digital Curation Google Group (https://groups.google.com/d/forum/digital-curation) which  is an open discussion list that reaches many of the contributors to and users of this project.
+
+## Technical Reference
+One of the inspirations for writing this library was to create a simple to use interface for creating, reading, writing, verifying, and linting BagIt specification bags. The coding therefore tries to adhere with the best practices in [Effective Java by Joshua Bloch](https://www.amazon.com/Effective-Java-Joshua-Bloch/dp/0134685997) as well as experiences from the team members.
+
+#### Windows Development Notes
+* Install JDK 8+
+* while gradle may work running from your IDE this has not been tested and isn't really supported. Instead run all gradle commands from the commandline using the `gradlew.bat` script root directory. git-bash seems to generally work, but sometimes crashes for unknown reasons.
+* Before submitting a pull request run `./gradlew.bat clean check` and there are no errors.
+
+#### Mac Development Notes
+* Install JDK 8+
+* while gradle may work running from your IDE this has not been tested and isn't really supported. Instead run all gradle commands from the commandline using the `gradlew` script root directory.
+* Before submitting a pull request run `./gradlew.bat clean check` and there are no errors.
+
+#### Linux Development Notes
+* Install JDK 8+
+* while gradle may work running from your IDE this has not been tested and isn't really supported. Instead run all gradle commands from the commandline using the `gradlew` script root directory.
+* Before submitting a pull request run `./gradlew.bat clean check` and there are no errors.
+
+#### Building a release
+* run `./gradlew bintrayUpload -Pversion=<VERSION YOU ARE CALLING THIS RELEASE>`
+* sign in to https://bintray.com/jscancella/com.github.jscancella/bagging and publish the new version
 
 ## Roadmap for this library
 * Maintain interoperability with the [BagIt specification](https://tools.ietf.org/html/rfc8493).
