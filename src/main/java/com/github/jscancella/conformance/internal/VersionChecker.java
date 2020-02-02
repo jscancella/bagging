@@ -18,8 +18,12 @@ public enum VersionChecker { ;//using enum to enforce singleton
   private static final Logger logger = LoggerFactory.getLogger(VersionChecker.class);
   private static final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
   
-  /*
-   * Check that they are using the latest version
+  /**
+   * Check that the Bag is using the latest version.
+   * 
+   * @param version The version of the bag
+   * @param warnings The list of warnings to add to if the bag does not conform
+   * @param warningsToIgnore The list of warnings to ignore
    */
   public static void checkVersion(final Version version, final Set<BagitWarning> warnings, final Collection<BagitWarning> warningsToIgnore){
     if(!warningsToIgnore.contains(BagitWarning.OLD_BAGIT_VERSION) && version.isOlder(Version.LATEST_BAGIT_VERSION())){

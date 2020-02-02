@@ -31,6 +31,18 @@ public enum LargeBagChecker { ; //using enum to enforce singleton
   private static final long ONE_TERABYTE = 1024 * ONE_GIGABYTE;
   private static final long LARGE_PAYLOAD_SIZE = ONE_TERABYTE; 
   
+  /**
+   * Check if a bag is "large", which is: </br>
+   * * A large number of files
+   * * A large total size of the bag
+   * * A large number of manifests
+   * 
+   * @param bagitDir The directory of the bag
+   * @param warnings The list of warnings to add to if bag is large
+   * @param warningsToIgnore The list of warnings to ignore
+   * 
+   * @throws IOException if there is a problem reading the bag
+   */
   public static void checkForLargeBag(final Path bagitDir, final Set<BagitWarning> warnings, final Collection<BagitWarning> warningsToIgnore) throws IOException {
     final FileCountAndTotalSizeVistor visitor = new FileCountAndTotalSizeVistor();
     if(!warningsToIgnore.contains(BagitWarning.LARGE_BAG_SIZE) || !warningsToIgnore.contains(BagitWarning.LARGE_NUMBER_OF_FILES)) {

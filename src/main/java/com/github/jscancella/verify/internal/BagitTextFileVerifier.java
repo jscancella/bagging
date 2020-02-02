@@ -18,6 +18,11 @@ public enum BagitTextFileVerifier {; //using to enforce singleton
   private static final String LINE2_REGEX = "(Tag-File-Character-Encoding: )\\S*";
   private static final int NUMBER_OF_LINES = 2; //there should be exactly 2 lines in the bagit.txt file
   
+  /**
+   * Starting with version 1.0, the bagit.txt file must be EXACTLY 2 lines.
+   * @param bag
+   * @throws IOException
+   */
   public static void checkBagitTextFile(final Bag bag) throws IOException {
     if(Version.VERSION_1_0().isSameOrNewer(bag.getVersion())){
       final List<String> lines = Files.readAllLines(bag.getRootDir().resolve("bagit.txt"), StandardCharsets.UTF_8);

@@ -14,11 +14,29 @@ import java.util.Formatter;
  * Constant definitions for the standard {@link Hasher}. Pretty much every computer will be able to implement these.
  */
 public enum StandardHasher implements Hasher {
+  /**
+   * The md5 checksum algorithm
+   */
   MD5("MD5", "md5"),
+  /**
+   * The sha-1 checksum algorithm
+   */
   SHA1("SHA-1", "sha1"),
+  /**
+   * The sha-2 checksum algorithm using 224 bits
+   */
   SHA224("SHA-224", "sha224"),
+  /**
+   * The sha-2 checksum algorithm using 256 bits
+   */
   SHA256("SHA-256", "sha256"),
+  /**
+   * The sha-2 checksum algorithm using 384 bits
+   */
   SHA384("SHA-384", "sha384"),
+  /**
+   * The sha-2 checksum algorithm using 512 bits
+   */
   SHA512("SHA-512", "sha512");
   
   private static final int _64_KB = 1024 * 64;

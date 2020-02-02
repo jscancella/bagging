@@ -19,8 +19,12 @@ public enum EncodingChecker {;// using enum to enforce singleton
   private static final Logger logger = LoggerFactory.getLogger(EncodingChecker.class);
   private static final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
   
-  /*
+  /**
    * It is now normal for all files to be UTF-8
+   * 
+   * @param encoding the encoding to check
+   * @param warnings the list of warnings to add to if the encoding doesn't conform
+   * @param warningsToIgnore the list of warnings to ignore
    */
   public static void checkEncoding(final Charset encoding, final Set<BagitWarning> warnings, final Collection<BagitWarning> warningsToIgnore){
     if(!warningsToIgnore.contains(BagitWarning.TAG_FILES_ENCODING) && !StandardCharsets.UTF_8.equals(encoding)){

@@ -23,6 +23,16 @@ public enum MetadataChecker { ;// using enum to enforce singleton
   private static final Logger logger = LoggerFactory.getLogger(MetadataChecker.class);
   private static final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
   
+  /**
+   * Check the bag metadata (bag-info.txt) for various conformance
+   * 
+   * @param bagitDir The base directory of the bag
+   * @param encoding The encoding of the bag tag files
+   * @param warnings The list of warnings to add to if the bag does not conform
+   * @param warningsToIgnore The list of warnings to ignore
+   * 
+   * @throws IOException If there is a problem reading the bag
+   */
   public static void checkBagMetadata(final Path bagitDir, final Charset encoding, final Set<BagitWarning> warnings, 
       final Collection<BagitWarning> warningsToIgnore) throws IOException{
     checkForPayloadOxumMetadata(bagitDir, encoding, warnings, warningsToIgnore);
