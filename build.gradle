@@ -7,7 +7,8 @@ plugins {
   id "org.owasp.dependencycheck" version "5.2.4"
 //  id "com.dorongold.task-tree" version "1.4"
   id "org.ajoberstar.grgit" version "4.0.0"
-  id "com.github.spotbugs" version "2.0.1"
+  id "jp.skypencil.spotbugs.snom" version "0.4.20"
+//  id "com.github.spotbugs" version "2.0.1"
   id "com.jfrog.bintray" version "1.8.4"
 }
 apply from: 'eclipse.gradle'
@@ -52,12 +53,12 @@ test {
   //testLogging.showStandardStreams = true
 }
 
-tasks.withType(com.github.spotbugs.SpotBugsTask) {
+/*tasks.withType(com.github.spotbugs.SpotBugsTask) {
   reports {
       xml.enabled = false
       html.enabled = true
   }
-}
+}*/
 
 import org.ajoberstar.grgit.*
 task cloneConformanceSuite(){
