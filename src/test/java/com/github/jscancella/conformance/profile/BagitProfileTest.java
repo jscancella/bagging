@@ -17,7 +17,7 @@ public class BagitProfileTest extends AbstractBagitProfileTest {
   public void testLogicallySameObjectsAreEqual() {
     BagitProfile profile = createExpectedProfile(new Version(1,2));
     BagitProfile identicalProfile = createExpectedProfile(new Version(1,2));
-    Assertions.assertTrue(profile.equals(identicalProfile));
+    Assertions.assertEquals(profile, identicalProfile);
   }
 
   /*
@@ -25,7 +25,7 @@ public class BagitProfileTest extends AbstractBagitProfileTest {
    * by using reflection to change the set field.
    */
   @Test
-  public void testEveryVariableIsIncludedInEqualsMethod1() throws Exception {
+  public void testEveryVariableIsIncludedInEqualsMethod() throws Exception {
     BagitProfile sut = createExpectedProfile(new Version(1,2));
     BagitProfile otherProfile = createExpectedProfile(new Version(1,2));
     
@@ -57,7 +57,7 @@ public class BagitProfileTest extends AbstractBagitProfileTest {
         continue;
       }
       else {
-        Assertions.fail("This test does not account for field type: " + field.getType() + " of variable: " + field.getName());
+        Assertions.fail("This test does not account for field type: [" + field.getGenericType() + "] of variable: [" + field.getName() + "]");
       }
       Assertions.assertNotEquals(sut, otherProfile);
     }

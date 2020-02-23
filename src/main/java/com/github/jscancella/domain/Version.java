@@ -73,7 +73,7 @@ public final class Version implements Comparable<Version>{
 
   @Override
   public int hashCode() {
-    return Objects.hash(major) + Objects.hash(minor);
+    return Objects.hash(major, minor);
   }
 
   @Override

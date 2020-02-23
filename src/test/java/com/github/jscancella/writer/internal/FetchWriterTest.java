@@ -27,14 +27,13 @@ public class FetchWriterTest extends TempFolderTest {
     
     
     Assertions.assertFalse(Files.exists(fetch));
-    FetchWriter.writeFetchFile(itemsToFetch, rootPath, StandardCharsets.UTF_8);
-    Assertions.assertTrue(Files.exists(fetch));
+    Path fetchFile = FetchWriter.writeFetchFile(itemsToFetch, rootPath, StandardCharsets.UTF_8);
+    Assertions.assertTrue(Files.exists(fetchFile));
   }
   
   @Test
   public void testFetchFileIsFormattedCorrectly() throws Exception{
     Path rootPath = createDirectory("fetchFormatted");
-    Path fetch = rootPath.resolve("fetch.txt");
     List<FetchItem> itemsToFetch = new ArrayList<>();
     
     itemsToFetch.add(new FetchItem(URI.create("http://localhost:8989/bags/v0_96/holey-bag/data/dir1/test3.txt"), null, rootPath.resolve("data/dir1/test3.txt")));
@@ -43,7 +42,7 @@ public class FetchWriterTest extends TempFolderTest {
     itemsToFetch.add(new FetchItem(URI.create("http://localhost:8989/bags/v0_96/holey-bag/data/test%201.txt"), null, rootPath.resolve("data/test 1.txt")));
     itemsToFetch.add(new FetchItem(URI.create("http://localhost:8989/bags/v0_96/holey-bag/data/test2.txt"), null, rootPath.resolve("data/test2.txt")));
     
-    FetchWriter.writeFetchFile(itemsToFetch, rootPath, StandardCharsets.UTF_8);
+    Path fetch = FetchWriter.writeFetchFile(itemsToFetch, rootPath, StandardCharsets.UTF_8);
     
     List<String> expectedLines = Arrays.asList("http://localhost:8989/bags/v0_96/holey-bag/data/dir1/test3.txt - data/dir1/test3.txt", 
         "http://localhost:8989/bags/v0_96/holey-bag/data/dir2/dir3/test5.txt - data/dir2/dir3/test5.txt", 
@@ -53,6 +52,36 @@ public class FetchWriterTest extends TempFolderTest {
     List<String> actualLines = Files.readAllLines(fetch);
     
     Assertions.assertEquals(expectedLines, actualLines);
+  }
+  
+  @Test
+  public void testFormatFetchLineForNullLength() throws Exception{
+    Path bagitRootDir = Paths.get("foo", "bar", "ham");
+    FetchItem fetchItem = new FetchItem(new URI("https://www.hackaday.com/blog"), null, bagitRootDir.resolve("data").resolve("foo.txt"));
+    String expected = "https://www.hackaday.com/blog - data/foo.txt" + System.lineSeparator();
+    String actual = FetchWriter.formatFetchLine(fetchItem, bagitRootDir);
+    
+    Assertions.assertEquals(expected, actual);
+  }
+  
+  @Test
+  public void testFormatFetchLineForUnknownLength() throws Exception{
+    Path bagitRootDir = Paths.get("foo", "bar", "ham");
+    FetchItem fetchItem = new FetchItem(new URI("https://www.hackaday.com/blog"), -1l, bagitRootDir.resolve("data").resolve("foo.txt"));
+    String expected = "https://www.hackaday.com/blog - data/foo.txt" + System.lineSeparator();
+    String actual = FetchWriter.formatFetchLine(fetchItem, bagitRootDir);
+    
+    Assertions.assertEquals(expected, actual);
+  }
+  
+  @Test
+  public void testFormatFetchLineForKnownLength() throws Exception{
+    Path bagitRootDir = Paths.get("foo", "bar", "ham");
+    FetchItem fetchItem = new FetchItem(new URI("https://www.hackaday.com/blog"), 100l, bagitRootDir.resolve("data").resolve("foo.txt"));
+    String expected = "https://www.hackaday.com/blog 100 data/foo.txt" + System.lineSeparator();
+    String actual = FetchWriter.formatFetchLine(fetchItem, bagitRootDir);
+    
+    Assertions.assertEquals(expected, actual);
   }
   
   @Test

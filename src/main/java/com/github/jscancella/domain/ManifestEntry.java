@@ -52,7 +52,7 @@ public final class ManifestEntry {
 
   @Override
   public int hashCode(){
-    return Objects.hash(this.physicalLocation) + Objects.hash(this.relativeLocation) + Objects.hash(this.checksum);
+    return Objects.hash(this.physicalLocation, this.relativeLocation, this.checksum);
   }
 
   @Override

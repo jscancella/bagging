@@ -29,10 +29,12 @@ public class MetadataWriterTest extends TempFolderTest {
     Assertions.assertFalse(Files.exists(bagInfo));
     Assertions.assertFalse(Files.exists(packageInfo));
     
-    MetadataWriter.writeBagMetadata(metadata, new Version(0,96), rootDir, StandardCharsets.UTF_8);
-    Assertions.assertTrue(Files.exists(bagInfo));
+    Path metadataFile = MetadataWriter.writeBagMetadata(metadata, new Version(0,96), rootDir, StandardCharsets.UTF_8);
+    Assertions.assertEquals(metadataFile, bagInfo);
+    Assertions.assertTrue(Files.exists(metadataFile));
     
-    MetadataWriter.writeBagMetadata(metadata, new Version(0,95), rootDir, StandardCharsets.UTF_8);
-    Assertions.assertTrue(Files.exists(packageInfo));
+    metadataFile = MetadataWriter.writeBagMetadata(metadata, new Version(0,95), rootDir, StandardCharsets.UTF_8);
+    Assertions.assertEquals(metadataFile, packageInfo);
+    Assertions.assertTrue(Files.exists(metadataFile));
   }
 }

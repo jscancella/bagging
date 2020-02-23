@@ -50,7 +50,7 @@ public final class FetchItem {
       builder.append(length).append(' ');
     }
     
-    builder.append(path);
+    builder.append(path.toString().replace('\\', '/'));
       
     return builder.toString();
   }
@@ -86,7 +86,7 @@ public final class FetchItem {
   
   @Override
   public int hashCode() {
-    return Objects.hash(uri) + Objects.hash(length) + Objects.hash(path);
+    return Objects.hash(uri, length, path);
   }
 
   @Override

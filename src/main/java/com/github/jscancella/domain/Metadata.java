@@ -23,13 +23,17 @@ public class Metadata {
   private Metadata(final Map<String, List<String>> map, final List<SimpleImmutableEntry<String, String>> list) {
     this.map = Collections.unmodifiableMap(map);
     this.list = Collections.unmodifiableList(list);
-    cachedString = String.join(",", list.stream().map(o -> o.toString()).collect(Collectors.toList()));
+    cachedString = buildString();
+  }
+  
+  private String buildString() {
+    return String.join(",", list.stream().map(o -> o.toString()).collect(Collectors.toList()));
   }
   
   @Override
   public String toString() {
     if(cachedString == null) {
-      cachedString = String.join(",", list.stream().map(o -> o.toString()).collect(Collectors.toList()));
+      cachedString = buildString();
     }
     return cachedString;
   }
@@ -68,7 +72,7 @@ public class Metadata {
    * @return the list of values for that label
    */
   public List<String> get(final String key){
-    return map.get(key.toUpperCase());
+    return map.getOrDefault(key.toUpperCase(), Collections.EMPTY_LIST);
   }
   
   /**

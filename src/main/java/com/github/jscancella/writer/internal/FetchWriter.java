@@ -46,7 +46,7 @@ public enum FetchWriter {;//using enum to enforce singleton
     return fetchFilePath;
   }
   
-  private static String formatFetchLine(final FetchItem fetchItem, final Path bagitRootDir){
+  static String formatFetchLine(final FetchItem fetchItem, final Path bagitRootDir){
     final StringBuilder fetchLineBuilder = new StringBuilder();
     fetchLineBuilder.append(fetchItem.getUri()).append(' ');
     

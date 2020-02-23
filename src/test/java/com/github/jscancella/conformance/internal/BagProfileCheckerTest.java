@@ -9,7 +9,6 @@ import java.nio.file.StandardOpenOption;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import com.github.jscancella.TempFolderTest;
 import com.github.jscancella.conformance.exceptions.BagitVersionIsNotAcceptableException;
 import com.github.jscancella.conformance.exceptions.FetchFileNotAllowedException;
 import com.github.jscancella.conformance.exceptions.MetatdataValueIsNotAcceptableException;
@@ -19,7 +18,7 @@ import com.github.jscancella.conformance.exceptions.RequiredMetadataFieldNotPres
 import com.github.jscancella.conformance.exceptions.RequiredTagFileNotPresentException;
 import com.github.jscancella.domain.Bag;
 
-public class BagProfileCheckerTest extends TempFolderTest {
+public class BagProfileCheckerTest{
   private static final Path profileJson = new File("src/test/resources/bagitProfiles/allOptionalFieldsProfile_v1.2.0.json").toPath();
   
   @Test

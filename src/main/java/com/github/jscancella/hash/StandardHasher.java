@@ -56,26 +56,6 @@ public enum StandardHasher implements Hasher {
     updateMessageDigest(path, messageDigestInstance);
     return formatMessageDigest(messageDigestInstance);
   }
-
-  @Override
-  public void update(final byte[] bytes, final int length){
-    messageDigestInstance.update(bytes, 0, length);
-  }
-
-  @Override
-  public String getHash(){
-    return formatMessageDigest(messageDigestInstance);
-  }
-
-  @Override
-  public void reset(){
-    messageDigestInstance.reset();
-  }
-
-  @Override
-  public String getBagitAlgorithmName(){
-    return BAGIT_ALGORITHM_NAME;
-  }
   
   private static void updateMessageDigest(final Path path, final MessageDigest messageDigest) throws IOException{
     try(InputStream inputStream = new BufferedInputStream(Files.newInputStream(path, StandardOpenOption.READ))){
@@ -98,7 +78,27 @@ public enum StandardHasher implements Hasher {
       return formatter.toString();
     }
   }
+  
+  @Override
+  public String getHash(){
+    return formatMessageDigest(messageDigestInstance);
+  }
 
+  @Override
+  public void update(final byte[] bytes){
+    messageDigestInstance.update(bytes);
+  }
+
+  @Override
+  public void reset(){
+    messageDigestInstance.reset();
+  }
+
+  @Override
+  public String getBagitAlgorithmName(){
+    return BAGIT_ALGORITHM_NAME;
+  }
+  
   @Override
   public void initialize() throws NoSuchAlgorithmException{
     messageDigestInstance = MessageDigest.getInstance(MESSAGE_DIGEST_NAME);

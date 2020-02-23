@@ -28,8 +28,8 @@ public enum SHA3Hasher implements Hasher {
   }
 
   @Override
-  public void update(byte[] bytes, int length){
-    messageDigestInstance.update(bytes, 0, length);
+  public void update(byte[] bytes){
+    messageDigestInstance.update(bytes, 0, bytes.length);
   }
 
   @Override

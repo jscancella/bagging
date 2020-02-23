@@ -75,7 +75,7 @@ public enum ManifestWriter {
 
       try(BufferedWriter writer = Files.newBufferedWriter(manifestPath, charsetName,
           StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE)){
-        for(final ManifestEntry entry : manifest.getEntries()){
+        for(final ManifestEntry entry : manifest.getEntries()){          
           // there are 2 spaces between the checksum and the path so that the manifests
           // are compatible with the md5sum tools available on most unix systems.
           // This may cause problems on windows due to it being text mode, in which case

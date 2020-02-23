@@ -19,7 +19,6 @@ public class ManifestWriterTest extends TempFolderTest {
 
   @Test
   public void testWritePayloadManifests() throws IOException {
-    //TODO
     Path outputFolder = createDirectory("write_payload_manifests");
     
     ManifestBuilder builder = new ManifestBuilder("md5");
@@ -30,8 +29,11 @@ public class ManifestWriterTest extends TempFolderTest {
     
     final Path expectedFile = outputFolder.resolve("manifest-md5.txt");
     Assertions.assertTrue(!Files.exists(expectedFile), expectedFile + " should not exist yet, but it does. Something went wrong during setup?");
-    ManifestWriter.writePayloadManifests(manifests, outputFolder, StandardCharsets.UTF_8);
-    Assertions.assertTrue(Files.exists(expectedFile), expectedFile + " should exist but doesn't!");
+    Set<Path> expectedManifests = ManifestWriter.writePayloadManifests(manifests, outputFolder, StandardCharsets.UTF_8);
+    for(Path expectedManifest : expectedManifests) {
+      Assertions.assertTrue(Files.exists(expectedManifest), expectedManifest + " should exist but doesn't!");
+      Assertions.assertTrue(Files.size(expectedManifest) > 0, expectedManifest + " should not be empty!");
+    }
   }
   
   @Test
@@ -47,7 +49,10 @@ public class ManifestWriterTest extends TempFolderTest {
     
     final Path expectedFile = outputFolder.resolve("tagmanifest-md5.txt");
     Assertions.assertTrue(!Files.exists(expectedFile), expectedFile + " should not exist yet, but it does. Something went wrong during setup?");
-    ManifestWriter.writeTagManifests(tagManifests, outputFolder, StandardCharsets.UTF_8);
-    Assertions.assertTrue(Files.exists(expectedFile), expectedFile + " should exist but doesn't!");
+    Set<Path> expectedManifests = ManifestWriter.writeTagManifests(tagManifests, outputFolder, StandardCharsets.UTF_8);
+    for(Path expectedManifest : expectedManifests) {
+      Assertions.assertTrue(Files.exists(expectedManifest), expectedManifest + " should exist but doesn't!");
+      Assertions.assertTrue(Files.size(expectedManifest) > 0, expectedManifest + " should not be empty!");
+    }
   }
 }

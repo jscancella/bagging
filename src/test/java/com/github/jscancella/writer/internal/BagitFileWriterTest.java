@@ -18,7 +18,8 @@ public class BagitFileWriterTest extends TempFolderTest {
     Path bagit = rootDir.resolve("bagit.txt");
     
     Assertions.assertFalse(Files.exists(bagit));
-    BagitFileWriter.writeBagitFile(new Version(0, 97), StandardCharsets.UTF_8, rootDir);
+    Path writtenTo = BagitFileWriter.writeBagitFile(new Version(0, 97), StandardCharsets.UTF_8, rootDir);
+    Assertions.assertTrue(Files.exists(writtenTo));
     Assertions.assertTrue(Files.exists(bagit));
     
     //test truncating existing
