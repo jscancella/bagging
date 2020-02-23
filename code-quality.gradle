@@ -38,8 +38,8 @@ check.dependsOn jacocoTestReport //run the code coverage reports
 check.dependsOn javadoc //ensure javadocs are generated correctly
 
 //ignore some of the code quality checks for tests since you can't always follow the best practices when testing
-spotbugsIntegrationTest.enabled = false
-spotbugsTest.enabled = false
+//spotbugsIntegrationTest.enabled = false
+//spotbugsTest.enabled = false
 
 pmdIntegrationTest.enabled = false
 pmdTest.enabled = false
