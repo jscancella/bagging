@@ -32,9 +32,8 @@ public interface Hasher {
    * <b>NOT THREAD SAFE</b> 
    * 
    * @param bytes the bytes with which to update the checksum
-   * @param length the number of bytes to update from the array
    */
-  void update(final byte[] bytes, final int length);
+  void update(final byte[] bytes);
   
   /**
    * @return the checksum of the streamed file. If no file has been streamed, returns a default hash.

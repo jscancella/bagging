@@ -179,8 +179,7 @@ public final class Bag {
 
   @Override
   public int hashCode() {
-    return Objects.hash(version) + Objects.hash(fileEncoding) + Objects.hash(payLoadManifests) + 
-        Objects.hash(tagManifests) + Objects.hash(itemsToFetch) + Objects.hash(metadata);
+    return Objects.hash(version, fileEncoding, payLoadManifests, tagManifests, itemsToFetch, metadata);
   }
 
   @Override

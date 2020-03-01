@@ -36,10 +36,8 @@ jacocoTestReport.dependsOn test //ensure the tests have run before generating a 
 check.dependsOn integrationTest //run the integration tests
 check.dependsOn jacocoTestReport //run the code coverage reports
 check.dependsOn javadoc //ensure javadocs are generated correctly
-
-//ignore some of the code quality checks for tests since you can't always follow the best practices when testing
-//spotbugsIntegrationTest.enabled = false
-//spotbugsTest.enabled = false
+check.dependsOn spotbugsMain //run the spotbugs on the main source code
+check.dependsOn pmdMain //run pmd and cpd on the main source code 
 
 pmdIntegrationTest.enabled = false
 pmdTest.enabled = false

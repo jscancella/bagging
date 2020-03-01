@@ -4,8 +4,8 @@ import java.nio.file.Path;
 
 public final class PathPair {
 
-  public final Path payloadFile;
-  public final String relativeLocation;
+  private final Path payloadFile;
+  private final String relativeLocation;
   
   public PathPair(final Path payloadFile, final String relativeLocation) {
     this.payloadFile = payloadFile;

@@ -1,24 +1,26 @@
 plugins {
   id 'java'
   
-  //these have to be in the main project for now see - https://discuss.gradle.org/t/how-do-i-include-buildscript-block-from-external-gradle-script/7016/2
+  //these have to be in the main project for now see:
+  //https://discuss.gradle.org/t/how-do-i-include-buildscript-block-from-external-gradle-script/7016/2
   id "com.github.kt3k.coveralls" version "2.9.0" 
   id "de.aaschmid.cpd" version "3.1"
   id "org.owasp.dependencycheck" version "5.3.0"
-//  id "com.dorongold.task-tree" version "1.5"
   id "org.ajoberstar.grgit" version "4.0.1"
   id "jp.skypencil.spotbugs.snom" version "0.5.1"
 //  id "com.github.spotbugs" version "3.0.0"
   id "com.jfrog.bintray" version "1.8.4"
+  id 'info.solidsoft.pitest' version '1.4.7'
 }
 apply from: 'eclipse.gradle'
 apply from: 'bintray.gradle'
-//apply from: 'maven-central.gradle'
 apply from: 'code-quality.gradle'
 apply from: 'message-bundle.gradle'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
+
+project.group = "com.github.jscancella"
 
 if(project.version == "unspecified"){
   String now = new Date().format( 'MMM-dd-yyyy_HH-mm-ss' )
@@ -54,12 +56,18 @@ test {
   //testLogging.showStandardStreams = true
 }
 
-/*tasks.withType(com.github.spotbugs.SpotBugsTask) {
-  reports {
-      xml.enabled = false
-      html.enabled = true
-  }
-}*/
+pitest {
+	//turn on to figure out why BagitProfileTest is failing
+	//verbose = true
+    //it adds dependency to org.pitest:pitest-junit5-plugin and also sets "testPlugin" to "junit5"
+    junit5PluginVersion = '0.12'
+    targetClasses = ['com.github.jscancella.*']
+	excludedTestClasses = ['com.github.jscancella.conformance.profile.BagitProfileTest'] //breaks due to testing all fields
+	useClasspathFile = true
+	threads = 4
+    outputFormats = ['XML', 'HTML']
+    timestampedReports = false
+}
 
 import org.ajoberstar.grgit.*
 task cloneConformanceSuite(){

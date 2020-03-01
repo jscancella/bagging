@@ -18,6 +18,7 @@ import com.github.jscancella.domain.Manifest.ManifestBuilder;
 import com.github.jscancella.domain.Metadata.MetadataBuilder;
 import com.github.jscancella.domain.internal.PathPair;
 import com.github.jscancella.exceptions.InvalidBagStateException;
+import com.github.jscancella.exceptions.NoSuchBagitAlgorithmException;
 import com.github.jscancella.hash.BagitChecksumNameMapping;
 
 /**
@@ -116,6 +117,7 @@ public final class BagBuilder {
     }
     else {
       logger.error(messages.getString("algorithm_not_supported"), bagitAlgorithmName, bagitAlgorithmName);
+      throw new NoSuchBagitAlgorithmException("Algorithm [" + bagitAlgorithmName + "] is not supported!");
     }
     return this;
   }
@@ -153,7 +155,7 @@ public final class BagBuilder {
   
   /**
    * Write the bag out to a physical location (on disk)
-   * @return this builder so as to chain commands
+   * @return The bag that was created
    * @throws IOException if there is a problem reading a file
    */
   public Bag write() throws IOException{
@@ -172,8 +174,9 @@ public final class BagBuilder {
     
     for(final String name : bagitAlgorithmNames) {
       final ManifestBuilder builder = new ManifestBuilder(name);
+      
       for(final Path tagFile : tagFiles) {
-        builder.addFile(tagFile, rootDir);
+        builder.addFile(tagFile, rootDir.relativize(rootDir));
       }
       
       manifests.add(builder.build());
@@ -181,7 +184,7 @@ public final class BagBuilder {
     
     return manifests;
   }
-
+  
   @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
   private Set<Manifest> createPayloadManifests() throws IOException{
     final Set<Manifest> manifests = new HashSet<>();
@@ -189,7 +192,9 @@ public final class BagBuilder {
     for(final String name : bagitAlgorithmNames) {
       final ManifestBuilder builder = new ManifestBuilder(name);
       for(final PathPair pair : payloadFiles) {        
-        builder.addFile(pair.payloadFile, rootDir.resolve(pair.relativeLocation));
+        final Path fullPathToNewLocation = rootDir.resolve(pair.getRelativeLocation());
+        final Path relativeToBaseDir = rootDir.relativize(fullPathToNewLocation);
+        builder.addFile(pair.getPayloadFile(), relativeToBaseDir);
       }
       
       manifests.add(builder.build());

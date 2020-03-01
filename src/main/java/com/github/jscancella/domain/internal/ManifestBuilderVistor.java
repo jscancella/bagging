@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -29,13 +30,12 @@ public final class ManifestBuilderVistor extends SimpleFileVisitor<Path> {
   /**
    * Create a manifest from the starting point
    * 
-   * @param entries the {@link ManifestEntry} that corresponds to a particular file
    * @param startingPoint The place to use when creating a relative path
    * @param hasher the hashing implementation
    */
-  public ManifestBuilderVistor(final List<ManifestEntry> entries, final Path startingPoint, final Hasher hasher) {
+  public ManifestBuilderVistor(final Path startingPoint, final Hasher hasher) {
     super();
-    this.entries = entries;
+    this.entries =  new ArrayList<>();
     this.startingPoint = Paths.get(startingPoint.toAbsolutePath().toString());
     this.hasher = hasher;
   }

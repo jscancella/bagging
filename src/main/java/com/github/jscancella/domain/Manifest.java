@@ -46,7 +46,7 @@ public final class Manifest {
   
   @Override
   public int hashCode() {
-    return Objects.hash(bagitAlgorithmName) + entries.hashCode();
+    return Objects.hash(bagitAlgorithmName, entries);
   }
 
   @Override
@@ -109,7 +109,9 @@ public final class Manifest {
      */
     public ManifestBuilder addFile(final Path file, final Path relative) throws IOException {
       if(Files.isDirectory(file)) {
-        Files.walkFileTree(file, new ManifestBuilderVistor(entries, file, hasher));
+        final ManifestBuilderVistor vistor = new ManifestBuilderVistor(file, hasher);
+        Files.walkFileTree(file, vistor);
+        entries.addAll(vistor.getEntries());
       }
       else {
         final Path physicalLocation = file.toAbsolutePath();
@@ -127,6 +129,10 @@ public final class Manifest {
      */
     public Manifest build() {
       return new Manifest(algorithmName, entries);
+    }
+
+    public String getAlgorithmName(){
+      return algorithmName;
     }
   }
 }

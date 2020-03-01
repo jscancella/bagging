@@ -23,7 +23,7 @@ public class BagitChecksumNameMappingTest {
       }
 
       @Override
-      public void update(byte[] bytes, int length) {
+      public void update(byte[] bytes) {
 
       }
 

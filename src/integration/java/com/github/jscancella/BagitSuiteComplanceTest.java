@@ -163,14 +163,19 @@ public class BagitSuiteComplanceTest extends TempFolderTest {
     Path newBagDir;
     
     for(final Path bagDir : visitor.getValidTestCases()){
-      newBagDir = folder.resolve("readWriteProducesSameBag");
-      bag = Bag.read(bagDir);
-      bag.write(newBagDir);
-      
-      testTagFileContents(bag, newBagDir);
-      
-      testBagsStructureAreEqual(bagDir, newBagDir);
-      delete(newBagDir);
+      try {
+        newBagDir = folder.resolve("readWriteProducesSameBag");
+        bag = Bag.read(bagDir);
+        bag.write(newBagDir);
+        
+        testTagFileContents(bag, newBagDir);
+        
+        testBagsStructureAreEqual(bagDir, newBagDir);
+        delete(newBagDir);
+      }
+      catch(Exception e) {
+        Assertions.fail("Read write equivialence fail on bag " + bagDir, e);
+      }
     }
   }
   
