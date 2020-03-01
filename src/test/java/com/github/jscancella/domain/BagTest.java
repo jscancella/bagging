@@ -13,34 +13,34 @@ import com.github.jscancella.TempFolderTest;
 
 public class BagTest extends TempFolderTest{
 
-//  @Test
-//  public void testReadObjectsAreEqual() throws Exception {
-//    Path rootDir = Paths.get("src", "test", "resources", "md5Bag");
-//    Bag bag = Bag.read(rootDir);
-//    Bag sameBag = Bag.read(rootDir);
-//    
-//    Assertions.assertEquals(bag, sameBag);
-//  }
-//  
-//  @Test
-//  public void testLogicallySameObjectsAreEqual() throws Exception {
-//    Path file = Paths.get("src", "test", "resources", "md5Bag", "bagit.txt");
-//    Path folder = createDirectory("tempBag");
-//    
-//    Bag bag = new BagBuilder().addAlgorithm("md5")
-//      .addMetadata("foo", "bar")
-//      .addPayloadFile(file)
-//      .bagLocation(folder)
-//      .write();
-//    
-//    Bag sameBag = new BagBuilder().addAlgorithm("md5")
-//        .addMetadata("foo", "bar")
-//        .addPayloadFile(file)
-//        .bagLocation(folder)
-//        .write();
-//    
-//    Assertions.assertEquals(bag, sameBag);
-//  }
+  @Test
+  public void testReadObjectsAreEqual() throws Exception {
+    Path rootDir = Paths.get("src", "test", "resources", "md5Bag");
+    Bag bag = Bag.read(rootDir);
+    Bag sameBag = Bag.read(rootDir);
+    
+    Assertions.assertEquals(bag, sameBag);
+  }
+  
+  @Test
+  public void testLogicallySameObjectsAreEqual() throws Exception {
+    Path file = Paths.get("src", "test", "resources", "md5Bag", "bagit.txt");
+    Path folder = createDirectory("tempBag");
+    
+    Bag bag = new BagBuilder().addAlgorithm("md5")
+      .addMetadata("foo", "bar")
+      .addPayloadFile(file)
+      .bagLocation(folder)
+      .write();
+    
+    Bag sameBag = new BagBuilder().addAlgorithm("md5")
+        .addMetadata("foo", "bar")
+        .addPayloadFile(file)
+        .bagLocation(folder)
+        .write();
+    
+    Assertions.assertEquals(bag, sameBag);
+  }
   
   @Test
   public void testBagCreation() throws Exception{
