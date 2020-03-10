@@ -125,6 +125,56 @@ jobs:
           command: ./gradlew check dependencyCheckUpdate dependencyCheckAnalyze --no-daemon
           environment: 
             GRADLE_OPTS: "-Xmx1024m -Dorg.gradle.jvmargs='-Xmx1024m'"
+  build-java13:
+    docker:
+      # specify the version you desire here
+      - image: circleci/openjdk:13-buster
+
+    working_directory: ~/repo
+
+    environment:
+      # Customize the JVM maximum heap limit
+      JVM_OPTS: -Xmx1048m
+      TERM: dumb
+    
+    steps:
+      - checkout #checks out your code to your working directory
+      - restore_cache:
+          keys:
+            - dependency-cache
+      - run:
+          name: chmod permissions
+          command: chmod +x ./gradlew
+      - run:
+          name: run checks
+          command: ./gradlew check dependencyCheckUpdate dependencyCheckAnalyze --no-daemon
+          environment: 
+            GRADLE_OPTS: "-Xmx1024m -Dorg.gradle.jvmargs='-Xmx1024m'"
+  build-java14:
+    docker:
+      # specify the version you desire here
+      - image: circleci/openjdk:14-buster
+
+    working_directory: ~/repo
+
+    environment:
+      # Customize the JVM maximum heap limit
+      JVM_OPTS: -Xmx1048m
+      TERM: dumb
+    
+    steps:
+      - checkout #checks out your code to your working directory
+      - restore_cache:
+          keys:
+            - dependency-cache
+      - run:
+          name: chmod permissions
+          command: chmod +x ./gradlew
+      - run:
+          name: run checks
+          command: ./gradlew check dependencyCheckUpdate dependencyCheckAnalyze --no-daemon
+          environment: 
+            GRADLE_OPTS: "-Xmx1024m -Dorg.gradle.jvmargs='-Xmx1024m'"
 
 workflows:
   version: 2
@@ -134,3 +184,5 @@ workflows:
       - build-java9
       - build-java10
       - build-java11
+      - build-java13
+      - build-java14
