@@ -42,6 +42,9 @@ check.dependsOn pmdMain //run pmd and cpd on the main source code
 pmdIntegrationTest.enabled = false
 pmdTest.enabled = false
 
+spotbugsIntegrationTest.enabled = false
+spotbugsTest.enabled = false
+
 pmd {
   ruleSets = [] //specifically set this to be empty, otherwise gradle includes the defaults in addition to our custom ruleset! 
   ruleSetConfig = resources.text.fromFile("config/pmd/ruleset.xml")
@@ -75,4 +78,17 @@ dependencyCheck {
     skipTestGroups=true
     skipConfigurations=['spotbugs','cpd'] //don't look for vulnerabilities in the build plugins
     outputDirectory="build/reports/OWASP"
+}
+
+pitest {
+	//turn on to figure out why BagitProfileTest is failing
+	//verbose = true
+    //it adds dependency to org.pitest:pitest-junit5-plugin and also sets "testPlugin" to "junit5"
+    junit5PluginVersion = '0.12'
+    targetClasses = ['com.github.jscancella.*']
+	excludedTestClasses = ['com.github.jscancella.conformance.profile.BagitProfileTest'] //breaks due to testing all fields
+	useClasspathFile = true
+	threads = 4
+    outputFormats = ['XML', 'HTML']
+    timestampedReports = false
 }
