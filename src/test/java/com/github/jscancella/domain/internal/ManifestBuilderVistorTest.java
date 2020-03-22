@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 
 import com.github.jscancella.hash.BagitChecksumNameMapping;
 import com.github.jscancella.hash.Hasher;
-import com.github.jscancella.hash.StandardHasher;
 
 public class ManifestBuilderVistorTest {
 

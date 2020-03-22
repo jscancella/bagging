@@ -83,5 +83,7 @@ public class BagTest extends TempFolderTest{
     
     Assertions.assertTrue(Files.exists(expectedTagFile));
     Assertions.assertArrayEquals(Files.readAllBytes(tagFile), Files.readAllBytes(expectedTagFile));
+    
+    Assertions.assertTrue(Files.exists(expectedFetchFile));
   }
 }

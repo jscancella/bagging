@@ -72,7 +72,7 @@ public class Metadata {
    * @return the list of values for that label
    */
   public List<String> get(final String key){
-    return map.getOrDefault(key.toUpperCase(), Collections.EMPTY_LIST);
+    return map.getOrDefault(key.toUpperCase(), Collections.emptyList());
   }
   
   /**

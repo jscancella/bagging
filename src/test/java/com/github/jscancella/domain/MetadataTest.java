@@ -3,7 +3,6 @@ package com.github.jscancella.domain;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import com.github.jscancella.conformance.profile.BagitProfile;
 import com.github.jscancella.domain.Metadata.MetadataBuilder;
 
 public class MetadataTest {

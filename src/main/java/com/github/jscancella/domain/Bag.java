@@ -218,10 +218,30 @@ public final class Bag {
    * @throws MissingPayloadManifestException if there is no payload manifest
    */
   public boolean isValid(final boolean ignoreHiddenFiles) throws IOException {
+    BagitTextFileVerifier.checkBagitTextFile(this);
+    return isComplete(ignoreHiddenFiles) && justValidate();
+  }
+  
+  /**
+   * See <a href=
+   * "https://tools.ietf.org/html/draft-kunze-bagit#section-3">https://tools.ietf.org/html/draft-kunze-bagit#section-3</a><br>
+   * Just checks every checksum has been
+   * verified against the contents of its corresponding file.
+   * 
+   * @return true if the bag is valid or throws an exception
+   * 
+   * @throws InvalidBagitFileFormatException if the file(s) are not formatted correctly
+   * @throws IOException if there is a problem reading a file
+   * @throws CorruptChecksumException the checksum doesn't match what was listed in the manifest
+   * @throws FileNotInPayloadDirectoryException file listed in manifest but doesn't exist
+   * @throws MissingBagitFileException the bagit.txt file is missing
+   * @throws MissingPayloadDirectoryException if a bag is missing a payload directory
+   * @throws MissingPayloadManifestException if there is no payload manifest
+   */
+  public boolean justValidate() throws IOException{
     boolean isValid = true;
     
     BagitTextFileVerifier.checkBagitTextFile(this);
-    isValid = isComplete(ignoreHiddenFiles) && isValid;
     
     for(final Manifest payloadManifest : payLoadManifests){
       isValid = checkHashes(payloadManifest) && isValid;
