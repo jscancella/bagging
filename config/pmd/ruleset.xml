@@ -36,6 +36,7 @@
     </rule>
     <rule ref="category/java/errorprone.xml">
         <exclude name="DataflowAnomalyAnalysis"/> <!-- Has a bug that doesn't recognize variables created in for-each loops and others that are valid. -->
+        <exclude name="InvalidLogMessageFormat"/> <!-- Doesn't recognize message bundles -->
     </rule>
     <rule ref="category/java/multithreading.xml">
     </rule>
