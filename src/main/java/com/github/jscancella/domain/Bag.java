@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
@@ -47,6 +48,7 @@ import com.github.jscancella.writer.internal.MetadataWriter;
 /**
  * The main representation of the bagit spec. This is an immutable object.
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public final class Bag {  
   private static final Logger logger = LoggerFactory.getLogger(Bag.class);
   private static final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
@@ -335,12 +337,27 @@ public final class Bag {
     }
     
     final Set<Manifest> newPayloadManifests = writeManifests(writeTo, payLoadManifests);
-    ManifestWriter.writePayloadManifests(newPayloadManifests, writeTo, fileEncoding);
+    final Set<Path> newPayloadManifestFiles = ManifestWriter.writePayloadManifests(newPayloadManifests, writeTo, fileEncoding);
+    final Set<Manifest> updatedTagManifests = updateTagManifests(newPayloadManifestFiles);
     
-    final Set<Manifest> newTagManifests = writeManifests(writeTo, tagManifests);
+    final Set<Manifest> newTagManifests = writeManifests(writeTo, updatedTagManifests);
     ManifestWriter.writeTagManifests(newTagManifests, writeTo, fileEncoding);
     
     return new Bag(version, fileEncoding, newPayloadManifests, newTagManifests, itemsToFetch, metadata, writeTo);
+  }
+  
+  private Set<Manifest> updateTagManifests(final Set<Path> newPayloadManifestFiles) throws IOException{
+	  final Set<Manifest> updatedTagManifests = new HashSet<>(tagManifests.size());
+	  for(final Manifest manifest : tagManifests) {
+		  //TODO //tagManifests + newPayloadManifestFiles entries
+		  final ManifestBuilder builder = new ManifestBuilder(manifest);
+		  for(final Path payloadManifestFile : newPayloadManifestFiles) {
+			  builder.addFile(payloadManifestFile, Paths.get(""));
+		  }
+		  updatedTagManifests.add(builder.build());
+	  }
+	  
+	  return updatedTagManifests;
   }
   
   @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")

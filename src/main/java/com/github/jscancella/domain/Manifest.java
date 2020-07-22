@@ -67,13 +67,19 @@ public final class Manifest {
   public static final class ManifestBuilder {
     private String algorithmName;
     private Hasher hasher;
-    private final List<ManifestEntry> entries = new ArrayList<>();
+    private final List<ManifestEntry> entries;
     
     /**
      * @param bagitAlgorithmName the bagit algorithm name
      */
     public ManifestBuilder(final String bagitAlgorithmName){
       this.bagitAlgorithmName(bagitAlgorithmName);
+      this.entries = new ArrayList<>();
+    }
+    
+    public ManifestBuilder(final Manifest manifestToClone) {
+    	this.bagitAlgorithmName(manifestToClone.getBagitAlgorithmName());
+    	this.entries = new ArrayList<>(manifestToClone.getEntries());
     }
     
     /**
