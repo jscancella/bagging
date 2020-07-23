@@ -26,7 +26,7 @@ public class BagTest extends TempFolderTest{
   @Test
   public void testLogicallySameObjectsAreEqual() throws Exception {
     Path file = Paths.get("src", "test", "resources", "md5Bag", "bagit.txt");
-    Path folder = createDirectory("tempBag");
+    Path folder = createDirectory("tempBagAreEqual");
     
     Bag bag = new BagBuilder().addAlgorithm("md5")
       .addMetadata("foo", "bar")
@@ -45,7 +45,7 @@ public class BagTest extends TempFolderTest{
   
   @Test
   public void testBagCreation() throws Exception{
-    Path rootDir = createDirectory("builtBag");
+    Path rootDir = createDirectory("tempBuiltBag");
     Path payloadFile = Paths.get("src", "test", "resources", "bags", "v1_0", "bag", "data", "foo.txt");
     Path tagFile = payloadFile;
     FetchItem fetchItem = new FetchItem(new URI("https://hackaday.com"), 0l, Paths.get(""));

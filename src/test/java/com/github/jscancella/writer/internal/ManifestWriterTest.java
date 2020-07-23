@@ -19,7 +19,7 @@ public class ManifestWriterTest extends TempFolderTest {
 
   @Test
   public void testWritePayloadManifests() throws IOException {
-    Path outputFolder = createDirectory("write_payload_manifests");
+    Path outputFolder = createDirectory("testWritePayloadManifests");
     
     ManifestBuilder builder = new ManifestBuilder("md5");
     builder.addFile(Paths.get("src","test","resources","bags", "v1_0", "bag", "data", "foo.txt"), outputFolder.resolve("data"));
@@ -38,8 +38,7 @@ public class ManifestWriterTest extends TempFolderTest {
   
   @Test
   public void testWriteTagManifests() throws IOException{
-    //TODO
-    Path outputFolder = createDirectory("write_tag_manifests");
+    Path outputFolder = createDirectory("testWriteTagManifests");
     
     ManifestBuilder builder = new ManifestBuilder("md5");
     builder.addFile(Paths.get("src","test","resources","bags", "v1_0", "bag", "bagit.txt"), outputFolder);

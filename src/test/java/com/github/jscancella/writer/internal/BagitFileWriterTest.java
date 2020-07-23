@@ -14,7 +14,7 @@ public class BagitFileWriterTest extends TempFolderTest {
   
   @Test
   public void testWriteBagitFile() throws Exception{
-    Path rootDir = createDirectory("newFolder");
+    Path rootDir = createDirectory("testWriteBagitFile");
     Path bagit = rootDir.resolve("bagit.txt");
     
     Assertions.assertFalse(Files.exists(bagit));

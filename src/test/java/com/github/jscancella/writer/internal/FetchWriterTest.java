@@ -19,7 +19,7 @@ public class FetchWriterTest extends TempFolderTest {
 
   @Test
   public void testWriteFetchFile() throws Exception{
-    Path rootPath = createDirectory("fetchTest");
+    Path rootPath = createDirectory("testWriteFetchFile");
     Path fetch = rootPath.resolve("fetch.txt");
     URI uri = URI.create("http://localhost:/foo/bar");
     List<FetchItem> itemsToFetch = Arrays.asList(new FetchItem(uri, -1l, rootPath.resolve("/data/foo/bar")),

@@ -17,7 +17,7 @@ public class MetadataWriterTest extends TempFolderTest {
   
   @Test
   public void testWriteBagitInfoFile() throws IOException{
-    Path rootDir = createDirectory("writeBagitInfo");
+    Path rootDir = createDirectory("testWriteBagitInfoFile");
     Path bagInfo = rootDir.resolve("bag-info.txt");
     Path packageInfo = rootDir.resolve("package-info.txt");
     Metadata metadata = new MetadataBuilder()

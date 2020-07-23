@@ -1,9 +1,11 @@
 package com.github.jscancella.domain;
 
+import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Set;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -96,7 +98,7 @@ public class BagBuilderTest extends TempFolderTest{
     sut.addAlgorithm("md5");
     sut.addMetadata("foo", "bar");
     sut.addPayloadFile(Paths.get("src", "test", "resources", "md5Bag", "data", "readme.txt"));
-    sut.bagLocation(createDirectory("tempBag"));
+    sut.bagLocation(createDirectory("tempBagForWriting"));
     
     Assertions.assertNotNull(sut.write());
   }
@@ -105,5 +107,21 @@ public class BagBuilderTest extends TempFolderTest{
   public void builderThrowsErrorNonSupportedHashAlgorithm() {
     BagBuilder sut = new BagBuilder();
     Assertions.assertThrows(NoSuchBagitAlgorithmException.class, () -> { sut.addAlgorithm("somethingMadeUp"); }); 
+  }
+  
+  @Test
+  public void builderHandlesAddingDirectoryAsTagFiles() throws IOException {
+    BagBuilder sut = new BagBuilder();
+    Path path = Paths.get("src", "test", "resources", "md5Bag", "data");
+    ManifestEntry expectedManifestEntry = 
+        new ManifestEntry(path.resolve("readme.txt"), path.getFileName().resolve("readme.txt"), "aee452eebfbd978228775bf7b0e808dc");
+    
+    sut.bagLocation(createDirectory("tempBagForTagFolderFiles"));
+    sut.addAlgorithm("md5");
+    sut.addTagFile(path);
+    Set<Manifest> tagManifests = sut.createTagManifests();
+    for(Manifest manifest : tagManifests) {
+      Assertions.assertTrue(manifest.getEntries().contains(expectedManifestEntry));
+    }
   }
 }

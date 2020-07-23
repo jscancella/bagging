@@ -43,7 +43,11 @@ public final class ManifestBuilderVistor extends SimpleFileVisitor<Path> {
   @Override
   public FileVisitResult visitFile(final Path path, final BasicFileAttributes attrs) throws IOException{
     final Path physicalLocation = path.toAbsolutePath();
-    final Path relativeLocation = startingPoint.relativize(physicalLocation);
+    Path relativeStartingLocation = startingPoint.getParent();
+    if(relativeStartingLocation == null) {
+      relativeStartingLocation = startingPoint;
+    }
+    final Path relativeLocation = relativeStartingLocation.relativize(physicalLocation);
     final String checksum = hasher.hash(physicalLocation);
     final ManifestEntry entry = new ManifestEntry(physicalLocation, relativeLocation, checksum);
     
