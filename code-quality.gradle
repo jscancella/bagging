@@ -45,6 +45,15 @@ pmdTest.enabled = false
 spotbugsIntegrationTest.enabled = false
 spotbugsTest.enabled = false
 
+spotbugsMain {
+  reports {
+    html {
+      enabled = true
+      destination = file("$buildDir/reports/spotbugs/main/spotbugs.html")
+    }
+  }
+}
+
 pmd {
   ruleSets = [] //specifically set this to be empty, otherwise gradle includes the defaults in addition to our custom ruleset! 
   ruleSetConfig = resources.text.fromFile("config/pmd/ruleset.xml")
