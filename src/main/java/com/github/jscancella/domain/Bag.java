@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
 
@@ -326,19 +327,21 @@ public final class Bag {
     logger.info(messages.getString("writing_bag_to_path"), rootDir);
     Files.createDirectories(writeTo);
     
-    BagitFileWriter.writeBagitFile(version, fileEncoding, writeTo);
+    final Path bagitFile = BagitFileWriter.writeBagitFile(version, fileEncoding, writeTo);
     
+    Optional<Path> metadataFile = Optional.empty();
     if(!metadata.isEmpty()) {
-      MetadataWriter.writeBagMetadata(metadata, version, writeTo, fileEncoding);
+    	metadataFile = Optional.of(MetadataWriter.writeBagMetadata(metadata, version, writeTo, fileEncoding));
     }
     
+    Optional<Path> fetchFile = Optional.empty();
     if(!itemsToFetch.isEmpty()){
-      FetchWriter.writeFetchFile(itemsToFetch, writeTo, fileEncoding);
+    	fetchFile = Optional.of(FetchWriter.writeFetchFile(itemsToFetch, writeTo, fileEncoding));
     }
     
     final Set<Manifest> newPayloadManifests = writeManifests(writeTo, payLoadManifests);
     final Set<Path> newPayloadManifestFiles = ManifestWriter.writePayloadManifests(newPayloadManifests, writeTo, fileEncoding);
-    final Set<Manifest> updatedTagManifests = updateTagManifests(newPayloadManifestFiles);
+    final Set<Manifest> updatedTagManifests = updateTagManifests(bagitFile, newPayloadManifestFiles, metadataFile, fetchFile);
     
     final Set<Manifest> newTagManifests = writeManifests(writeTo, updatedTagManifests);
     ManifestWriter.writeTagManifests(newTagManifests, writeTo, fileEncoding);
@@ -346,11 +349,26 @@ public final class Bag {
     return new Bag(version, fileEncoding, newPayloadManifests, newTagManifests, itemsToFetch, metadata, writeTo);
   }
   
-  private Set<Manifest> updateTagManifests(final Set<Path> newPayloadManifestFiles) throws IOException{
+  /*
+   * because certain files like the payload manifest just got created, 
+   * we need to now add them to the tag manifest(s)
+   */
+  private Set<Manifest> updateTagManifests(final Path bagitFile, final Set<Path> newPayloadManifestFiles, final Optional<Path> metadataFile, final Optional<Path> fetchFile) throws IOException{
 	  final Set<Manifest> updatedTagManifests = new HashSet<>(tagManifests.size());
 	  for(final Manifest manifest : tagManifests) {
-		  //TODO //tagManifests + newPayloadManifestFiles entries
+		  //clone the existing manifest as it may contain other tag files
 		  final ManifestBuilder builder = new ManifestBuilder(manifest);
+		  
+		  builder.addFile(bagitFile, Paths.get(""));
+		  
+		  if(metadataFile.isPresent()) {
+			  builder.addFile(metadataFile.get(), Paths.get(""));
+		  }
+		  
+		  if(fetchFile.isPresent()) {
+			  builder.addFile(fetchFile.get(), Paths.get(""));
+		  }
+		  
 		  for(final Path payloadManifestFile : newPayloadManifestFiles) {
 			  builder.addFile(payloadManifestFile, Paths.get(""));
 		  }

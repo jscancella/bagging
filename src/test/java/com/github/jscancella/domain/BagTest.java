@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import com.github.jscancella.TempFolderTest;
-import com.github.jscancella.hash.Hasher;
 import com.github.jscancella.hash.StandardHasher;
 
 public class BagTest extends TempFolderTest{
@@ -68,10 +67,12 @@ public class BagTest extends TempFolderTest{
     Path expectedFetchFile = rootDir.resolve("fetch.txt");
     
     Assertions.assertTrue(Files.exists(expectedBagitFile));
+    String bagitFileHash = StandardHasher.MD5.hash(expectedBagitFile);
     Assertions.assertEquals(
         Arrays.asList("BagIt-Version: 1.0","Tag-File-Character-Encoding: UTF-8"), Files.readAllLines(expectedBagitFile));
     
     Assertions.assertTrue(Files.exists(expectedMetadataFile));
+    String metadataFileHash = StandardHasher.MD5.hash(expectedMetadataFile);
     Assertions.assertEquals(
         Arrays.asList("foo: bar"), Files.readAllLines(expectedMetadataFile));
     
@@ -80,13 +81,21 @@ public class BagTest extends TempFolderTest{
     Assertions.assertEquals(
         Arrays.asList("b1946ac92492d2347c6235b4d2611184  data/foo.txt"), Files.readAllLines(expectedManifestFile));
     
+    Assertions.assertTrue(Files.exists(expectedFetchFile));
+    String fetchFileHash = StandardHasher.MD5.hash(expectedFetchFile);
+    
     Assertions.assertTrue(Files.exists(expectedTagmanifestFile));
     Assertions.assertEquals(
-        Arrays.asList("b1946ac92492d2347c6235b4d2611184  foo.txt", manifestFileHash + "  manifest-md5.txt"), Files.readAllLines(expectedTagmanifestFile));
+        Arrays.asList("b1946ac92492d2347c6235b4d2611184  foo.txt",
+        		      bagitFileHash + "  bagit.txt",
+        		      metadataFileHash + "  bag-info.txt",
+        		      fetchFileHash + "  fetch.txt",
+        		      manifestFileHash + "  manifest-md5.txt"), 
+        Files.readAllLines(expectedTagmanifestFile));
     
     Assertions.assertTrue(Files.exists(expectedTagFile));
     Assertions.assertArrayEquals(Files.readAllBytes(tagFile), Files.readAllBytes(expectedTagFile));
     
-    Assertions.assertTrue(Files.exists(expectedFetchFile));
+    
   }
 }
