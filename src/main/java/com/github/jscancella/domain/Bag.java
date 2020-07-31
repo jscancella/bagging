@@ -400,7 +400,9 @@ public final class Bag {
     manifestBuilder.addEntry(newEntry);
     //copy to new location
     createDirectoriesIfNeeded(newEntry);
-    Files.copy(entry.getPhysicalLocation(), newEntry.getPhysicalLocation(), StandardCopyOption.REPLACE_EXISTING);
+    if(!Files.exists(newEntry.getPhysicalLocation())) {
+      Files.copy(entry.getPhysicalLocation(), newEntry.getPhysicalLocation(), StandardCopyOption.REPLACE_EXISTING);
+    }
   }
   
   private void createDirectoriesIfNeeded(final ManifestEntry entry) throws IOException {

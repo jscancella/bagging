@@ -8,6 +8,18 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class StandardHasherTest {
+  
+  @Test
+  public void testResetBeforeHashingFile() throws Exception{
+    Path testFile = Paths.get("src", "test", "resources", "md5Bag", "bagit.txt");
+    Hasher hasher = BagitChecksumNameMapping.get("md5");
+    
+    String originalHash = hasher.hash(testFile);
+    
+    hasher.update("Some data that needs to be cleared from the hasher".getBytes());
+    
+    Assertions.assertEquals(originalHash, hasher.hash(testFile));
+  }
 
   @Test
   public void testResetClearsState() throws Exception{
@@ -15,6 +27,8 @@ public class StandardHasherTest {
     Hasher hasher = BagitChecksumNameMapping.get("md5");
     hasher.update(Files.readAllBytes(testFile));
     String originalHash = hasher.getHash();
+    
+    hasher.update("Some data that needs to be cleared from the hasher".getBytes());
     
     hasher.reset(); //clear the state
     
