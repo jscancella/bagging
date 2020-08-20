@@ -113,24 +113,27 @@ public class BagBuilderTest extends TempFolderTest{
   @Test
   public void builderHandlesAddingDirectoryAsTagFiles() throws IOException {
     BagBuilder sut = new BagBuilder();
-    Path path = Paths.get("src", "test", "resources", "md5Bag", "data");
-    ManifestEntry expectedManifestEntry = 
-        new ManifestEntry(path.resolve("readme.txt"), path.getFileName().resolve("readme.txt"), "aee452eebfbd978228775bf7b0e808dc");
+    Path src = Paths.get("src", "test", "resources", "bagitProfiles");
+    Path dst = createDirectory("tempBagForTagFolderFiles");
     
-    sut.bagLocation(createDirectory("tempBagForTagFolderFiles"));
+    sut.bagLocation(dst);
     sut.addAlgorithm("md5");
-    sut.addTagFile(path);
-    Set<Manifest> tagManifests = sut.createTagManifests();
-    for(Manifest manifest : tagManifests) {
-      Assertions.assertTrue(manifest.getEntries().contains(expectedManifestEntry));
+    sut.addTagFile(src);
+    Set<Manifest> manifests = sut.createTagManifests();
+    ManifestEntry expectedEntry = new ManifestEntry(src.resolve("allOptionalFieldsProfile_v1.2.0.json"), 
+                                                          Paths.get("bagitProfiles").resolve("allOptionalFieldsProfile_v1.2.0.json"), 
+                                                          "425068292657a960002af7890bed207c");
+    for(Manifest manifest : manifests) {
+      Assertions.assertTrue(manifest.getEntries().contains(expectedEntry));
     }
+    
   }
   
   @Test
   /*
    * This is in response to found bug https://github.com/jscancella/bagging/issues/46
    */
-  public void builderCorrectlyHandlesAddingFolderToDataDirectoryBug46() throws IOException {
+  public void builderCorrectlyHandlesAddingFolderToDataDirectory() throws IOException {
     BagBuilder sut = new BagBuilder();
     Path src = Paths.get("src", "test", "resources", "baginfoFiles");
     Path dst = createDirectory("Bug46");
@@ -140,6 +143,23 @@ public class BagBuilderTest extends TempFolderTest{
       .bagLocation(dst)
       .write();
     Path expectedOutput = dst.resolve("data").resolve("baginfoFiles").resolve("bag-info.txt");
+    Assertions.assertTrue(Files.exists(expectedOutput), "Expected "+ expectedOutput + " to exist but it doesn't!");
+  }
+  
+  @Test
+  /*
+   * This is in response to found bug https://github.com/jscancella/bagging/issues/46
+   */
+  public void builderCorrectlyHandlesAddingFolderToDataDirectoryUsingRelativePath() throws IOException {
+    BagBuilder sut = new BagBuilder();
+    Path src = Paths.get("src", "test", "resources", "baginfoFiles");
+    Path dst = createDirectory("Bug46-relative");
+    
+    sut.addAlgorithm("md5")
+      .addPayloadFile(src, "data/foo")
+      .bagLocation(dst)
+      .write();
+    Path expectedOutput = dst.resolve("data").resolve("foo").resolve("baginfoFiles").resolve("bag-info.txt");
     Assertions.assertTrue(Files.exists(expectedOutput), "Expected "+ expectedOutput + " to exist but it doesn't!");
   }
 }

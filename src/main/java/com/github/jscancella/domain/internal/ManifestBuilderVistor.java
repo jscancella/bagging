@@ -25,33 +25,34 @@ public final class ManifestBuilderVistor extends SimpleFileVisitor<Path> {
   
   private final List<ManifestEntry> entries;
   private final Path startingPoint;
+  private final Path relative;
   private final Hasher hasher;
   
   /**
    * Create a manifest from the starting point
    * 
-   * @param startingPoint The place to use when creating a relative path
+   * @param startingPoint used for determining the relative path
+   * @param relative the relative place to start in the bag (must include data if a payload path)
    * @param hasher the hashing implementation
    */
-  public ManifestBuilderVistor(final Path startingPoint, final Hasher hasher) {
+  public ManifestBuilderVistor(final Path startingPoint, final Path relative, final Hasher hasher) {
     super();
     this.entries =  new ArrayList<>();
-    this.startingPoint = Paths.get(startingPoint.toAbsolutePath().toString());
+    final Path absoluteStartingPoint = Paths.get(startingPoint.toAbsolutePath().toString());
+    if(absoluteStartingPoint.getParent() == null) {
+      this.startingPoint = absoluteStartingPoint;
+    }
+    else {
+      this.startingPoint = absoluteStartingPoint.getParent();
+    }
+    this.relative = relative;
     this.hasher = hasher;
   }
 
   @Override
   public FileVisitResult visitFile(final Path path, final BasicFileAttributes attrs) throws IOException{
     final Path physicalLocation = path.toAbsolutePath();
-    Path relativeStartingLocation = startingPoint.getParent();
-    if(relativeStartingLocation == null) {
-      relativeStartingLocation = startingPoint;
-    }
-    
-    Path relativeLocation = relativeStartingLocation.relativize(physicalLocation);
-    if(!relativeLocation.startsWith("data")) {
-      relativeLocation = Paths.get("data").resolve(relativeLocation);
-    }
+    final Path relativeLocation = relative.resolve(startingPoint.relativize(physicalLocation));
     final String checksum = hasher.hash(physicalLocation);
     final ManifestEntry entry = new ManifestEntry(physicalLocation, relativeLocation, checksum);
     
@@ -72,5 +73,9 @@ public final class ManifestBuilderVistor extends SimpleFileVisitor<Path> {
 
   public Hasher getHasher(){
     return hasher;
+  }
+
+  public Path getRelative() {
+    return relative;
   }
 }

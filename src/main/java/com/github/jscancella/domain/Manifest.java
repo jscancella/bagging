@@ -115,7 +115,7 @@ public final class Manifest {
      */
     public ManifestBuilder addFile(final Path file, final Path relative) throws IOException {
       if(Files.isDirectory(file)) {
-        final ManifestBuilderVistor vistor = new ManifestBuilderVistor(file, hasher);
+        final ManifestBuilderVistor vistor = new ManifestBuilderVistor(file, relative, hasher);
         Files.walkFileTree(file, vistor);
         entries.addAll(vistor.getEntries());
       }

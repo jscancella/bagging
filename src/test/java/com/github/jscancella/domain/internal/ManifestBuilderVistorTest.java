@@ -17,7 +17,7 @@ public class ManifestBuilderVistorTest {
     Path startingPoint = Paths.get("src", "test", "resources", "bags", "v0_97", "bag", "data");
     Hasher hasher = BagitChecksumNameMapping.get("md5");
     
-    ManifestBuilderVistor vistor = new ManifestBuilderVistor(startingPoint, hasher);
+    ManifestBuilderVistor vistor = new ManifestBuilderVistor(startingPoint, Paths.get("data"), hasher);
     Files.walkFileTree(startingPoint, vistor);
     Assertions.assertEquals(5, vistor.getEntries().size());
   }

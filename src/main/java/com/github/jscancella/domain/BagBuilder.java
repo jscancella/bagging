@@ -3,7 +3,6 @@ package com.github.jscancella.domain;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -82,7 +81,6 @@ public final class BagBuilder {
    * @return this builder so as to chain commands
    */
   public BagBuilder addPayloadFile(final Path payload) {
-//    this.payloadFiles.add(Paths.get(payload.toAbsolutePath().toString()));
     this.addPayloadFile(payload.toAbsolutePath(), "data");
     return this;
   }
@@ -191,12 +189,7 @@ public final class BagBuilder {
       final ManifestBuilder builder = new ManifestBuilder(name);
 
       for (final Path tagFile : tagFiles) {
-        if (Files.isDirectory(tagFile)) {
-          builder.addFile(tagFile, tagFile.getFileName());
-        }
-        else {
-          builder.addFile(tagFile, Paths.get(""));
-        }
+        builder.addFile(tagFile, Paths.get(""));
       }
 
       manifests.add(builder.build());
@@ -208,13 +201,19 @@ public final class BagBuilder {
   @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
   private Set<Manifest> createPayloadManifests() throws IOException {
     final Set<Manifest> manifests = new HashSet<>();
+    logger.debug("building payload manifests");
 
     for (final String name : bagitAlgorithmNames) {
+      logger.debug("building payload manifest for algorithm [{}]", name);
       final ManifestBuilder builder = new ManifestBuilder(name);
       for (final PathPair pair : payloadFiles) {
-        final Path fullPathToNewLocation = rootDir.resolve(pair.getRelativeLocation());
-        final Path relativeToBaseDir = rootDir.relativize(fullPathToNewLocation);
-        builder.addFile(pair.getPayloadFile(), relativeToBaseDir);
+//        logger.debug("source [{}] file should be located at [{}] relative to the bag's root directory", pair.getPayloadFile(), pair.getRelativeLocation());
+//        final Path fullPathToNewLocation = rootDir.resolve(pair.getRelativeLocation());
+//        logger.debug("full path to new location [{}]", fullPathToNewLocation);
+//        final Path relativeToBaseDir = rootDir.relativize(fullPathToNewLocation);
+//        logger.debug("relative to base dir [{}]", relativeToBaseDir);
+//        builder.addFile(pair.getPayloadFile(), relativeToBaseDir);
+        builder.addFile(pair.getPayloadFile(), Paths.get(pair.getRelativeLocation()));
       }
 
       manifests.add(builder.build());
