@@ -47,7 +47,11 @@ public final class ManifestBuilderVistor extends SimpleFileVisitor<Path> {
     if(relativeStartingLocation == null) {
       relativeStartingLocation = startingPoint;
     }
-    final Path relativeLocation = relativeStartingLocation.relativize(physicalLocation);
+    
+    Path relativeLocation = relativeStartingLocation.relativize(physicalLocation);
+    if(!relativeLocation.startsWith("data")) {
+      relativeLocation = Paths.get("data").resolve(relativeLocation);
+    }
     final String checksum = hasher.hash(physicalLocation);
     final ManifestEntry entry = new ManifestEntry(physicalLocation, relativeLocation, checksum);
     

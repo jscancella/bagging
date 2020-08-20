@@ -3,6 +3,7 @@ package com.github.jscancella.domain;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Set;
@@ -123,5 +124,22 @@ public class BagBuilderTest extends TempFolderTest{
     for(Manifest manifest : tagManifests) {
       Assertions.assertTrue(manifest.getEntries().contains(expectedManifestEntry));
     }
+  }
+  
+  @Test
+  /*
+   * This is in response to found bug https://github.com/jscancella/bagging/issues/46
+   */
+  public void builderCorrectlyHandlesAddingFolderToDataDirectoryBug46() throws IOException {
+    BagBuilder sut = new BagBuilder();
+    Path src = Paths.get("src", "test", "resources", "baginfoFiles");
+    Path dst = createDirectory("Bug46");
+    
+    sut.addAlgorithm("md5")
+      .addPayloadFile(src)
+      .bagLocation(dst)
+      .write();
+    Path expectedOutput = dst.resolve("data").resolve("baginfoFiles").resolve("bag-info.txt");
+    Assertions.assertTrue(Files.exists(expectedOutput), "Expected "+ expectedOutput + " to exist but it doesn't!");
   }
 }
