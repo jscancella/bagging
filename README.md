@@ -8,7 +8,7 @@ It currently supports version 0.93 through 1.0.
 |            |                                                    |
 |------------|----------------------------------------------------|
 |Build Status|[![Travis-CI Build Status (Linux)](https://img.shields.io/travis/jscancella/bagging/master.svg?label=TravisCi&maxAge=600)](https://travis-ci.org/jscancella/bagging) [![CircleCI](https://img.shields.io/circleci/project/github/jscancella/bagging/master.svg?label=CircleCi&maxAge=600)](https://circleci.com/gh/jscancella/bagging) [![Appveyor Build Status (Windows)](https://img.shields.io/appveyor/ci/jscancella/bagging/master.svg?label=Appveyor%20(Windows)&maxAge=600)](https://ci.appveyor.com/project/jscancella/bagging)|
-|Metrics|[![Coverage Status](https://coveralls.io/repos/github/jscancella/bagging/badge.svg?branch=1933338c4298ac0b90dd3cfb1eb401237fd13ed9)](https://coveralls.io/github/jscancella/bagging?branch=1933338c4298ac0b90dd3cfb1eb401237fd13ed9) [![Github Latest Release Downloads](https://img.shields.io/github/downloads/jscancella/bagging/latest/total.svg?maxAge=600)]()|
+|Metrics|[![Coverage Status](https://coveralls.io/repos/github/jscancella/bagging/badge.svg?branch=master)](https://coveralls.io/github/jscancella/bagging?branch=master) [![Github Latest Release Downloads](https://img.shields.io/github/downloads/jscancella/bagging/latest/total.svg?maxAge=600)]()|
 |Documentation|[![javadoc.io](https://img.shields.io/badge/javadoc.io-latest-blue.svg?maxAge=31556926)](http://www.javadoc.io/doc/com.github.jscancella/bagging)|
 
 ## Requirements
