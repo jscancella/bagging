@@ -49,7 +49,7 @@ import com.github.jscancella.writer.internal.MetadataWriter;
 /**
  * The main representation of the bagit spec. This is an immutable object.
  */
-@SuppressWarnings("PMD.TooManyMethods")
+@SuppressWarnings({ "PMD.TooManyMethods", "PMD.GodClass" })
 public final class Bag {  
   private static final Logger logger = LoggerFactory.getLogger(Bag.class);
   private static final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");

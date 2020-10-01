@@ -45,6 +45,10 @@ pmdTest.enabled = false
 spotbugsIntegrationTest.enabled = false
 spotbugsTest.enabled = false
 
+spotbugs {
+  toolVersion = '4.1.3' //4.1.3 release should fix showstopper bug https://github.com/spotbugs/spotbugs/issues/878
+}
+
 spotbugsMain {
   reports {
     html {
