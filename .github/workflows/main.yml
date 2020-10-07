@@ -1,0 +1,67 @@
+name: Bagging CI
+on:
+  push:
+    branches: [ master, github-actions ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+        java: [8, 9, 10, 11, 12, 13, 14, 15]
+
+    env:
+      GRADLE_OPTS: "-Xmx1024m -Dorg.gradle.jvmargs='-Xmx1024m'"
+      JVM_OPTS: "-Xmx1048m"
+      TERM: dumb
+      
+    continue-on-error: true
+
+    steps:
+    - name : Checkout Repo
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 3
+
+    - name: Cache
+      uses: actions/cache@v2
+      with:
+        path: ~/.gradle
+        key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
+
+    - name: Set up JDK ${{ matrix.java }}
+      uses: actions/setup-java@v1
+      with:
+        java-version: ${{ matrix.java }}
+
+    - name: Grant execute permission for gradlew (Ubuntu & Mac)
+      run: chmod +x gradlew
+      if: matrix.os == 'macos-latest' || matrix.os == 'ubuntu-latest'
+
+    # - name: create temp (Windows)
+    #   run: mkdir D:/temp
+    #   if: matrix.os == 'windows-latest'
+
+    - name: Run all the checks (Windows)
+      run: ./gradlew.bat check --no-daemon
+      # continue-on-error: true
+      if: matrix.os == 'windows-latest'
+
+    - name: Run all the checks (Ubuntu & Mac)
+      run: ./gradlew check dependencyCheckUpdate dependencyCheckAnalyze --no-daemon
+      #continue-on-error: true
+      if: matrix.os == 'macos-latest' || matrix.os == 'ubuntu-latest'
+
+    - name: upload reports
+      run: ./gradlew coveralls --no-daemon
+      
+    - name: upload artifacts
+      uses: actions/upload-artifact@v2
+      continue-on-error: true
+      with:
+        name: ${{ matrix.os }} - Java ${{ matrix.java }} Test Artifacts 
+        path: build/test-results/ #!path/**/*.tmp
