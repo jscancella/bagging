@@ -70,7 +70,7 @@ jobs:
           command: chmod +x ./gradlew
       - run:
           name: run checks
-          command: ./gradlew check dependencyCheckUpdate dependencyCheckAnalyze --no-daemon
+          command: ./gradlew check --no-daemon
           environment: 
             GRADLE_OPTS: "-Xmx1024m -Dorg.gradle.jvmargs='-Xmx1024m'"
             
@@ -96,7 +96,7 @@ jobs:
           command: chmod +x ./gradlew
       - run:
           name: run checks
-          command: ./gradlew check dependencyCheckUpdate dependencyCheckAnalyze --no-daemon
+          command: ./gradlew check --no-daemon
           environment: 
             GRADLE_OPTS: "-Xmx1024m -Dorg.gradle.jvmargs='-Xmx1024m'"
 
@@ -122,7 +122,7 @@ jobs:
           command: chmod +x ./gradlew
       - run:
           name: run checks
-          command: ./gradlew check dependencyCheckUpdate dependencyCheckAnalyze --no-daemon
+          command: ./gradlew check --no-daemon
           environment: 
             GRADLE_OPTS: "-Xmx1024m -Dorg.gradle.jvmargs='-Xmx1024m'"
   build-java13:
@@ -147,7 +147,7 @@ jobs:
           command: chmod +x ./gradlew
       - run:
           name: run checks
-          command: ./gradlew check dependencyCheckUpdate dependencyCheckAnalyze --no-daemon
+          command: ./gradlew check --no-daemon
           environment: 
             GRADLE_OPTS: "-Xmx1024m -Dorg.gradle.jvmargs='-Xmx1024m'"
   build-java14:
@@ -172,7 +172,7 @@ jobs:
           command: chmod +x ./gradlew
       - run:
           name: run checks
-          command: ./gradlew check dependencyCheckUpdate dependencyCheckAnalyze --no-daemon
+          command: ./gradlew check --no-daemon
           environment: 
             GRADLE_OPTS: "-Xmx1024m -Dorg.gradle.jvmargs='-Xmx1024m'"
 
