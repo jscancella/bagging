@@ -261,8 +261,28 @@ One of the inspirations for writing this library was to create a simple to use i
 * Before submitting a pull request run `./gradlew.bat clean check` and there are no errors.
 
 #### Building a release
-* run `./gradlew bintrayUpload -Pversion=<VERSION YOU ARE CALLING THIS RELEASE>`
-* sign in to https://bintray.com/jscancella/com.github.jscancella/bagging and publish the new version
+Make sure you have setup your `gradle.properties` file and have distributed your gpg key
+* install gnupg
+* generate a key `gpg --full-generate-key`
+* export your key `gpg --export-secret-keys -o C:\Users\John\secring.gpg`
+* setup your `gradle.properties file`
+```
+signing.keyId=<LAST 8 NUMBERS of ID>
+signing.password=<PASSWORD YOU USED DURING CREATION>
+signing.secretKeyRingFile=C:\\Users\\John\\secring.gpg
+
+ossrhUsername=<JIRA USERNAME FOR OSS. See https://issues.sonatype.org/browse/OSSRH-55497>
+ossrhPassword=<JIRA PASSWORD>
+```
+
+Now actually upload the new version
+* run `./gradlew uploadArchives -Pversion="<VERSION YOU ARE CALLING THIS RELEASE>"`
+* sign in to https://oss.sonatype.org/
+* The following is an abreviated version of https://central.sonatype.org/pages/releasing-the-deployment.html
+  * Go to the "staging repositories" (naviagation on the left)
+  * Find the artifact you just uploaded and click "close" button at the top of the page
+  * Allow time for nexus to go through its automated checking
+  * click "release" button at the top of page
 
 ## Roadmap for this library
 * Maintain interoperability with the [BagIt specification](https://tools.ietf.org/html/rfc8493).
