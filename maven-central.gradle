@@ -1,6 +1,12 @@
 apply plugin: 'maven'
 apply plugin: 'signing'
 
+if(!project.hasProperty("ossrhUsername")){ //so CI doesn't break
+  project.ext.ossrhUsername = "foo"
+  project.ext.ossrhPassword = "foo"
+}
+
+
 task javadocJar(type: Jar) {
   group "Build"
   description "Create the jar that contains all the class documentation (javadoc)."
