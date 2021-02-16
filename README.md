@@ -5,12 +5,12 @@ This is a software library intended to support the creation, manipulation, and v
 It currently supports version 0.93 through 1.0.
 
 ## Badges
-|            |                                                    |
-|------------|----------------------------------------------------|
-|Build Status|[![Travis-CI Build Status (Linux)](https://img.shields.io/travis/jscancella/bagging/master.svg?label=TravisCi&maxAge=600)](https://travis-ci.org/jscancella/bagging) [![CircleCI](https://img.shields.io/circleci/project/github/jscancella/bagging/master.svg?label=CircleCi&maxAge=600)](https://circleci.com/gh/jscancella/bagging) [![Appveyor Build Status (Windows)](https://img.shields.io/appveyor/ci/jscancella/bagging/master.svg?label=Appveyor%20(Windows)&maxAge=600)](https://ci.appveyor.com/project/jscancella/bagging)|
-|Metrics|[![Coverage Status](https://coveralls.io/repos/github/jscancella/bagging/badge.svg?branch=master)](https://coveralls.io/github/jscancella/bagging?branch=master) [![Github Latest Release Downloads](https://img.shields.io/github/downloads/jscancella/bagging/latest/total.svg?maxAge=600)]()|
+|             |                                                    |
+|-------------|----------------------------------------------------|
+|Build Status |[![Travis-CI Build Status (Linux)](https://img.shields.io/travis/jscancella/bagging/master.svg?label=TravisCi&maxAge=600)](https://travis-ci.org/jscancella/bagging) [![CircleCI](https://img.shields.io/circleci/project/github/jscancella/bagging/master.svg?label=CircleCi&maxAge=600)](https://circleci.com/gh/jscancella/bagging) [![Appveyor Build Status (Windows)](https://img.shields.io/appveyor/ci/jscancella/bagging/master.svg?label=Appveyor%20(Windows)&maxAge=600)](https://ci.appveyor.com/project/jscancella/bagging)|
+|Metrics      |[![Coverage Status](https://coveralls.io/repos/github/jscancella/bagging/badge.svg?branch=master)](https://coveralls.io/github/jscancella/bagging?branch=master) [![Github Latest Release Downloads](https://img.shields.io/github/downloads/jscancella/bagging/latest/total.svg?maxAge=600)]()|
+|Download     |![Maven Central](https://img.shields.io/maven-central/v/com.github.jscancella/bagging)|
 |Documentation|[![javadoc.io](https://img.shields.io/badge/javadoc.io-latest-blue.svg?maxAge=31556926)](http://www.javadoc.io/doc/com.github.jscancella/bagging)|
-
 ## Requirements
 * Java 8
 * gradle (for development only)
