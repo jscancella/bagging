@@ -14,27 +14,28 @@ import com.github.jscancella.exceptions.NoSuchBagitAlgorithmException;
 /**
  * Responsible for mapping between the bagit algorithm name and the actual implementation of that checksum.
  * By default this includes implementations from {@link StandardHasher}. 
- * To override a default implementation, simple add the same bagit algorithm name and new {@link Hasher} implementation. 
+ * To override a default implementation, simply add the same bagit algorithm name and new {@link HasherFactory} implementation.
  * Example:
- * {@code BagitChecksumNameMapping.add("md5", new MyNewMD5Hasher());} 
+ * {@code BagitChecksumNameMapping.add("md5", new MyNewMD5HasherFactory());}
  */
 @SuppressWarnings("PMD.MoreThanOneLogger")
 public enum BagitChecksumNameMapping {
   INSTANCE; //using enum to ensure singleton
   
   private static final Logger logger = LoggerFactory.getLogger(BagitChecksumNameMapping.class);
-  private final Map<String, Hasher> map = new ConcurrentHashMap<>();
+  private final Map<String, HasherFactory> map = new ConcurrentHashMap<>();
 
   BagitChecksumNameMapping() {
     final Logger logger = LoggerFactory.getLogger(BagitChecksumNameMapping.class);
-    for(final Hasher hasher : StandardHasher.values()) {
+    for(final HasherFactory hasherFactory : StandardHasher.values()) {
       try {
-        hasher.initialize();
-        map.put(hasher.getBagitAlgorithmName(), hasher);
+        // verify the algorithm exists
+        hasherFactory.createHasher().initialize();
+        map.put(hasherFactory.getBagitAlgorithmName(), hasherFactory);
       }
       catch(NoSuchAlgorithmException e) {
         final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
-        logger.error(messages.getString("failed_to_init_hasher"), hasher.getBagitAlgorithmName(), e);
+        logger.error(messages.getString("failed_to_init_hasher"), hasherFactory.getBagitAlgorithmName(), e);
       }
     }
   }
@@ -45,10 +46,11 @@ public enum BagitChecksumNameMapping {
    * @param implementation the implementation that will be used to compute the checksum
    * @return if the implementation was successfully added
    */
-  public static boolean add(final String bagitAlgorithmName, final Hasher implementation) {
+  public static boolean add(final String bagitAlgorithmName, final HasherFactory implementation) {
     boolean addedSuccessfully = false;
     try {
-      implementation.initialize();
+      // verify the algorithm exists
+      implementation.createHasher().initialize();
       INSTANCE.map.put(bagitAlgorithmName, implementation);
       addedSuccessfully = true;
     }
@@ -87,6 +89,17 @@ public enum BagitChecksumNameMapping {
       final String message = MessageFormatter.format(messages.getString("no_implementation_error"), bagitAlgorithmName, INSTANCE.toString()).getMessage();
       throw new NoSuchBagitAlgorithmException(message);
     }
-    return INSTANCE.map.get(bagitAlgorithmName);
+
+    final HasherFactory factory = INSTANCE.map.get(bagitAlgorithmName);
+    final Hasher hasher = factory.createHasher();
+    try {
+      hasher.initialize();
+    } catch (NoSuchAlgorithmException e) {
+      // This should never happen because only factories that were tested will appear in the map
+      throw new IllegalStateException(e);
+    }
+
+    return hasher;
   }
+
 }

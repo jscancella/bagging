@@ -44,14 +44,14 @@ public enum FetchReader {;//using enum to enforce singleton
     
     try(BufferedReader reader = Files.newBufferedReader(fetchFile, encoding)){
       String line = reader.readLine();
-      String[] parts = null;
-      long length = 0;
-      URI url = null;
+      String[] parts;
+      long length;
+      URI url;
       while(line != null){
         if(line.matches(FETCH_LINE_REGEX) && !line.matches("\\s*")){
           parts = line.split("\\s+", 3);
           final Path path = TagFileReader.createFileFromManifest(bagRootDir, parts[2]);
-          length = parts[1].equals("-") ? -1 : Long.decode(parts[1]);
+          length = "-".equals(parts[1]) ? -1 : Long.decode(parts[1]);
           url = URI.create(parts[0]);
           
           logger.debug(messages.getString("read_fetch_file_line"), url, length, parts[2], fetchFile);

@@ -11,30 +11,40 @@ public class BagitChecksumNameMappingTest {
 
   @Test
   void addShouldReturnFalseGivenNotValidAlgorithm() {
-    boolean result = BagitChecksumNameMapping.add("not-valid", new Hasher() {
+    boolean result = BagitChecksumNameMapping.add("not-valid", new HasherFactory() {
       @Override
-      public String hash(Path path) throws IOException {
-        return "not-valid";
-      }
+      public Hasher createHasher() {
+        return new Hasher() {
+          @Override
+          public String hash(Path path) throws IOException {
+            return "not-valid";
+          }
 
-      @Override
-      public void initialize() throws NoSuchAlgorithmException {
-        throw new NoSuchAlgorithmException("not-valid");
-      }
+          @Override
+          public void initialize() throws NoSuchAlgorithmException {
+            throw new NoSuchAlgorithmException("not-valid");
+          }
 
-      @Override
-      public void update(byte[] bytes) {
+          @Override
+          public void update(byte[] bytes) {
 
-      }
+          }
 
-      @Override
-      public String getHash() {
-        return "not-valid";
-      }
+          @Override
+          public String getHash() {
+            return "not-valid";
+          }
 
-      @Override
-      public void reset() {
+          @Override
+          public void reset() {
 
+          }
+
+          @Override
+          public String getBagitAlgorithmName() {
+            return "not-valid";
+          }
+        };
       }
 
       @Override

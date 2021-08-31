@@ -14,7 +14,7 @@ public interface Hasher {
    * 
    * @param path the {@link Path} (file) to hash
    * 
-   * @return the hash as a hex formated string
+   * @return the hash as a hex formatted string
    * 
    * @throws IOException if there is a problem reading the file
    */
