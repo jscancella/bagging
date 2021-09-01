@@ -1,4 +1,4 @@
-package com.github.jscancella.hash;
+package com.github.jscancella.hash.standard;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -10,45 +10,20 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Formatter;
 
-/**
- * Constant definitions for the standard {@link Hasher}. Pretty much every computer will be able to implement these.
- */
-@SuppressWarnings({"PMD.AvoidMessageDigestField"})
-public enum StandardHasher implements Hasher {
-  /**
-   * The md5 checksum algorithm
-   */
-  MD5("MD5", "md5"),
-  /**
-   * The sha-1 checksum algorithm
-   */
-  SHA1("SHA-1", "sha1"),
-  /**
-   * The sha-2 checksum algorithm using 224 bits
-   */
-  SHA224("SHA-224", "sha224"),
-  /**
-   * The sha-2 checksum algorithm using 256 bits
-   */
-  SHA256("SHA-256", "sha256"),
-  /**
-   * The sha-2 checksum algorithm using 384 bits
-   */
-  SHA384("SHA-384", "sha384"),
-  /**
-   * The sha-2 checksum algorithm using 512 bits
-   */
-  SHA512("SHA-512", "sha512");
-  
+import com.github.jscancella.exceptions.HasherInitializationException;
+import com.github.jscancella.hash.Hasher;
+
+public abstract class AbstractMessageDigestHasher implements Hasher{
   private static final int _64_KB = 1024 * 64;
   private static final int CHUNK_SIZE = _64_KB;
-  private MessageDigest messageDigestInstance;
-  private final String MESSAGE_DIGEST_NAME;
-  private final String BAGIT_ALGORITHM_NAME;
+  @SuppressWarnings("PMD.AvoidMessageDigestField") //unavoidable because we need to be able to stream big files to multiple hashers at once
+  private transient MessageDigest messageDigestInstance;
+  private final String messageDigestName;
+  private final String BagitAlgorithmName;
   
-  StandardHasher(final String digestName, final String bagitAlgorithmName) {
-    MESSAGE_DIGEST_NAME = digestName;
-    BAGIT_ALGORITHM_NAME = bagitAlgorithmName;
+  protected AbstractMessageDigestHasher(final String messageDigestName, final String bagitAlgorithmName) {
+    this.messageDigestName = messageDigestName;
+    this.BagitAlgorithmName = bagitAlgorithmName;
   }
   
   @Override
@@ -97,12 +72,19 @@ public enum StandardHasher implements Hasher {
 
   @Override
   public String getBagitAlgorithmName(){
-    return BAGIT_ALGORITHM_NAME;
+    return BagitAlgorithmName;
   }
   
   @Override
-  public void initialize() throws NoSuchAlgorithmException{
-    messageDigestInstance = MessageDigest.getInstance(MESSAGE_DIGEST_NAME);
+  public void initialize(){
+    try {
+      messageDigestInstance = MessageDigest.getInstance(messageDigestName);
+    } catch (NoSuchAlgorithmException e) {
+      throw new HasherInitializationException(e);
+    }
   }
 
+  protected String getMessageDigestName() {
+    return messageDigestName;
+  }
 }

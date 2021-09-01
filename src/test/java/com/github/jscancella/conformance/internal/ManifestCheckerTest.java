@@ -34,7 +34,7 @@ public class ManifestCheckerTest extends TempFolderTest{
   
   @BeforeAll
   public static void setup() {
-    boolean successful = BagitChecksumNameMapping.add("sha3", SHA3Hasher.INSTANCE);
+    boolean successful = BagitChecksumNameMapping.add("sha3", SHA3Hasher.class);
     Assertions.assertTrue(successful);
   }
   

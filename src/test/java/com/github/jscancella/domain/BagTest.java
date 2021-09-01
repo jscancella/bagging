@@ -1,16 +1,23 @@
 package com.github.jscancella.domain;
 
+import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Phaser;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import com.github.jscancella.TempFolderTest;
-import com.github.jscancella.hash.StandardHasher;
+import com.github.jscancella.hash.Hasher;
+import com.github.jscancella.hash.standard.MD5Hasher;
 
 public class BagTest extends TempFolderTest{
 
@@ -66,23 +73,26 @@ public class BagTest extends TempFolderTest{
     Path expectedTagFile = rootDir.resolve("foo.txt"); 
     Path expectedFetchFile = rootDir.resolve("fetch.txt");
     
+    Hasher md5Hasher = new MD5Hasher();
+    md5Hasher.initialize();
+    
     Assertions.assertTrue(Files.exists(expectedBagitFile));
-    String bagitFileHash = StandardHasher.MD5.hash(expectedBagitFile);
+    String bagitFileHash = md5Hasher.hash(expectedBagitFile);
     Assertions.assertEquals(
         Arrays.asList("BagIt-Version: 1.0","Tag-File-Character-Encoding: UTF-8"), Files.readAllLines(expectedBagitFile));
     
     Assertions.assertTrue(Files.exists(expectedMetadataFile));
-    String metadataFileHash = StandardHasher.MD5.hash(expectedMetadataFile);
+    String metadataFileHash = md5Hasher.hash(expectedMetadataFile);
     Assertions.assertEquals(
         Arrays.asList("foo: bar"), Files.readAllLines(expectedMetadataFile));
     
     Assertions.assertTrue(Files.exists(expectedManifestFile));
-    String manifestFileHash = StandardHasher.MD5.hash(expectedManifestFile);
+    String manifestFileHash = md5Hasher.hash(expectedManifestFile);
     Assertions.assertEquals(
         Arrays.asList("b1946ac92492d2347c6235b4d2611184  data/foo.txt"), Files.readAllLines(expectedManifestFile));
     
     Assertions.assertTrue(Files.exists(expectedFetchFile));
-    String fetchFileHash = StandardHasher.MD5.hash(expectedFetchFile);
+    String fetchFileHash = md5Hasher.hash(expectedFetchFile);
     
     Assertions.assertTrue(Files.exists(expectedTagmanifestFile));
     Assertions.assertEquals(
@@ -95,7 +105,46 @@ public class BagTest extends TempFolderTest{
     
     Assertions.assertTrue(Files.exists(expectedTagFile));
     Assertions.assertArrayEquals(Files.readAllBytes(tagFile), Files.readAllBytes(expectedTagFile));
-    
-    
+  }
+  
+  @Test
+  public void concurrentTest() throws IOException {
+    List<Path> bags = new ArrayList<>();
+    bags.add(Files.createDirectories(folder.resolve("bag-1")));
+    bags.add(Files.createDirectories(folder.resolve("bag-2")));
+
+    byte[] content = new byte[10_000];
+    Arrays.fill(content, (byte) 'a');
+    Path file = Files.write(folder.resolve("test.txt"), content);
+
+    Executor executor = Executors.newFixedThreadPool(bags.size());
+    Phaser phaser = new Phaser(bags.size() + 1);
+
+    bags.forEach(bagDir -> {
+      executor.execute(() -> {
+        phaser.arriveAndAwaitAdvance();
+        try {
+          new BagBuilder()
+                  .addAlgorithm("sha256")
+                  .bagLocation(bagDir)
+                  .addPayloadFile(file)
+                  .write();
+          phaser.arrive();
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      });
+    });
+
+    phaser.arriveAndAwaitAdvance();
+    phaser.arriveAndAwaitAdvance();
+
+    bags.forEach(bagDir -> {
+      try {
+        Assertions.assertTrue(Bag.read(bagDir).justValidate());
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    });
   }
 }

@@ -10,10 +10,10 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Formatter;
 
+import com.github.jscancella.exceptions.HasherInitializationException;
 import com.github.jscancella.hash.Hasher;
 
-public enum SHA3Hasher implements Hasher {
-  INSTANCE;// using enum to enforce singleton
+public class SHA3Hasher implements Hasher {
   
   private static final int _64_KB = 1024 * 64;
   private static final int CHUNK_SIZE = _64_KB;
@@ -70,8 +70,12 @@ public enum SHA3Hasher implements Hasher {
   }
 
   @Override
-  public void initialize() throws NoSuchAlgorithmException{
-    messageDigestInstance = MessageDigest.getInstance(MESSAGE_DIGEST_NAME);
+  public void initialize() throws HasherInitializationException{
+    try {
+      messageDigestInstance = MessageDigest.getInstance(MESSAGE_DIGEST_NAME);
+    } catch (NoSuchAlgorithmException e) {
+      throw new HasherInitializationException(e);
+    }
   }
 
 }

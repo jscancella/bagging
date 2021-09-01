@@ -2,7 +2,8 @@ package com.github.jscancella.hash;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.security.NoSuchAlgorithmException;
+
+import com.github.jscancella.exceptions.HasherInitializationException;
 
 /**
  * The interface that any supported checksum algorithm must implement.
@@ -23,9 +24,9 @@ public interface Hasher {
   /**
    * Used to do any pre hashing initialization.
    * 
-   * @throws NoSuchAlgorithmException if there is a problem during initialization
+   * @throws HasherInitializationException if there is a problem during initialization
    */
-  void initialize() throws NoSuchAlgorithmException;
+  void initialize();
   
   /**
    * For calculating large file checksums it is more efficient to stream the file, thus the need to be able to update a checksum.

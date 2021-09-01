@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 
 import com.github.jscancella.domain.Bag;
 import com.github.jscancella.hash.BagitChecksumNameMapping;
-import com.github.jscancella.hash.StandardHasher;
+import com.github.jscancella.hash.standard.SHA1Hasher;
 import com.github.jscancella.verify.SHA3Hasher;
 
 public class BagLinterTest {
@@ -67,7 +67,7 @@ public class BagLinterTest {
   
   @Test
   public void testNonStandardAlgorithm() throws Exception {
-    boolean successful = BagitChecksumNameMapping.add("sha3", SHA3Hasher.INSTANCE);
+    boolean successful = BagitChecksumNameMapping.add("sha3", SHA3Hasher.class);
     Assertions.assertTrue(successful, "couldn't add sha3, did you add bouncy castle?");
     
     Set<BagitWarning> warnings =  BagLinter.lintBag(rootDir.resolve("nonstandardAlgorithm"));
@@ -137,7 +137,7 @@ public class BagLinterTest {
   @Test
   public void testTooManyManifests() throws Exception {
     //otherwise we will get an exception for not having an implementation of that algorithm
-    IntStream.rangeClosed(3, 21).forEach(i -> BagitChecksumNameMapping.add("sha" + String.valueOf(i), StandardHasher.SHA1));
+    IntStream.rangeClosed(3, 21).forEach(i -> BagitChecksumNameMapping.add("sha" + String.valueOf(i), SHA1Hasher.class));
     
     //starting with version 1.0 manifests MUST contain the same list of files
     Set<BagitWarning> warnings =  BagLinter.lintBag(rootDir.resolve("largeNumberOfManifests"), Arrays.asList(BagitWarning.NON_STANDARD_ALGORITHM, BagitWarning.MISSING_TAG_MANIFEST));

@@ -137,7 +137,7 @@ public class BagVeriferTest extends TempFolderTest {
   
   @Test
   public void testAddSHA3SupportViaInterface() throws Exception{
-    boolean successful = BagitChecksumNameMapping.add("sha3256", SHA3Hasher.INSTANCE);
+    boolean successful = BagitChecksumNameMapping.add("sha3256", SHA3Hasher.class);
     Assertions.assertTrue(successful);
     
     Path sha3BagDir = Paths.get(new File("src/test/resources/sha3Bag").toURI());

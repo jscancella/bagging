@@ -1,61 +1,63 @@
 package com.github.jscancella.hash;
 
-import java.security.NoSuchAlgorithmException;
-import java.util.concurrent.ConcurrentHashMap;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.MessageFormatter;
 
+import com.github.jscancella.exceptions.HasherInitializationException;
 import com.github.jscancella.exceptions.NoSuchBagitAlgorithmException;
+import com.github.jscancella.hash.standard.MD5Hasher;
+import com.github.jscancella.hash.standard.SHA1Hasher;
+import com.github.jscancella.hash.standard.SHA224Hasher;
+import com.github.jscancella.hash.standard.SHA256Hasher;
+import com.github.jscancella.hash.standard.SHA384Hasher;
+import com.github.jscancella.hash.standard.SHA512Hasher;
 
 /**
  * Responsible for mapping between the bagit algorithm name and the actual implementation of that checksum.
- * By default this includes implementations from {@link StandardHasher}. 
+ * By default this includes implementations {@link MD5Hasher}, {@link SHA1Hasher}, {@link SHA224Hasher}, {@link SHA256Hasher},
+ *  {@link SHA384Hasher}, and {@link SHA512Hasher}.
  * To override a default implementation, simple add the same bagit algorithm name and new {@link Hasher} implementation. 
  * Example:
  * {@code BagitChecksumNameMapping.add("md5", new MyNewMD5Hasher());} 
  */
-@SuppressWarnings("PMD.MoreThanOneLogger")
 public enum BagitChecksumNameMapping {
   INSTANCE; //using enum to ensure singleton
   
   private static final Logger logger = LoggerFactory.getLogger(BagitChecksumNameMapping.class);
-  private final Map<String, Hasher> map = new ConcurrentHashMap<>();
+  private final Map<String, Class<? extends Hasher>> map = new ConcurrentHashMap<>();
 
   BagitChecksumNameMapping() {
-    final Logger logger = LoggerFactory.getLogger(BagitChecksumNameMapping.class);
-    for(final Hasher hasher : StandardHasher.values()) {
-      try {
-        hasher.initialize();
-        map.put(hasher.getBagitAlgorithmName(), hasher);
-      }
-      catch(NoSuchAlgorithmException e) {
-        final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
-        logger.error(messages.getString("failed_to_init_hasher"), hasher.getBagitAlgorithmName(), e);
-      }
-    }
+    map.put(MD5Hasher.BAGIT_ALGORITHM_NAME, MD5Hasher.class);
+    map.put(SHA1Hasher.BAGIT_ALGORITHM_NAME, SHA1Hasher.class);
+    map.put(SHA224Hasher.BAGIT_ALGORITHM_NAME, SHA224Hasher.class);
+    map.put(SHA256Hasher.BAGIT_ALGORITHM_NAME, SHA256Hasher.class);
+    map.put(SHA384Hasher.BAGIT_ALGORITHM_NAME, SHA384Hasher.class);
+    map.put(SHA512Hasher.BAGIT_ALGORITHM_NAME, SHA512Hasher.class);
+    
+//    final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
+//    logger.error(messages.getString("failed_to_init_hasher"), hasher.getBagitAlgorithmName(), e);
   }
   
   /**
    * map an implementation to the bagit algorithm name 
    * @param bagitAlgorithmName the all lowercase name as defined in the specification
-   * @param implementation the implementation that will be used to compute the checksum
+   * @param implementation the implementation class that will be used to compute the checksum
    * @return if the implementation was successfully added
    */
-  public static boolean add(final String bagitAlgorithmName, final Hasher implementation) {
+  public static boolean add(final String bagitAlgorithmName, final Class<? extends Hasher> implementation) {
     boolean addedSuccessfully = false;
-    try {
-      implementation.initialize();
-      INSTANCE.map.put(bagitAlgorithmName, implementation);
-      addedSuccessfully = true;
-    }
-    catch(NoSuchAlgorithmException e) {
-      final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
-      logger.error(messages.getString("hasher_setup"), implementation.getBagitAlgorithmName(), e);
-    }
+    INSTANCE.map.put(bagitAlgorithmName, implementation);
+    addedSuccessfully = true;
+    
+//    final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
+//    logger.error(messages.getString("hasher_setup"), implementation.getBagitAlgorithmName(), e);
+    
     return addedSuccessfully;
   }
   
@@ -87,6 +89,14 @@ public enum BagitChecksumNameMapping {
       final String message = MessageFormatter.format(messages.getString("no_implementation_error"), bagitAlgorithmName, INSTANCE.toString()).getMessage();
       throw new NoSuchBagitAlgorithmException(message);
     }
-    return INSTANCE.map.get(bagitAlgorithmName);
+    
+    try {
+      final Hasher hasher = (Hasher)INSTANCE.map.get(bagitAlgorithmName).getDeclaredConstructor().newInstance();
+      hasher.initialize();
+      return hasher;
+    } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+      logger.error("Failed instantiating hasher class!", e);
+      throw new HasherInitializationException(e);
+    }
   }
 }

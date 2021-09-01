@@ -95,11 +95,14 @@ assert BagLinter.checkAgainstProfile(jsonProfile, bag) == true;
 ```
 
 #### How to include a new checksum algorithm?
-The [StandardHasher](https://github.com/jscancella/bagging/blob/master/src/main/java/com/github/jscancella/hash/StandardHasher.java) contains many well known checksum algorithm implementations. However, there will be times when you want (or must) use a different algorithm. The [BagitChecksumNameMapping](https://github.com/jscancella/bagging/blob/master/src/main/java/com/github/jscancella/hash/BagitChecksumNameMapping.java) contains the mapping between bagit checksum names and their implementation and is the only place you need to modify to change which implementation you would like to use.
+By default MD5, SHA1, SHA224, SHA256, SHA384, and SHA512 are provided. However, there will be times when you want (or must) use a different algorithm. 
+
+The [BagitChecksumNameMapping](https://github.com/jscancella/bagging/blob/master/src/main/java/com/github/jscancella/hash/BagitChecksumNameMapping.java) 
+contains the mapping between bagit checksum names and their implementation and is the only place you need to modify to change which implementation you would like to use.
+Note: to enable multi-threaded bag creation and checking multiple instances of the hasher could exist at the same time.
 
 ```java
 public enum SHA3Hasher implements Hasher {
-  INSTANCE;// using enum to enforce singleton
   
   private static final int _64_KB = 1024 * 64;
   private static final int CHUNK_SIZE = _64_KB;
@@ -162,7 +165,7 @@ public enum SHA3Hasher implements Hasher {
 
 }
 
-BagitChecksumNameMapping.add("sha3256", SHA3Hasher.INSTANCE);
+BagitChecksumNameMapping.add("sha3256", SHA3Hasher.class);
 ```
 
 #### How to create a new conformance profile 
