@@ -269,7 +269,11 @@ Make sure you have setup your `gradle.properties` file and have distributed your
 * install gnupg
 * generate a key `gpg --full-generate-key`
 * export your key `gpg --export-secret-keys -o C:\Users\John\secring.gpg`
-* upload your key `gpg --keyserver hkp://pool.sks-keyservers.net --send-keys DF5644DC`
+* upload your key to various keyservers
+  * `gpg --keyserver hkp://pool.sks-keyservers.net --send-keys DF5644DC`
+  * `gpg --keyserver http://keyserver.ubuntu.com --send-keys DF5644DC`
+  * `gpg --keyserver https://keys.openpgp.org --send-keys DF5644DC`
+  * `gpg --keyserver http://pgp.mit.edu --send-keys DF5644DC`
 * setup your `gradle.properties file`
 ```
 signing.keyId=<LAST 8 NUMBERS of ID>
