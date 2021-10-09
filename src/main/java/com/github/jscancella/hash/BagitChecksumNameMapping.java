@@ -51,14 +51,8 @@ public enum BagitChecksumNameMapping {
    * @return if the implementation was successfully added
    */
   public static boolean add(final String bagitAlgorithmName, final Class<? extends Hasher> implementation) {
-    boolean addedSuccessfully = false;
     INSTANCE.map.put(bagitAlgorithmName, implementation);
-    addedSuccessfully = true;
-    
-//    final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
-//    logger.error(messages.getString("hasher_setup"), implementation.getBagitAlgorithmName(), e);
-    
-    return addedSuccessfully;
+    return true;
   }
   
   /**
