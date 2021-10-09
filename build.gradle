@@ -30,13 +30,13 @@ repositories {
 }
 
 dependencies {
-  implementation 'org.slf4j:slf4j-api:1.7.30'
-  implementation 'com.fasterxml.jackson.core:jackson-core:2.11.2'
-  implementation 'com.fasterxml.jackson.core:jackson-databind:2.11.2'
+  implementation 'org.slf4j:slf4j-api:1.7.32'
+  implementation 'com.fasterxml.jackson.core:jackson-core:2.13.0'
+  implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
     
-  testImplementation 'org.junit.jupiter:junit-jupiter:5.6.2'
-  testImplementation 'org.springframework.boot:spring-boot-starter-logging:2.3.3.RELEASE'
-  testImplementation 'org.bouncycastle:bcprov-jdk15on:1.66'
+  testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
+  testImplementation 'org.springframework.boot:spring-boot-starter-logging:2.5.5'
+  testImplementation 'org.bouncycastle:bcprov-jdk15on:1.69'
   testImplementation 'org.kamranzafar:jtar:2.3'
 }
 
