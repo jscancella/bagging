@@ -1,79 +1,69 @@
-apply plugin: 'maven'
 apply plugin: 'signing'
+apply plugin: 'maven-publish'
 
 if(!project.hasProperty("ossrhUsername")){ //so CI doesn't break
   project.ext.ossrhUsername = "foo"
   project.ext.ossrhPassword = "foo"
 }
 
-
-task javadocJar(type: Jar) {
-  group "Build"
-  description "Create the jar that contains all the class documentation (javadoc)."
-  classifier = 'javadoc'
-  from javadoc
+java {
+  withJavadocJar()
+  withSourcesJar()
 }
 
-task sourcesJar(type: Jar) {
-  group "Build"
-  description "Create the jar that contains all the .class files."
-  classifier = 'sources'
-  from sourceSets.main.allSource
-}
-
-artifacts {
-    archives sourcesJar, javadocJar
-}
-
-signing {
-    sign configurations.archives
-}
-
-group = 'com.github.jscancella'
-archivesBaseName = 'bagging'
-version = project.version
-
-uploadArchives {
-  repositories {
-    mavenDeployer {
-      beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-      repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-        authentication(userName: ossrhUsername, password: ossrhPassword)
-      }
-
-      snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-        authentication(userName: ossrhUsername, password: ossrhPassword)
-      }
-
-      pom.project {
-        name 'bagging'
-        packaging 'jar'
-        // optionally artifactId can be defined here 
-        description 'This is a software library intended to support the creation, manipulation, and validation of "bags" from the bagit specification. It currently supports version 0.93 through 1.0.'
-        url 'https://github.com/jscancella/bagging'
-
-        scm {
-          connection 'scm:git:https://github.com/jscancella/bagging'
-          developerConnection 'scm:git:ssh://github.com/jscancella/bagging'
-          url 'https://github.com/jscancella/bagging'
-        }
-
+publishing {
+  publications {
+    mavenJava(MavenPublication) {
+      group = 'com.github.jscancella'
+      artifactId = 'bagging'
+      version = project.version
+  
+      from components.java
+  
+      pom {
+        name = 'bagging'
+        description = 'This is a software library intended to support the creation, manipulation, and validation of "bags" from the bagit specification. It currently supports version 0.93 through 1.0.'
+        url = 'https://github.com/jscancella/bagging'
         licenses {
           license {
-            name 'AGPL-V3'
-            url 'https://github.com/jscancella/bagging/blob/master/LICENSE.txt'
+              name = 'AGPL-V3'
+              url = 'https://github.com/jscancella/bagging/blob/master/LICENSE.txt'
           }
         }
-
         developers {
           developer {
-            id 'blacksmithforlife'
-            name 'John Scancella'
-            email 'john.scancella@gmail.com'
+            id = 'blacksmithforlife'
+            name = 'John Scancella'
+            email = 'john.scancella@gmail.com'
           }
+        }
+        scm {
+          connection = 'scm:git:https://github.com/jscancella/bagging'
+          developerConnection = 'scm:git:ssh://github.com/jscancella/bagging'
+          url = 'https://github.com/jscancella/bagging'
         }
       }
     }
+  }
+  
+  repositories {
+    maven {
+      name "OSSRH"
+      url "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+      credentials {
+        username = ossrhUsername
+        password = ossrhPassword
+      }
+    }
+  }
+}
+
+signing {
+  sign publishing.publications.mavenJava
+}
+
+javadoc {
+  if(JavaVersion.current().isJava9Compatible()) {
+      options.addBooleanOption('html5', true)
   }
 }

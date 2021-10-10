@@ -285,7 +285,7 @@ ossrhPassword=<JIRA PASSWORD>
 ```
 
 Now actually upload the new version
-* run `./gradlew uploadArchives -Pversion="<VERSION YOU ARE CALLING THIS RELEASE>"`
+* run `./gradlew publish -Pversion="<VERSION YOU ARE CALLING THIS RELEASE>"`
 * sign in to https://oss.sonatype.org/
 * The following is an abreviated version of https://central.sonatype.org/pages/releasing-the-deployment.html
   * Go to the "staging repositories" (naviagation on the left)

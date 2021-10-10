@@ -40,10 +40,12 @@ public interface PathUtils {
    */
   static boolean isHidden(final Path path) throws IOException{
     //cause Files.isHidden() doesn't work properly for windows if the file is a directory
+    boolean isHidden = Files.isHidden(path);
+    
     if (System.getProperty("os.name").contains("Windows")){
-      return Files.readAttributes(path, DosFileAttributes.class).isHidden() || Files.isHidden(path);
+      isHidden = Files.readAttributes(path, DosFileAttributes.class).isHidden() || Files.isHidden(path);
     }
 
-    return Files.isHidden(path);
+    return isHidden;
   }
 }

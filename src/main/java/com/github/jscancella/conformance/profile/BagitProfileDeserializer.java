@@ -161,33 +161,10 @@ public class BagitProfileDeserializer extends StdDeserializer<BagitProfile> {
       
       while(nodes.hasNext()){
         final Entry<String, JsonNode> node = nodes.next();
-        boolean isRequired = false;
-        boolean isRepeatable = true;
-        final List<String> acceptableValues = new ArrayList<>();
-        String description = "";
-        
-        final JsonNode requiredNode = node.getValue().get("required");
-        if (requiredNode != null) {
-          isRequired = requiredNode.asBoolean();
-        }
-
-        final JsonNode repeatableNode = node.getValue().get("repeatable");
-        if (repeatableNode != null) {
-          isRepeatable = repeatableNode.asBoolean();
-        }
-        
-        final JsonNode descriptionNode = node.getValue().get("description");
-        if (descriptionNode != null) {
-          description = descriptionNode.asText();
-        }
-        
-        final JsonNode valuesNode = node.getValue().get("values");
-        if(valuesNode != null){
-          for(final JsonNode value : valuesNode){
-            acceptableValues.add(value.asText());
-          }
-        }
-        
+        final boolean isRequired = determineIsRequired(node);
+        final boolean isRepeatable = determineIsRepeatable(node);
+        final List<String> acceptableValues = determineAcceptableValues(node);
+        final String description = determineDescription(node);
         
         final BagInfoRequirement entry = new BagInfoRequirement(isRequired, acceptableValues, isRepeatable, description);
         
@@ -195,6 +172,52 @@ public class BagitProfileDeserializer extends StdDeserializer<BagitProfile> {
         builder.addBagInfoRequirement(node.getKey(), entry);
       }
     }
+  }
+  
+  private static boolean determineIsRequired(final Entry<String, JsonNode> node) {
+    final JsonNode requiredNode = node.getValue().get("required");
+    boolean isRequired = false;
+    
+    if (requiredNode != null) {
+      isRequired = requiredNode.asBoolean();
+    }
+    
+    return isRequired;
+  }
+  
+  private static boolean determineIsRepeatable(final Entry<String, JsonNode> node) {
+    final JsonNode repeatableNode = node.getValue().get("repeatable");
+    boolean isRepeatable = true;
+    
+    if (repeatableNode != null) {
+      isRepeatable = repeatableNode.asBoolean();
+    }
+    
+    return isRepeatable;
+  }
+  
+  private static List<String> determineAcceptableValues(final Entry<String, JsonNode> node) {
+    final JsonNode valuesNode = node.getValue().get("values");
+    final List<String> acceptableValues = new ArrayList<>();
+    
+    if(valuesNode != null){
+      for(final JsonNode value : valuesNode){
+        acceptableValues.add(value.asText());
+      }
+    }
+    
+    return acceptableValues;
+  }
+  
+  private static String determineDescription(final Entry<String, JsonNode> node) {
+    final JsonNode descriptionNode = node.getValue().get("description");
+    String description = "";
+    
+    if (descriptionNode != null) {
+      description = descriptionNode.asText();
+    }
+    
+    return description;
   }
   
   private static void parseManifestTypesRequired(final JsonNode node, final BagitProfileBuilder builder){
