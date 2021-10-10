@@ -8,7 +8,9 @@
         My custom rules
     </description>
 
-    <rule ref="category/java/bestpractices.xml"></rule>
+    <rule ref="category/java/bestpractices.xml">
+      <exclude name="GuardLogStatement"/> <!-- because we pull the logging from the message bundle which triggers this regardless -->
+    </rule>
     <rule ref="category/java/codestyle.xml">
         <exclude name="FieldNamingConventions"/> <!--  because we don't follow the convention for static fields. Since this is merely stylistic there isn't much concern for it be exempted -->
         <exclude name="AtLeastOneConstructor"/> <!-- because it seems pointless to have to have an empty default constructor -->
