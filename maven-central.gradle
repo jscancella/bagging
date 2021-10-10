@@ -32,15 +32,15 @@ publishing {
         }
         developers {
           developer {
-            id 'blacksmithforlife'
-            name 'John Scancella'
-            email 'john.scancella@gmail.com'
+            id = 'blacksmithforlife'
+            name = 'John Scancella'
+            email = 'john.scancella@gmail.com'
           }
         }
         scm {
-          connection 'scm:git:https://github.com/jscancella/bagging'
-          developerConnection 'scm:git:ssh://github.com/jscancella/bagging'
-          url 'https://github.com/jscancella/bagging'
+          connection = 'scm:git:https://github.com/jscancella/bagging'
+          developerConnection = 'scm:git:ssh://github.com/jscancella/bagging'
+          url = 'https://github.com/jscancella/bagging'
         }
       }
     }
@@ -58,12 +58,12 @@ publishing {
   }
 }
 
-//signing {
-//  sign publishing.publications.mavenJava
-//}
-//
-//javadoc {
-//  if(JavaVersion.current().isJava9Compatible()) {
-//      options.addBooleanOption('html5', true)
-//  }
-//}
+signing {
+  sign publishing.publications.mavenJava
+}
+
+javadoc {
+  if(JavaVersion.current().isJava9Compatible()) {
+      options.addBooleanOption('html5', true)
+  }
+}
