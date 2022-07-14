@@ -5,11 +5,10 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.Normalizer;
-import java.util.HashSet;
-import java.util.ResourceBundle;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import com.github.jscancella.domain.ManifestEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.MessageFormatter;
@@ -31,21 +30,21 @@ public enum ManifestVerifier {; //using enum to enforce singleton
   private static final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
 
   /**
-   * Verify that all the files in the payload directory are listed in the payload manifest and 
+   * Verify that all the files in the payload directory are listed in the payload manifest and
    * all files listed in all manifests exist.
-   * 
+   *
    * @param bag the bag which contains the manifests to check
    * @param ignoreHiddenFiles to include hidden files when checking
-   * 
+   *
    * @throws IOException if there is an error while reading a file from the filesystem
    * @throws MaliciousPathException if a path is outside the bag
    * @throws InvalidBagitFileFormatException if a manifest is not formatted correctly
    * @throws FileNotInPayloadDirectoryException if a file listed in a manifest is not in the payload directory
    */
   public static void verifyManifests(final Bag bag, final boolean ignoreHiddenFiles)throws IOException{
-    
-    final Set<Path> allFilesListedInManifests = getAllFilesListedInManifests(bag);
-    checkAllFilesListedInManifestExist(allFilesListedInManifests);
+
+    final Map<Path, Optional<Path>> allFilesListedInManifests = getAllFilesListedInManifests(bag);
+    checkAllFilesListedInManifestExist(allFilesListedInManifests, bag.getVersion());
 
     if (bag.getVersion().isOlder(Version.VERSION_1_0())) {
       checkAllFilesInPayloadDirAreListedInAtLeastOneAManifest(allFilesListedInManifests, bag.getDataDir(), ignoreHiddenFiles);
@@ -55,18 +54,21 @@ public enum ManifestVerifier {; //using enum to enforce singleton
   }
 
   /*
-   * get the full path (absolute) of all the files listed in all the manifests
+   * get the full path (absolute) of all the files listed in all the manifests, mapped to possible fallback path
    */
-  private static Set<Path> getAllFilesListedInManifests(final Bag bag) throws IOException {
+  private static Map<Path, Optional<Path>> getAllFilesListedInManifests(final Bag bag) throws IOException {
     logger.debug(messages.getString("all_files_in_manifests"));
-    
-    final Set<Path> filesListedInManifests = new HashSet<>();
+
+    final Map<Path, Optional<Path>> filesListedInManifests = new HashMap<>();
 
     try(DirectoryStream<Path> directoryStream = Files.newDirectoryStream(bag.getTagFileDir(), new ManifestFilter())){
       for(final Path path : directoryStream) {
         logger.debug(messages.getString("get_listing_in_manifest"), path);
         final Manifest manifest = ManifestReader.readManifest(path, bag.getRootDir(),bag.getFileEncoding());
-        filesListedInManifests.addAll(manifest.getEntries().stream().map(entry -> entry.getPhysicalLocation()).collect(Collectors.toList()));
+        filesListedInManifests.putAll(manifest.getEntries().stream().collect(Collectors.toMap(
+                ManifestEntry::getPhysicalLocation,
+                entry -> manifest.getFallbackEntryFor(entry).map(ManifestEntry::getPhysicalLocation)
+        )));
       }
     }
 
@@ -76,12 +78,25 @@ public enum ManifestVerifier {; //using enum to enforce singleton
   /*
    * Make sure all the listed files actually exist
    */
-  private static void checkAllFilesListedInManifestExist(final Set<Path> files) {
+  private static void checkAllFilesListedInManifestExist(final Map<Path, Optional<Path>> files, Version version) {
     logger.info(messages.getString("check_all_files_in_manifests_exist"));
-    
-    for (final Path file : files) {
+
+    for (final Map.Entry<Path, Optional<Path>> fileEntry : files.entrySet()) {
+      final Path file = fileEntry.getKey();
       if(!Files.exists(file)){
-        if(existsNormalized(file)){
+        final Optional<Path> fallback = fileEntry.getValue();
+        if (fallback.isPresent() && Files.exists(fallback.get())) {
+          if (version.isSameOrNewer(Version.VERSION_1_0())) {
+            logger.warn(messages.getString("legacy_manifest_%_encoding_warning"), fallback.get());
+          }
+        }
+        else if(existsNormalized(file)){
+          logger.warn(messages.getString("different_normalization_on_filesystem_warning"), file);
+        }
+        else if (fallback.isPresent() && existsNormalized(fallback.get())) {
+          if (version.isSameOrNewer(Version.VERSION_1_0())) {
+            logger.warn(messages.getString("legacy_manifest_%_encoding_warning"), fallback.get());
+          }
           logger.warn(messages.getString("different_normalization_on_filesystem_warning"), file);
         }
         else{
@@ -91,11 +106,11 @@ public enum ManifestVerifier {; //using enum to enforce singleton
       }
     }
   }
-  
+
   /**
    * if a file is parially normalized or of a different normalization then the manifest specifies it will fail the existence test.
    * This method checks for that by normalizing what is on disk with the normalized filename and see if they match.
-   * 
+   *
    * @return true if the normalized filename matches one on disk in the specified folder
    */
   private static boolean existsNormalized(final Path file){
@@ -116,14 +131,17 @@ public enum ManifestVerifier {; //using enum to enforce singleton
         logger.error(messages.getString("error_reading_normalized_file"), parent, normalizedFile, e);
       }
     }
-    
+
     return existsNormalized;
   }
 
   /*
    * Make sure all files in the directory are in at least 1 manifest
    */
-  private static void checkAllFilesInPayloadDirAreListedInAtLeastOneAManifest(final Set<Path> filesListedInManifests, final Path payloadDir, final boolean ignoreHiddenFiles) throws IOException {
+  private static void checkAllFilesInPayloadDirAreListedInAtLeastOneAManifest(final Map<Path, Optional<Path>> filesListedInManifests,
+                                                                              final Path payloadDir,
+                                                                              final boolean ignoreHiddenFiles)
+          throws IOException {
     logger.debug(messages.getString("checking_file_in_at_least_one_manifest"), payloadDir);
     if (Files.exists(payloadDir)) {
       Files.walkFileTree(payloadDir, new PayloadFileExistsInAtLeastOneManifestVistor(filesListedInManifests, ignoreHiddenFiles));

@@ -6,8 +6,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ResourceBundle;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import org.slf4j.helpers.MessageFormatter;
 
@@ -21,24 +21,27 @@ public final class PayloadFileExistsInAtLeastOneManifestVistor extends AbstractP
   private static final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
   private final Set<Path> filesListedInManifests;
 
-  public PayloadFileExistsInAtLeastOneManifestVistor(final Set<Path> filesListedInManifests, final boolean ignoreHiddenFiles) {
+  public PayloadFileExistsInAtLeastOneManifestVistor(final Map<Path, Optional<Path>> filesListedInManifests, final boolean ignoreHiddenFiles) {
     super(ignoreHiddenFiles);
-    this.filesListedInManifests = filesListedInManifests;
+    this.filesListedInManifests = new HashSet<>();
+    this.filesListedInManifests.addAll(filesListedInManifests.keySet());
+    this.filesListedInManifests.addAll(filesListedInManifests.values().stream()
+            .filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList()));
   }
 
   @Override
   public FileVisitResult visitFile(final Path path, final BasicFileAttributes attrs)throws IOException{
-	if(Files.isHidden(path) && ignoreHiddenFiles){
-	  logger.debug(messages.getString("skipping_hidden_file"), path);
-  }
-	else {
-	  if(Files.isRegularFile(path) && !filesListedInManifests.contains(path.toAbsolutePath())){
-      final String formattedMessage = messages.getString("file_not_in_any_manifest_error");
-      throw new FileNotInManifestException(MessageFormatter.format(formattedMessage, path).getMessage());
+    if(Files.isHidden(path) && ignoreHiddenFiles){
+      logger.debug(messages.getString("skipping_hidden_file"), path);
     }
-    logger.debug(messages.getString("file_in_at_least_one_manifest"), path);
-	}
-	return FileVisitResult.CONTINUE;
+    else {
+      if (Files.isRegularFile(path) && !filesListedInManifests.contains(path.toAbsolutePath())){
+        final String formattedMessage = messages.getString("file_not_in_any_manifest_error");
+        throw new FileNotInManifestException(MessageFormatter.format(formattedMessage, path).getMessage());
+      }
+      logger.debug(messages.getString("file_in_at_least_one_manifest"), path);
+    }
+    return FileVisitResult.CONTINUE;
   }
 
 }

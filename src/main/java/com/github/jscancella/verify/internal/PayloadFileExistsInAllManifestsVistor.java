@@ -5,9 +5,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.github.jscancella.domain.ManifestEntry;
 import org.slf4j.helpers.MessageFormatter;
 
 import com.github.jscancella.domain.Manifest;
@@ -33,8 +35,10 @@ public final class PayloadFileExistsInAllManifestsVistor extends AbstractPayload
       for(final Manifest manifest : manifests){
         final Set<Path> relativePaths = manifest
                                     .getEntries().stream()
-                                    .map(entry -> entry.getRelativeLocation())
-                                    .collect(Collectors.toSet());
+                                    .map(ManifestEntry::getRelativeLocation)
+                                    .collect(Collectors.toCollection(HashSet::new));
+        relativePaths.addAll(manifest.getFallbackEntries().stream().map(ManifestEntry::getRelativeLocation).collect(Collectors.toList()));
+
         final Path relativePath = rootDir.relativize(path);
         
         if(!relativePaths.contains(relativePath)){

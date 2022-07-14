@@ -4,10 +4,8 @@ package com.github.jscancella.domain;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import com.github.jscancella.domain.internal.ManifestBuilderVistor;
 import com.github.jscancella.hash.BagitChecksumNameMapping;
@@ -18,18 +16,33 @@ import com.github.jscancella.hash.Hasher;
  */
 public final class Manifest {
   private final String bagitAlgorithmName;
-  private final List<ManifestEntry> entries;
-  
-  private Manifest(final String bagitAlgorithmName, final List<ManifestEntry> entries) {
+  private final Map<ManifestEntry, Optional<ManifestEntry>> entries;
+
+  private Manifest(final String bagitAlgorithmName, final Map<ManifestEntry, Optional<ManifestEntry>> entries) {
     this.bagitAlgorithmName = bagitAlgorithmName;
-    this.entries = Collections.unmodifiableList(entries);
+    this.entries = Collections.unmodifiableMap(entries);
   }
 
   /**
    * @return the entries that this manifest specifies
    */
-  public List<ManifestEntry> getEntries() {
-    return entries;
+  public Set<ManifestEntry> getEntries() {
+    return entries.keySet();
+  }
+
+  /**
+   * @return all the known fallback entries that this manifest specifies
+   */
+  public Set<ManifestEntry> getFallbackEntries() {
+    return entries.values().stream().filter(Optional::isPresent).map(Optional::get).collect(Collectors.toSet());
+  }
+
+  /**
+   * @param entry the expected entry
+   * @return optional wrapping the entry if the bag was encoded via a legacy method, may be empty
+   */
+  public Optional<ManifestEntry> getFallbackEntryFor(ManifestEntry entry) {
+    return entries.get(entry);
   }
 
   /**
@@ -67,19 +80,19 @@ public final class Manifest {
   public static final class ManifestBuilder {
     private String algorithmName;
     private Hasher hasher;
-    private final List<ManifestEntry> entries;
+    private final Map<ManifestEntry, Optional<ManifestEntry>> entries;
     
     /**
      * @param bagitAlgorithmName the bagit algorithm name
      */
     public ManifestBuilder(final String bagitAlgorithmName){
       this.bagitAlgorithmName(bagitAlgorithmName);
-      this.entries = new ArrayList<>();
+      this.entries = new HashMap<>();
     }
     
     public ManifestBuilder(final Manifest manifestToClone) {
     	this.bagitAlgorithmName(manifestToClone.getBagitAlgorithmName());
-    	this.entries = new ArrayList<>(manifestToClone.getEntries());
+        this.entries = new HashMap<>();
     }
     
     /**
@@ -100,7 +113,12 @@ public final class Manifest {
      * @return this builder so as to chain commands
      */
     public ManifestBuilder addEntry(final ManifestEntry entry) {
-      this.entries.add(entry);
+      this.entries.put(entry, Optional.empty());
+      return this;
+    }
+
+    public ManifestBuilder addEntryWithFallback(final ManifestEntry entry, final ManifestEntry fallback) {
+      this.entries.put(entry, entry.equals(fallback) ? Optional.empty() : Optional.of(fallback));
       return this;
     }
     
@@ -117,14 +135,14 @@ public final class Manifest {
       if(Files.isDirectory(file)) {
         final ManifestBuilderVistor vistor = new ManifestBuilderVistor(file, relative, hasher);
         Files.walkFileTree(file, vistor);
-        entries.addAll(vistor.getEntries());
+        vistor.getEntries().forEach(this::addEntry);
       }
       else {
         final Path physicalLocation = file.toAbsolutePath();
         final Path relativeLocation = relative.resolve(file.getFileName());
         final String checksum = hasher.hash(physicalLocation);
         final ManifestEntry entry = new ManifestEntry(physicalLocation, relativeLocation, checksum);
-        entries.add(entry);
+        addEntry(entry);
       }
       
       return this;

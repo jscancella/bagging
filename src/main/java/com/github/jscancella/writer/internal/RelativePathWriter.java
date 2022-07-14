@@ -17,7 +17,10 @@ public enum RelativePathWriter { ; // enforce singleton
   }
   
   private static String encodeFilename(final Path path) {
-    return path.toString().replaceAll("\n", "%0A").replaceAll("\r", "%0D");
+    return path.toString()
+            .replaceAll("%", "%25")
+            .replaceAll("\n", "%0A")
+            .replaceAll("\r", "%0D");
   }
 
 }

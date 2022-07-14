@@ -262,17 +262,26 @@ public final class Bag {
     
     for(final ManifestEntry entry : manifest.getEntries()) {
       if(Files.exists(entry.getPhysicalLocation())) {
-        final String hash = hasher.hash(entry.getPhysicalLocation());
-        if (!hash.equals(entry.getChecksum())){
-          throw new CorruptChecksumException("File [{}] is suppose to have a [{}] hash of [{}] but was computed [{}].", entry.getPhysicalLocation(), //entry.getRelativeLocation(),
-              manifest.getBagitAlgorithmName(), entry.getChecksum(), hash);
+        checkHash(hasher, entry);
+      } else {
+        Optional<ManifestEntry> fallbackOptional = manifest.getFallbackEntryFor(entry);
+        if (fallbackOptional.isPresent() && Files.exists(fallbackOptional.get().getPhysicalLocation())) {
+          checkHash(hasher, fallbackOptional.get());
         }
       }
     }
 
     return true;
   }
-  
+
+  private void checkHash(final Hasher hasher, final ManifestEntry entry) throws IOException {
+    final String hash = hasher.hash(entry.getPhysicalLocation());
+    if (!hash.equals(entry.getChecksum())){
+      throw new CorruptChecksumException("File [{}] is suppose to have a [{}] hash of [{}] but was computed [{}].", entry.getPhysicalLocation(), //entry.getRelativeLocation(),
+              hasher.getBagitAlgorithmName(), entry.getChecksum(), hash);
+    }
+  }
+
   /**
    * See <a href=
    * "https://tools.ietf.org/html/draft-kunze-bagit#section-3">https://tools.ietf.org/html/draft-kunze-bagit#section-3</a><br>

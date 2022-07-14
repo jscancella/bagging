@@ -4,6 +4,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.slf4j.Logger;
@@ -34,14 +36,37 @@ public enum TagFileReader {;//using enum to enforce singleton
    * @throws InvalidBagitFileFormatException if the path is invalid
    */
   public static Path createFileFromManifest(final Path bagRootDir, final String path) {
+    return createFileFromManifestInternal(bagRootDir, path, false);
+  }
+
+  /**
+   * Create the fallback file and check it for various things, like starting with a *,
+   * or trying to access a file outside the bag. Uses a legacy method to decode the filename for compatibility with
+   * incorrectly encoded bag manifests.
+   *
+   *
+   * @param bagRootDir the base directory of the bag
+   *
+   * @param path the path listed in the manifest
+   *
+   * @return a {@link Path} object
+   *
+   * @throws MaliciousPathException if the path is trying to reference a place outside the bag
+   * @throws InvalidBagitFileFormatException if the path is invalid
+   */
+  public static Path createFallbackFileFromManifest(final Path bagRootDir, final String path) {
+    return createFileFromManifestInternal(bagRootDir, path, true);
+  }
+
+  private static Path createFileFromManifestInternal(final Path bagRootDir, final String path, final boolean useLegacy){
     checkPathSeparator(path);
     checkTildaMaliciousPath(path);
 
     String fixedPath = removeAsteriskIfExists(path);
 
-    fixedPath = decodeFilname(fixedPath);
+    fixedPath = useLegacy ? decodeFallbackFilename(fixedPath) : decodeFilename(fixedPath);
     final Path file = createPath(fixedPath, bagRootDir);
-    
+
     checkNormalizedPathIsInBag(file, bagRootDir);
 
     return file;
@@ -71,7 +96,14 @@ public enum TagFileReader {;//using enum to enforce singleton
   /*
    * as per https://github.com/jkunze/bagitspec/commit/152d42f6298b31a4916ea3f8f644ca4490494070 decode percent encoded filenames
    */
-  private static String decodeFilname(final String encoded){
+  private static String decodeFilename(final String encoded){
+    return encoded
+            .replaceAll("%0A", "\n")
+            .replaceAll("%0D", "\r")
+            .replaceAll("%25", "%");
+  }
+
+  private static String decodeFallbackFilename(final String encoded){
     return encoded.replaceAll("%0A", "\n").replaceAll("%0D", "\r");
   }
 

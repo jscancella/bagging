@@ -79,6 +79,9 @@ public enum FetchWriter {;//using enum to enforce singleton
    * as per https://github.com/jkunze/bagitspec/commit/152d42f6298b31a4916ea3f8f644ca4490494070 encode any new lines or carriage returns
    */
   private static String encodeFilename(final Path path){
-    return path.toString().replaceAll("\n", "%0A").replaceAll("\r", "%0D");
+    return path.toString()
+            .replaceAll("%", "%25")
+            .replaceAll("\n", "%0A")
+            .replaceAll("\r", "%0D");
   }
 }
