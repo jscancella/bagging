@@ -5,9 +5,7 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Phaser;
@@ -95,13 +93,13 @@ public class BagTest extends TempFolderTest{
     String fetchFileHash = md5Hasher.hash(expectedFetchFile);
     
     Assertions.assertTrue(Files.exists(expectedTagmanifestFile));
-    Assertions.assertEquals(
-        Arrays.asList("b1946ac92492d2347c6235b4d2611184  foo.txt",
-        		      bagitFileHash + "  bagit.txt",
-        		      metadataFileHash + "  bag-info.txt",
-        		      fetchFileHash + "  fetch.txt",
-        		      manifestFileHash + "  manifest-md5.txt"), 
-        Files.readAllLines(expectedTagmanifestFile));
+    Set<String> expectedTagManifestLines = new HashSet<>(Arrays.asList(
+            "b1946ac92492d2347c6235b4d2611184  foo.txt",
+            bagitFileHash + "  bagit.txt",
+            metadataFileHash + "  bag-info.txt",
+            fetchFileHash + "  fetch.txt",
+            manifestFileHash + "  manifest-md5.txt"));
+    Assertions.assertEquals(expectedTagManifestLines, new HashSet<>(Files.readAllLines(expectedTagmanifestFile)));
     
     Assertions.assertTrue(Files.exists(expectedTagFile));
     Assertions.assertArrayEquals(Files.readAllBytes(tagFile), Files.readAllBytes(expectedTagFile));

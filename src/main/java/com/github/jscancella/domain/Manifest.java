@@ -67,7 +67,7 @@ public final class Manifest {
     boolean isEqual = false;
     if (obj instanceof Manifest){
       final Manifest other = (Manifest) obj;
-      isEqual = Objects.equals(bagitAlgorithmName, other.getBagitAlgorithmName()) && entries.equals(other.getEntries()); 
+      isEqual = Objects.equals(bagitAlgorithmName, other.getBagitAlgorithmName()) && getEntries().equals(other.getEntries());
     }
     
     return isEqual;
@@ -93,6 +93,9 @@ public final class Manifest {
     public ManifestBuilder(final Manifest manifestToClone) {
     	this.bagitAlgorithmName(manifestToClone.getBagitAlgorithmName());
         this.entries = new HashMap<>();
+        for (ManifestEntry entry : manifestToClone.getEntries()) {
+          this.entries.put(entry, manifestToClone.getFallbackEntryFor(entry));
+        }
     }
     
     /**

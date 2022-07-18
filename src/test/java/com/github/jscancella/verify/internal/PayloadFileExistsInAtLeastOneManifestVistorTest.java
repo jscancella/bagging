@@ -1,6 +1,6 @@
 package com.github.jscancella.verify.internal;
 
-import java.util.HashSet;
+import java.util.HashMap;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -13,7 +13,7 @@ public class PayloadFileExistsInAtLeastOneManifestVistorTest extends TempFolderT
   @Test
   public void testFileNotInManifestException() throws Exception{
     
-    PayloadFileExistsInAtLeastOneManifestVistor sut = new PayloadFileExistsInAtLeastOneManifestVistor(new HashSet<>(), true);
+    PayloadFileExistsInAtLeastOneManifestVistor sut = new PayloadFileExistsInAtLeastOneManifestVistor(new HashMap<>(), true);
     Assertions.assertThrows(FileNotInManifestException.class, 
         () -> { sut.visitFile(createFile("aNewFile"), null); });
   }

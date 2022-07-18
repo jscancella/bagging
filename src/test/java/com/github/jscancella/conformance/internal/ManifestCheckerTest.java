@@ -51,7 +51,7 @@ public class ManifestCheckerTest extends TempFolderTest{
     
     Assertions.assertTrue(warnings.contains(BagitWarning.WEAK_CHECKSUM_ALGORITHM));
     Assertions.assertTrue(warnings.contains(BagitWarning.DIFFERENT_CASE));
-    if(FileSystems.getDefault().getClass().getName() != "sun.nio.fs.MacOSXFileSystem"){ //don't test normalization on mac
+    if(FileSystems.getDefault().getClass().getName().equals("sun.nio.fs.MacOSXFileSystem")){ //don't test normalization on mac
       Assertions.assertTrue(warnings.contains(BagitWarning.DIFFERENT_NORMALIZATION));
     }
     Assertions.assertTrue(warnings.contains(BagitWarning.BAG_WITHIN_A_BAG));
