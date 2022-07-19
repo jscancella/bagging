@@ -48,4 +48,18 @@ public class ManifestVerifierTest {
     Assertions.assertThrows(FileNotInManifestException.class, 
         () -> { ManifestVerifier.verifyManifests(bag, true); });
   }
+
+  @Test
+  public void test1_0BagValidates() throws Exception {
+    Path bagDir = new File("src/test/resources/bags/v1_0/percent_encoded_bag").toPath();
+    Bag bag = Bag.read(bagDir);
+    Assertions.assertDoesNotThrow(() -> ManifestVerifier.verifyManifests(bag, true));
+  }
+
+  @Test
+  public void test1_0BagValidatesOldPercentEncoding() throws Exception {
+    Path bagDir = new File("src/test/resources/bags/v1_0/old_percent_encoded_bag").toPath();
+    Bag bag = Bag.read(bagDir);
+    Assertions.assertDoesNotThrow(() -> ManifestVerifier.verifyManifests(bag, true));
+  }
 }

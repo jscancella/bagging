@@ -3,7 +3,9 @@ package com.github.jscancella.reader.internal;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 
+import com.github.jscancella.domain.ManifestEntry;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
@@ -28,7 +30,36 @@ public class ManifestReaderTest extends TempFolderTest {
     Assertions.assertEquals(4, manifest.getEntries().size());
     Assertions.assertEquals("md5", manifest.getBagitAlgorithmName());
   }
-  
+
+  @Test
+  public void testManifestEntryEncoding() throws Exception {
+    Path bag = Paths.get(getClass().getClassLoader().getResource("bags/v1_0/percent_encoded_bag").toURI());
+    Path manifestFile = bag.resolve("manifest-sha512.txt");
+    Manifest manifest = ManifestReader.readManifest(manifestFile, bag, StandardCharsets.UTF_8);
+
+    Assertions.assertEquals(1, manifest.getEntries().size());
+    ManifestEntry entry = manifest.getEntries().stream().findFirst().get();
+    Assertions.assertEquals("data/foo\nfile\rnon%sense.txt", entry.getRelativeLocation().toString());
+
+    Optional<ManifestEntry> fallbackEntry = manifest.getFallbackEntryFor(entry);
+    Assertions.assertTrue(fallbackEntry.isPresent());
+    Assertions.assertEquals("data/foo\nfile\rnon%25sense.txt", fallbackEntry.get().getRelativeLocation().toString());
+  }
+
+  @Test
+  public void testManifestEntryOldEncoding() throws Exception {
+    Path bag = Paths.get(getClass().getClassLoader().getResource("bags/v1_0/old_percent_encoded_bag").toURI());
+    Path manifestFile = bag.resolve("manifest-sha512.txt");
+    Manifest manifest = ManifestReader.readManifest(manifestFile, bag, StandardCharsets.UTF_8);
+
+    Assertions.assertEquals(1, manifest.getEntries().size());
+    ManifestEntry entry = manifest.getEntries().stream().findFirst().get();
+    Assertions.assertEquals("data/foo\nfile\rnon%sense.txt", entry.getRelativeLocation().toString());
+
+    Optional<ManifestEntry> fallbackEntry = manifest.getFallbackEntryFor(entry);
+    Assertions.assertFalse(fallbackEntry.isPresent());
+  }
+
   @Test
   public void testReadUpDirectoryMaliciousManifestThrowsException() throws Exception{
     Path manifestFile = Paths.get(getClass().getClassLoader().getResource("maliciousManifestFile/upAdirectoryReference-md5.txt").toURI());

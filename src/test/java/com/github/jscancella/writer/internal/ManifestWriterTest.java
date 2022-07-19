@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.Assertions;
@@ -52,6 +53,30 @@ public class ManifestWriterTest extends TempFolderTest {
     for(Path expectedManifest : expectedManifests) {
       Assertions.assertTrue(Files.exists(expectedManifest), expectedManifest + " should exist but doesn't!");
       Assertions.assertTrue(Files.size(expectedManifest) > 0, expectedManifest + " should not be empty!");
+    }
+  }
+
+  @Test
+  public void testWriteManifestPercentEncodedEntry() throws IOException{
+    Path outputFolder = createDirectory("testWriteTagManifests");
+
+    ManifestBuilder builder = new ManifestBuilder("md5");
+    builder.addFile(Paths.get("src","test","resources","bags", "v1_0", "percent_encoded_bag", "data", "foo\nfile\rnon%sense.txt"), outputFolder.resolve("data"));
+
+    Set<Manifest> manifests = new HashSet<>();
+    manifests.add(builder.build());
+
+    final Path expectedFile = outputFolder.resolve("manifest-md5.txt");
+    Assertions.assertFalse(Files.exists(expectedFile), expectedFile + " should not exist yet, but it does. Something went wrong during setup?");
+    Set<Path> writtenManifests = ManifestWriter.writePayloadManifests(manifests, outputFolder, StandardCharsets.UTF_8);
+    for(Path writtenManifest : writtenManifests) {
+      Assertions.assertTrue(Files.exists(writtenManifest), writtenManifest + " should exist but doesn't!");
+      Assertions.assertTrue(Files.size(writtenManifest) > 0, writtenManifest + " should not be empty!");
+
+      List<String> lines = Files.readAllLines(writtenManifest);
+      Assertions.assertEquals(1, lines.size());
+      String[] lineParts = lines.get(0).split(" ", 2);
+      Assertions.assertTrue(lineParts[1].endsWith("data/foo%0Afile%0Dnon%25sense.txt"));
     }
   }
 }

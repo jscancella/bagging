@@ -43,6 +43,13 @@ public class RelativePathWriterTest {
     
     Assertions.assertEquals(expectedFormatting, RelativePathWriter.formatRelativePathString(testPath));
   }
+
+  @Test
+  public void testFormattingPercents() {
+    Path testPath = getFakePath("/foo%bar/baz%fob");
+    String expectedFormatting = "/foo%25bar/baz%25fob" + System.lineSeparator();
+    Assertions.assertEquals(expectedFormatting, RelativePathWriter.formatRelativePathString(testPath));
+  }
   
   //needed because you can't actually create these on windows...
   public Path getFakePath(String fakePath) {

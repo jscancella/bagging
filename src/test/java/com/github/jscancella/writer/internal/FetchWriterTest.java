@@ -101,4 +101,22 @@ public class FetchWriterTest extends TempFolderTest {
 
     Assertions.assertEquals(expectedRelativePath, FetchWriter.formatRelativePathString(parent, child));
   }
+
+  @Test
+  public void testFetchFilePercentEncoding() throws Exception{
+    Path rootPath = createDirectory("fetchFormatted");
+    List<FetchItem> itemsToFetch = new ArrayList<>();
+
+    itemsToFetch.add(new FetchItem(
+            URI.create("http://localhost:8989/bags/v0_96/holey-bag/data/dir1/test3.txt"),
+            null,
+            rootPath.resolve("data/di\nr1/te\rst%3.txt")));
+
+    Path fetch = FetchWriter.writeFetchFile(itemsToFetch, rootPath, StandardCharsets.UTF_8);
+
+    List<String> expectedLines = Arrays.asList("http://localhost:8989/bags/v0_96/holey-bag/data/dir1/test3.txt - data/di%0Ar1/te%0Dst%253.txt");
+    List<String> actualLines = Files.readAllLines(fetch);
+
+    Assertions.assertEquals(expectedLines, actualLines);
+  }
 }

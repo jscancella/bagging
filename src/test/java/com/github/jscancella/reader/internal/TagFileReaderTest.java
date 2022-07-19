@@ -17,6 +17,20 @@ public class TagFileReaderTest {
     Path path = TagFileReader.createFileFromManifest(bagRootDir, "data/bar/ham.txt");
     Assertions.assertEquals(bagRootDir.resolve("data/bar/ham.txt"), path);
   }
+
+  @Test
+  public void testCreateFileFromManifestWithEncodedChars() throws Exception {
+    Path rootDir = Paths.get("foo");
+    Path path = TagFileReader.createFileFromManifest(rootDir, "data/bar%0Aham%0Dbaz%25fud.txt");
+    Assertions.assertEquals(rootDir.resolve("data/bar\nham\rbaz%fud.txt"), path);
+  }
+
+  @Test
+  public void testCreateFallbackFileFromManifestWithEncodedChars() throws Exception {
+    Path rootDir = Paths.get("foo");
+    Path path = TagFileReader.createFallbackFileFromManifest(rootDir, "data/bar%0Aham%0Dbaz%25fud.txt");
+    Assertions.assertEquals(rootDir.resolve("data/bar\nham\rbaz%25fud.txt"), path);
+  }
   
   @Test
   public void testCreateFileFromManifestWithAsterisk() throws Exception{

@@ -4,8 +4,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import org.slf4j.Logger;
@@ -40,10 +38,9 @@ public enum TagFileReader {;//using enum to enforce singleton
   }
 
   /**
-   * Create the fallback file and check it for various things, like starting with a *,
-   * or trying to access a file outside the bag. Uses a legacy method to decode the filename for compatibility with
-   * incorrectly encoded bag manifests.
-   *
+   * Create the fallback file and check it for various things, like starting with a *, or trying to access a file
+   * outside the bag. Uses a legacy method to decode the filename for compatibility with bags encoded for an older
+   * version of the bagit spec.
    *
    * @param bagRootDir the base directory of the bag
    *
