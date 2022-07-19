@@ -41,7 +41,7 @@ public final class Manifest {
    * @param entry the expected entry
    * @return optional wrapping the entry if the bag was encoded via a legacy method, may be empty
    */
-  public Optional<ManifestEntry> getFallbackEntryFor(ManifestEntry entry) {
+  public Optional<ManifestEntry> getFallbackEntryFor(final ManifestEntry entry) {
     return entries.get(entry);
   }
 
@@ -93,7 +93,7 @@ public final class Manifest {
     public ManifestBuilder(final Manifest manifestToClone) {
     	this.bagitAlgorithmName(manifestToClone.getBagitAlgorithmName());
         this.entries = new HashMap<>();
-        for (ManifestEntry entry : manifestToClone.getEntries()) {
+        for (final ManifestEntry entry : manifestToClone.getEntries()) {
           this.entries.put(entry, manifestToClone.getFallbackEntryFor(entry));
         }
     }

@@ -264,7 +264,7 @@ public final class Bag {
       if(Files.exists(entry.getPhysicalLocation())) {
         checkHash(hasher, entry);
       } else {
-        Optional<ManifestEntry> fallbackOptional = manifest.getFallbackEntryFor(entry);
+        final Optional<ManifestEntry> fallbackOptional = manifest.getFallbackEntryFor(entry);
         if (fallbackOptional.isPresent() && Files.exists(fallbackOptional.get().getPhysicalLocation())) {
           checkHash(hasher, fallbackOptional.get());
         }

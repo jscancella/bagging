@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.Normalizer;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import com.github.jscancella.domain.ManifestEntry;
@@ -59,7 +60,7 @@ public enum ManifestVerifier {; //using enum to enforce singleton
   private static Map<Path, Optional<Path>> getAllFilesListedInManifests(final Bag bag) throws IOException {
     logger.debug(messages.getString("all_files_in_manifests"));
 
-    final Map<Path, Optional<Path>> filesListedInManifests = new HashMap<>();
+    final Map<Path, Optional<Path>> filesListedInManifests = new ConcurrentHashMap<>();
 
     try(DirectoryStream<Path> directoryStream = Files.newDirectoryStream(bag.getTagFileDir(), new ManifestFilter())){
       for(final Path path : directoryStream) {
@@ -78,33 +79,42 @@ public enum ManifestVerifier {; //using enum to enforce singleton
   /*
    * Make sure all the listed files actually exist
    */
-  private static void checkAllFilesListedInManifestExist(final Map<Path, Optional<Path>> files, Version version) {
+  private static void checkAllFilesListedInManifestExist(final Map<Path, Optional<Path>> files, final Version version) {
     logger.info(messages.getString("check_all_files_in_manifests_exist"));
 
     for (final Map.Entry<Path, Optional<Path>> fileEntry : files.entrySet()) {
       final Path file = fileEntry.getKey();
-      if(!Files.exists(file)){
-        final Optional<Path> fallback = fileEntry.getValue();
-        if (fallback.isPresent() && Files.exists(fallback.get())) {
-          if (version.isSameOrNewer(Version.VERSION_1_0())) {
-            logger.warn(messages.getString("legacy_manifest_%_encoding_warning"), fallback.get());
-          }
-        }
-        else if(existsNormalized(file)){
-          logger.warn(messages.getString("different_normalization_on_filesystem_warning"), file);
-        }
-        else if (fallback.isPresent() && existsNormalized(fallback.get())) {
-          if (version.isSameOrNewer(Version.VERSION_1_0())) {
-            logger.warn(messages.getString("legacy_manifest_%_encoding_warning"), fallback.get());
-          }
-          logger.warn(messages.getString("different_normalization_on_filesystem_warning"), file);
-        }
-        else{
-          final String formattedMessage = messages.getString("missing_payload_files_error");
-          throw new FileNotInPayloadDirectoryException(MessageFormatter.format(formattedMessage, file).getMessage());
-        }
+      if(!Files.exists(file) && !checkFallbackOptions(fileEntry, version)){
+        final String formattedMessage = messages.getString("missing_payload_files_error");
+        throw new FileNotInPayloadDirectoryException(MessageFormatter.format(formattedMessage, file).getMessage());
       }
     }
+  }
+
+  private static boolean checkFallbackOptions(final Map.Entry<Path, Optional<Path>> fileEntry, final Version version) {
+    final Path file = fileEntry.getKey();
+    final Optional<Path> fallback = fileEntry.getValue();
+
+    boolean fallbackOptionUsed = false;
+    if (fallback.isPresent() && Files.exists(fallback.get())) {
+      fallbackOptionUsed = true;
+      if (version.isSameOrNewer(Version.VERSION_1_0())) {
+        logger.warn(messages.getString("legacy_manifest_%_encoding_warning"), fallback.get());
+      }
+    }
+    else if(existsNormalized(file)){
+      fallbackOptionUsed = true;
+      logger.warn(messages.getString("different_normalization_on_filesystem_warning"), file);
+    }
+    else if (fallback.isPresent() && existsNormalized(fallback.get())) {
+      fallbackOptionUsed = true;
+      if (version.isSameOrNewer(Version.VERSION_1_0())) {
+        logger.warn(messages.getString("legacy_manifest_%_encoding_warning"), fallback.get());
+      }
+      logger.warn(messages.getString("different_normalization_on_filesystem_warning"), file);
+    }
+
+    return fallbackOptionUsed;
   }
 
   /**
