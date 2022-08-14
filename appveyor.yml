@@ -14,6 +14,7 @@ branches:
   - crowdin_translations
 
 build_script:
+- cmd: dir "C:\Program Files\Java"
 - cmd: ./gradlew.bat check --no-daemon
 
 shallow_clone: true
