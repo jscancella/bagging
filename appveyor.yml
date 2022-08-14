@@ -1,5 +1,5 @@
 ---
-version: "Visual Studio 2019"
+version: "{build}"
   
 environment:
   matrix:
