@@ -37,7 +37,7 @@ public enum RelativePathWriter { ; // enforce singleton
    * @return percent encoded path
    */
   public static String encodeFilename(final Path path, final Version version, final Charset charset) {
-    String encodedPath = URLEncoder.encode(path.toString(), charset).replace("+", "%20").replace("%5C", "/");
+    String encodedPath = URLEncoder.encode(path.toString(), charset).replace("+", "%20").replace("%5C", "/").replace("%2F", "/");
     if(version.isOlder(Version.VERSION_1_0())) {
       encodedPath = path.toString().replaceAll("\n", "%0A").replaceAll("\r", "%0D");
     }
