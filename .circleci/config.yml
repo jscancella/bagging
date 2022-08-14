@@ -30,7 +30,7 @@ jobs:
           environment: 
             GRADLE_OPTS: "-Xmx1024m -Dorg.gradle.jvmargs='-Xmx1024m'"
       - store_artifacts:
-        path: build/reports
+          path: build/reports
         
   build-java17:
     docker:
@@ -58,7 +58,7 @@ jobs:
           environment: 
             GRADLE_OPTS: "-Xmx1024m -Dorg.gradle.jvmargs='-Xmx1024m'"
       - store_artifacts:
-        path: build/reports
+          path: build/reports
 
 workflows:
   version: 2
