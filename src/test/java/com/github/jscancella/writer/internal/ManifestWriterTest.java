@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import com.github.jscancella.TempFolderTest;
 import com.github.jscancella.domain.Manifest;
+import com.github.jscancella.domain.Version;
 import com.github.jscancella.domain.Manifest.ManifestBuilder;
 
 public class ManifestWriterTest extends TempFolderTest {
@@ -29,7 +30,7 @@ public class ManifestWriterTest extends TempFolderTest {
     
     final Path expectedFile = outputFolder.resolve("manifest-md5.txt");
     Assertions.assertTrue(!Files.exists(expectedFile), expectedFile + " should not exist yet, but it does. Something went wrong during setup?");
-    Set<Path> expectedManifests = ManifestWriter.writePayloadManifests(manifests, outputFolder, StandardCharsets.UTF_8);
+    Set<Path> expectedManifests = ManifestWriter.writePayloadManifests(manifests, outputFolder, Version.VERSION_1_0(), StandardCharsets.UTF_8);
     for(Path expectedManifest : expectedManifests) {
       Assertions.assertTrue(Files.exists(expectedManifest), expectedManifest + " should exist but doesn't!");
       Assertions.assertTrue(Files.size(expectedManifest) > 0, expectedManifest + " should not be empty!");
@@ -48,7 +49,7 @@ public class ManifestWriterTest extends TempFolderTest {
     
     final Path expectedFile = outputFolder.resolve("tagmanifest-md5.txt");
     Assertions.assertTrue(!Files.exists(expectedFile), expectedFile + " should not exist yet, but it does. Something went wrong during setup?");
-    Set<Path> expectedManifests = ManifestWriter.writeTagManifests(tagManifests, outputFolder, StandardCharsets.UTF_8);
+    Set<Path> expectedManifests = ManifestWriter.writeTagManifests(tagManifests, outputFolder, Version.VERSION_1_0(), StandardCharsets.UTF_8);
     for(Path expectedManifest : expectedManifests) {
       Assertions.assertTrue(Files.exists(expectedManifest), expectedManifest + " should exist but doesn't!");
       Assertions.assertTrue(Files.size(expectedManifest) > 0, expectedManifest + " should not be empty!");

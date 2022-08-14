@@ -3,6 +3,7 @@ package com.github.jscancella.writer.internal;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
@@ -15,15 +16,16 @@ import java.util.Iterator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class RelativePathWriterTest {
+import com.github.jscancella.domain.Version;
 
+public class RelativePathWriterTest {
   @Test
   public void testFormattingNewline() {
     Path testPath = getFakePath("\\foo\n\\bar\n\\ham");
     
     String expectedFormatting = "/foo%0A/bar%0A/ham" + System.lineSeparator();
     
-    Assertions.assertEquals(expectedFormatting, RelativePathWriter.formatRelativePathString(testPath));
+    Assertions.assertEquals(expectedFormatting, RelativePathWriter.formatRelativePathString(testPath, Version.VERSION_1_0(), StandardCharsets.UTF_8));
   }
   
   @Test
@@ -32,7 +34,7 @@ public class RelativePathWriterTest {
     
     String expectedFormatting = "/foo%0D/bar%0D/ham" + System.lineSeparator();
     
-    Assertions.assertEquals(expectedFormatting, RelativePathWriter.formatRelativePathString(testPath));
+    Assertions.assertEquals(expectedFormatting, RelativePathWriter.formatRelativePathString(testPath, Version.VERSION_1_0(), StandardCharsets.UTF_8));
   }
   
   @Test
@@ -41,7 +43,7 @@ public class RelativePathWriterTest {
     
     String expectedFormatting = "/foo/bar/ham" + System.lineSeparator();
     
-    Assertions.assertEquals(expectedFormatting, RelativePathWriter.formatRelativePathString(testPath));
+    Assertions.assertEquals(expectedFormatting, RelativePathWriter.formatRelativePathString(testPath, Version.VERSION_1_0(), StandardCharsets.UTF_8));
   }
   
   //needed because you can't actually create these on windows...

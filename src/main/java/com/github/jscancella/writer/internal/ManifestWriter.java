@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.jscancella.domain.Manifest;
 import com.github.jscancella.domain.ManifestEntry;
+import com.github.jscancella.domain.Version;
 
 /**
  * Responsible for writing out a {@link Manifest} to the filesystem
@@ -31,6 +32,8 @@ public enum ManifestWriter {
    *          the payload{@link Manifest}s to write out
    * @param outputDir
    *          the root of where the manifest is being written to
+   * @param version 
+   *          the version of the bag
    * @param charsetName
    *          the name of the encoding for the file
    * @return the set of payload manifests that were just created
@@ -38,8 +41,8 @@ public enum ManifestWriter {
    * @throws IOException
    *           if there was a problem writing a file
    */
-  public static Set<Path> writePayloadManifests(final Set<Manifest> manifests, final Path outputDir, final Charset charsetName) throws IOException{
-    return writeManifests(manifests, outputDir, "manifest-", charsetName);
+  public static Set<Path> writePayloadManifests(final Set<Manifest> manifests, final Path outputDir, final Version version, final Charset charsetName) throws IOException{
+    return writeManifests(manifests, outputDir, "manifest-", version, charsetName);
   }
 
   /**
@@ -49,6 +52,8 @@ public enum ManifestWriter {
    *          the tag{@link Manifest}s to write out
    * @param outputDir
    *          the root of where the manifest is being written to
+   * @param version 
+   *          the version of the bag
    * @param charsetName
    *          the name of the encoding for the file
    * @return the set of tag manifests that were just created
@@ -56,15 +61,15 @@ public enum ManifestWriter {
    * @throws IOException
    *           if there was a problem writing a file
    */
-  public static Set<Path> writeTagManifests(final Set<Manifest> tagManifests, final Path outputDir, final Charset charsetName) throws IOException{
-    return writeManifests(tagManifests, outputDir, "tagmanifest-", charsetName);
+  public static Set<Path> writeTagManifests(final Set<Manifest> tagManifests, final Path outputDir, final Version version, final Charset charsetName) throws IOException{
+    return writeManifests(tagManifests, outputDir, "tagmanifest-", version, charsetName);
   }
 
   /*
    * Generic method to write manifests
    */
   private static Set<Path> writeManifests(
-      final Set<Manifest> manifests, final Path outputDir, final String filenameBase, final Charset charsetName) throws IOException{
+      final Set<Manifest> manifests, final Path outputDir, final String filenameBase, final Version version, final Charset charsetName) throws IOException{
     
     final Set<Path> manifestFiles = new HashSet<>();
 
@@ -81,7 +86,7 @@ public enum ManifestWriter {
           // This may cause problems on windows due to it being text mode, in which case
           // either replace with a * or try verifying in binary mode with --binary
           final String line = entry.getChecksum() + "  "
-              + RelativePathWriter.formatRelativePathString(entry.getRelativeLocation());
+              + RelativePathWriter.formatRelativePathString(entry.getRelativeLocation(), version, charsetName);
           logger.debug(messages.getString("writing_line_to_file"), line, manifestPath);
           writer.write(line);
         }

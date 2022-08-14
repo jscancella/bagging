@@ -2,6 +2,8 @@ package com.github.jscancella.reader.internal;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLDecoder;
+import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ResourceBundle;
@@ -10,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.MessageFormatter;
 
+import com.github.jscancella.domain.Version;
 import com.github.jscancella.exceptions.InvalidBagitFileFormatException;
 import com.github.jscancella.exceptions.MaliciousPathException;
 
@@ -28,18 +31,22 @@ public enum TagFileReader {;//using enum to enforce singleton
    * 
    * @param path the path listed in the manifest
    * 
+   * @param version the version of the bag
+   * 
+   * @param charset the encoding that was used to write this tag file
+   * 
    * @return a {@link Path} object
    * 
    * @throws MaliciousPathException if the path is trying to reference a place outside the bag
    * @throws InvalidBagitFileFormatException if the path is invalid
    */
-  public static Path createFileFromManifest(final Path bagRootDir, final String path) {
+  public static Path createFileFromManifest(final Path bagRootDir, final String path, final Version version, final Charset charset) {
     checkPathSeparator(path);
     checkTildaMaliciousPath(path);
 
     String fixedPath = removeAsteriskIfExists(path);
 
-    fixedPath = decodeFilname(fixedPath);
+    fixedPath = decodeFilname(fixedPath, version, charset);
     final Path file = createPath(fixedPath, bagRootDir);
     
     checkNormalizedPathIsInBag(file, bagRootDir);
@@ -71,8 +78,13 @@ public enum TagFileReader {;//using enum to enforce singleton
   /*
    * as per https://github.com/jkunze/bagitspec/commit/152d42f6298b31a4916ea3f8f644ca4490494070 decode percent encoded filenames
    */
-  private static String decodeFilname(final String encoded){
-    return encoded.replaceAll("%0A", "\n").replaceAll("%0D", "\r");
+  protected static String decodeFilname(final String encoded, final Version version, final Charset charset){
+    String decoded = encoded.replaceAll("%0A", "\n").replaceAll("%0D", "\r");
+    if(version.isSameOrNewer(Version.VERSION_1_0())) {
+      decoded = URLDecoder.decode(encoded, charset);
+    }
+    logger.debug(messages.getString("percent_encoded"), encoded, decoded);
+    return decoded;
   }
 
   @SuppressWarnings("PMD.OnlyOneReturn")

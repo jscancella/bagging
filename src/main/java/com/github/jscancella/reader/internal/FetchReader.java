@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.jscancella.domain.FetchItem;
+import com.github.jscancella.domain.Version;
 import com.github.jscancella.exceptions.InvalidBagitFileFormatException;
 import com.github.jscancella.exceptions.MaliciousPathException;
 
@@ -31,6 +32,7 @@ public enum FetchReader {;//using enum to enforce singleton
    * @param fetchFile the specific fetch file
    * @param encoding the encoding to read the file with
    * @param bagRootDir the root directory of the bag
+   * @param version the version of the bag
    * @return a list of items to fetch
    * 
    * @throws IOException if there is a problem reading a file
@@ -38,7 +40,7 @@ public enum FetchReader {;//using enum to enforce singleton
    * @throws InvalidBagitFileFormatException if the fetch format does not follow the bagit specification
    */
   @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-  public static List<FetchItem> readFetch(final Path fetchFile, final Charset encoding, final Path bagRootDir) throws IOException{
+  public static List<FetchItem> readFetch(final Path fetchFile, final Charset encoding, final Path bagRootDir, final Version version) throws IOException{
     logger.info(messages.getString("reading_fetch_file"), fetchFile);
     final List<FetchItem> itemsToFetch = new ArrayList<>();
     
@@ -47,7 +49,7 @@ public enum FetchReader {;//using enum to enforce singleton
       while(line != null){
         if(line.matches(FETCH_LINE_REGEX) && !line.matches("\\s*")){
           final String[] parts = line.split("\\s+", 3);
-          final Path path = TagFileReader.createFileFromManifest(bagRootDir, parts[2]);
+          final Path path = TagFileReader.createFileFromManifest(bagRootDir, parts[2], version, encoding);
           final long length = "-".equals(parts[1]) ? -1 : Long.decode(parts[1]);
           final URI url = URI.create(parts[0]);
           

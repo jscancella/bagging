@@ -15,6 +15,7 @@ import org.junit.jupiter.api.condition.OS;
 
 import com.github.jscancella.TempFolderTest;
 import com.github.jscancella.domain.FetchItem;
+import com.github.jscancella.domain.Version;
 import com.github.jscancella.exceptions.InvalidBagitFileFormatException;
 import com.github.jscancella.exceptions.MaliciousPathException;
 
@@ -34,7 +35,7 @@ public class FetchReaderTest extends TempFolderTest {
   @Test
   public void testReadFetchWithNoSizeSpecified() throws Exception{
     Path fetchFile = Paths.get(getClass().getClassLoader().getResource("fetchFiles/fetchWithNoSizeSpecified.txt").toURI());
-    List<FetchItem> returnedItems = FetchReader.readFetch(fetchFile, StandardCharsets.UTF_8, fetchFile.getParent());
+    List<FetchItem> returnedItems = FetchReader.readFetch(fetchFile, StandardCharsets.UTF_8, fetchFile.getParent(), Version.VERSION_1_0());
     
     for(FetchItem item : returnedItems){
       Assertions.assertNotNull(item.getUri());
@@ -49,7 +50,7 @@ public class FetchReaderTest extends TempFolderTest {
   @Test
   public void testReadFetchWithSizeSpecified() throws Exception{
     Path fetchFile = Paths.get(getClass().getClassLoader().getResource("fetchFiles/fetchWithSizeSpecified.txt").toURI());
-    List<FetchItem> returnedItems = FetchReader.readFetch(fetchFile, StandardCharsets.UTF_8, Paths.get("/foo"));
+    List<FetchItem> returnedItems = FetchReader.readFetch(fetchFile, StandardCharsets.UTF_8, Paths.get("/foo"), Version.VERSION_1_0());
     
     for(FetchItem item : returnedItems){
       Assertions.assertNotNull(item.getUri());
@@ -65,28 +66,28 @@ public class FetchReaderTest extends TempFolderTest {
   public void testReadBlankLinesThrowsException() throws Exception{
     Path fetchFile = Paths.get(getClass().getClassLoader().getResource("fetchFiles/fetchWithBlankLines.txt").toURI());
     Assertions.assertThrows(InvalidBagitFileFormatException.class, 
-        () -> { FetchReader.readFetch(fetchFile, StandardCharsets.UTF_8, Paths.get("/foo")); });
+        () -> { FetchReader.readFetch(fetchFile, StandardCharsets.UTF_8, Paths.get("/foo"), Version.VERSION_1_0()); });
   }
   
   @Test
   public void testReadWindowsSpecialDirMaliciousFetchThrowsException() throws Exception{
     Path fetchFile = Paths.get(getClass().getClassLoader().getResource("maliciousFetchFile/windowsSpecialDirectoryName.txt").toURI());
     Assertions.assertThrows(InvalidBagitFileFormatException.class, 
-        () -> { FetchReader.readFetch(fetchFile, StandardCharsets.UTF_8, Paths.get("/foo")); });
+        () -> { FetchReader.readFetch(fetchFile, StandardCharsets.UTF_8, Paths.get("/foo"), Version.VERSION_1_0()); });
   }
   
   @Test
   public void testReadUpADirMaliciousFetchThrowsException() throws Exception{
     Path fetchFile = Paths.get(getClass().getClassLoader().getResource("maliciousFetchFile/upAdirectoryReference.txt").toURI());
     Assertions.assertThrows(MaliciousPathException.class, 
-        () -> { FetchReader.readFetch(fetchFile, StandardCharsets.UTF_8, Paths.get("/bar")); });
+        () -> { FetchReader.readFetch(fetchFile, StandardCharsets.UTF_8, Paths.get("/bar"), Version.VERSION_1_0()); });
   }
   
   @Test
   public void testReadTildeFetchThrowsException() throws Exception{
     Path fetchFile = Paths.get(getClass().getClassLoader().getResource("maliciousFetchFile/tildeReference.txt").toURI());
     Assertions.assertThrows(MaliciousPathException.class, 
-        () -> { FetchReader.readFetch(fetchFile, StandardCharsets.UTF_8, Paths.get("/bar")); });
+        () -> { FetchReader.readFetch(fetchFile, StandardCharsets.UTF_8, Paths.get("/bar"), Version.VERSION_1_0()); });
   }
   
   @Test
@@ -94,7 +95,7 @@ public class FetchReaderTest extends TempFolderTest {
   public void testReadFileUrlMaliciousFetchThrowsException() throws Exception{
     Path fetchFile = Paths.get(getClass().getClassLoader().getResource("maliciousFetchFile/fileUrl.txt").toURI());
     Assertions.assertThrows(MaliciousPathException.class, 
-        () -> { FetchReader.readFetch(fetchFile, StandardCharsets.UTF_8, Paths.get("/bar")); });
+        () -> { FetchReader.readFetch(fetchFile, StandardCharsets.UTF_8, Paths.get("/bar"), Version.VERSION_1_0()); });
   }
   
   @Test

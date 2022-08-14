@@ -22,6 +22,7 @@ import org.slf4j.helpers.MessageFormatter;
 
 import com.github.jscancella.conformance.BagitWarning;
 import com.github.jscancella.domain.Manifest;
+import com.github.jscancella.domain.Version;
 import com.github.jscancella.exceptions.InvalidBagitFileFormatException;
 import com.github.jscancella.exceptions.MaliciousPathException;
 import com.github.jscancella.internal.PathUtils;
@@ -266,7 +267,7 @@ public enum ManifestChecker {;// using enum to enforce singleton
     Manifest compareToManifest = null;
     Path compareToManifestPath = null;
     for (final Path manifestPath : manifestPaths) {
-      final Manifest manifest = ManifestReader.readManifest(manifestPath, manifestPath.getParent(), charset);
+      final Manifest manifest = ManifestReader.readManifest(manifestPath, manifestPath.getParent(), Version.LATEST_BAGIT_VERSION(), charset);
       if(compareToManifest == null) {
         compareToManifestPath = manifestPath;
         compareToManifest = manifest;
