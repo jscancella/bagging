@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import com.github.jscancella.TempFolderTest;
 import com.github.jscancella.domain.FetchItem;
+import com.github.jscancella.domain.Version;
 
 public class FetchWriterTest extends TempFolderTest {
 
@@ -27,7 +28,7 @@ public class FetchWriterTest extends TempFolderTest {
     
     
     Assertions.assertFalse(Files.exists(fetch));
-    Path fetchFile = FetchWriter.writeFetchFile(itemsToFetch, rootPath, StandardCharsets.UTF_8);
+    Path fetchFile = FetchWriter.writeFetchFile(itemsToFetch, rootPath, Version.VERSION_1_0(), StandardCharsets.UTF_8);
     Assertions.assertTrue(Files.exists(fetchFile));
   }
   
@@ -42,7 +43,7 @@ public class FetchWriterTest extends TempFolderTest {
     itemsToFetch.add(new FetchItem(URI.create("http://localhost:8989/bags/v0_96/holey-bag/data/test%201.txt"), null, rootPath.resolve("data/test 1.txt")));
     itemsToFetch.add(new FetchItem(URI.create("http://localhost:8989/bags/v0_96/holey-bag/data/test2.txt"), null, rootPath.resolve("data/test2.txt")));
     
-    Path fetch = FetchWriter.writeFetchFile(itemsToFetch, rootPath, StandardCharsets.UTF_8);
+    Path fetch = FetchWriter.writeFetchFile(itemsToFetch, rootPath, new Version(0, 96), StandardCharsets.UTF_8);
     
     List<String> expectedLines = Arrays.asList("http://localhost:8989/bags/v0_96/holey-bag/data/dir1/test3.txt - data/dir1/test3.txt", 
         "http://localhost:8989/bags/v0_96/holey-bag/data/dir2/dir3/test5.txt - data/dir2/dir3/test5.txt", 
@@ -59,7 +60,7 @@ public class FetchWriterTest extends TempFolderTest {
     Path bagitRootDir = Paths.get("foo", "bar", "ham");
     FetchItem fetchItem = new FetchItem(new URI("https://www.hackaday.com/blog"), null, bagitRootDir.resolve("data").resolve("foo.txt"));
     String expected = "https://www.hackaday.com/blog - data/foo.txt" + System.lineSeparator();
-    String actual = FetchWriter.formatFetchLine(fetchItem, bagitRootDir);
+    String actual = FetchWriter.formatFetchLine(fetchItem, bagitRootDir, Version.VERSION_1_0(), StandardCharsets.UTF_8);
     
     Assertions.assertEquals(expected, actual);
   }
@@ -69,7 +70,7 @@ public class FetchWriterTest extends TempFolderTest {
     Path bagitRootDir = Paths.get("foo", "bar", "ham");
     FetchItem fetchItem = new FetchItem(new URI("https://www.hackaday.com/blog"), -1l, bagitRootDir.resolve("data").resolve("foo.txt"));
     String expected = "https://www.hackaday.com/blog - data/foo.txt" + System.lineSeparator();
-    String actual = FetchWriter.formatFetchLine(fetchItem, bagitRootDir);
+    String actual = FetchWriter.formatFetchLine(fetchItem, bagitRootDir, Version.VERSION_1_0(), StandardCharsets.UTF_8);
     
     Assertions.assertEquals(expected, actual);
   }
@@ -79,7 +80,7 @@ public class FetchWriterTest extends TempFolderTest {
     Path bagitRootDir = Paths.get("foo", "bar", "ham");
     FetchItem fetchItem = new FetchItem(new URI("https://www.hackaday.com/blog"), 100l, bagitRootDir.resolve("data").resolve("foo.txt"));
     String expected = "https://www.hackaday.com/blog 100 data/foo.txt" + System.lineSeparator();
-    String actual = FetchWriter.formatFetchLine(fetchItem, bagitRootDir);
+    String actual = FetchWriter.formatFetchLine(fetchItem, bagitRootDir, Version.VERSION_1_0(), StandardCharsets.UTF_8);
     
     Assertions.assertEquals(expected, actual);
   }
@@ -90,7 +91,7 @@ public class FetchWriterTest extends TempFolderTest {
     Path child = parent.resolve("bar/ham");
     String expectedRelativePath = "bar/ham" + System.lineSeparator();
     
-    Assertions.assertEquals(expectedRelativePath, FetchWriter.formatRelativePathString(parent, child));
+    Assertions.assertEquals(expectedRelativePath, FetchWriter.formatRelativePathString(parent, child, Version.VERSION_1_0(), StandardCharsets.UTF_8));
   }
 
   @Test
@@ -99,6 +100,6 @@ public class FetchWriterTest extends TempFolderTest {
     Path child = Paths.get("one/two/three").toAbsolutePath();
     String expectedRelativePath = "three" + System.lineSeparator();
 
-    Assertions.assertEquals(expectedRelativePath, FetchWriter.formatRelativePathString(parent, child));
+    Assertions.assertEquals(expectedRelativePath, FetchWriter.formatRelativePathString(parent, child, Version.VERSION_1_0(), StandardCharsets.UTF_8));
   }
 }

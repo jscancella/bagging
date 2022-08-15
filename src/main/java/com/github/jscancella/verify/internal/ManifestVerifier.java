@@ -65,7 +65,7 @@ public enum ManifestVerifier {; //using enum to enforce singleton
     try(DirectoryStream<Path> directoryStream = Files.newDirectoryStream(bag.getTagFileDir(), new ManifestFilter())){
       for(final Path path : directoryStream) {
         logger.debug(messages.getString("get_listing_in_manifest"), path);
-        final Manifest manifest = ManifestReader.readManifest(path, bag.getRootDir(),bag.getFileEncoding());
+        final Manifest manifest = ManifestReader.readManifest(path, bag.getRootDir(), bag.getVersion(), bag.getFileEncoding());
         filesListedInManifests.addAll(manifest.getEntries().stream().map(entry -> entry.getPhysicalLocation()).collect(Collectors.toList()));
       }
     }

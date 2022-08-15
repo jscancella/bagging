@@ -53,12 +53,18 @@ public class BagitSuiteComplanceTest extends TempFolderTest {
    * This test checks all the valid bags to make sure they don't throw some error.
    */
   @Test
-  public void testValidBags() throws Exception{
+  public void testValidBags(){
     Bag bag;
     
     for(final Path bagDir : visitor.getValidTestCases()){
-      bag = Bag.read(bagDir);
-      bag.isValid(true);
+      try {
+        bag = Bag.read(bagDir);
+        bag.isValid(true);
+      }
+      catch(Exception e) {
+        Assertions.fail("bag [" + bagDir + "] failed to validation even though it should be valid", e);
+      }
+      
     }
   }
   

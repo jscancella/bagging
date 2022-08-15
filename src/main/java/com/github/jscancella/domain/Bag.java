@@ -336,15 +336,15 @@ public final class Bag {
     
     Optional<Path> fetchFile = Optional.empty();
     if(!itemsToFetch.isEmpty()){
-    	fetchFile = Optional.of(FetchWriter.writeFetchFile(itemsToFetch, writeTo, fileEncoding));
+    	fetchFile = Optional.of(FetchWriter.writeFetchFile(itemsToFetch, writeTo, version, fileEncoding));
     }
     
     final Set<Manifest> newPayloadManifests = writeManifests(writeTo, payLoadManifests);
-    final Set<Path> newPayloadManifestFiles = ManifestWriter.writePayloadManifests(newPayloadManifests, writeTo, fileEncoding);
+    final Set<Path> newPayloadManifestFiles = ManifestWriter.writePayloadManifests(newPayloadManifests, writeTo, version, fileEncoding);
     final Set<Manifest> updatedTagManifests = updateTagManifests(bagitFile, newPayloadManifestFiles, metadataFile, fetchFile);
     
     final Set<Manifest> newTagManifests = writeManifests(writeTo, updatedTagManifests);
-    ManifestWriter.writeTagManifests(newTagManifests, writeTo, fileEncoding);
+    ManifestWriter.writeTagManifests(newTagManifests, writeTo, version, fileEncoding);
     
     return new Bag(version, fileEncoding, newPayloadManifests, newTagManifests, itemsToFetch, metadata, writeTo);
   }
@@ -441,7 +441,7 @@ public final class Bag {
     final Path fetchFile = rootDir.resolve("fetch.txt");
     final List<FetchItem> itemsToFetch = new ArrayList<>();
     if(Files.exists(fetchFile)){
-      itemsToFetch.addAll(FetchReader.readFetch(fetchFile, encoding, rootDir));
+      itemsToFetch.addAll(FetchReader.readFetch(fetchFile, encoding, rootDir, version));
     }
     
     final Set<Manifest> payloadManifests = new HashSet<>();
@@ -451,11 +451,11 @@ public final class Bag {
         final String filename = PathUtils.getFilename(path);
         
         if(filename.startsWith("tagmanifest-")){
-          final Manifest tagManifest = ManifestReader.readManifest(path, rootDir, encoding);
+          final Manifest tagManifest = ManifestReader.readManifest(path, rootDir, version, encoding);
           tagManifests.add(tagManifest);
         }
         else if(filename.startsWith("manifest-")){
-          final Manifest payloadManifest = ManifestReader.readManifest(path, rootDir, encoding);
+          final Manifest payloadManifest = ManifestReader.readManifest(path, rootDir, version, encoding);
           payloadManifests.add(payloadManifest);
         }
       }

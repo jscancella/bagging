@@ -1,12 +1,12 @@
 ---
 version: "{build}"
+
+image: Visual Studio 2019
   
 environment:
   matrix:
-    - JAVA_HOME: C:\Program Files\Java\jdk1.8.0
     - JAVA_HOME: C:\Program Files\Java\jdk11
-    - JAVA_HOME: C:\Program Files\Java\jdk12
-    - JAVA_HOME: C:\Program Files\Java\jdk13
+    - JAVA_HOME: C:\Program Files\Java\jdk17
 
 install:
 - cmd: git clone --depth 3 https://github.com/loc-rdc/bagit-conformance-suite.git
@@ -16,6 +16,7 @@ branches:
   - crowdin_translations
 
 build_script:
+- cmd: dir "C:\Program Files\Java"
 - cmd: ./gradlew.bat check --no-daemon
 
 shallow_clone: true

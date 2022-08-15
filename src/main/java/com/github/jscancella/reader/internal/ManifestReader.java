@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.github.jscancella.domain.Manifest;
 import com.github.jscancella.domain.Manifest.ManifestBuilder;
 import com.github.jscancella.domain.ManifestEntry;
+import com.github.jscancella.domain.Version;
 import com.github.jscancella.exceptions.InvalidBagitFileFormatException;
 import com.github.jscancella.exceptions.MaliciousPathException;
 import com.github.jscancella.internal.PathUtils;
@@ -30,6 +31,7 @@ public enum ManifestReader {;//using enum to enforce singleton
    * @param manifestFile the path to the manifest file to read
    * @param bagRootDir the root directory of the bag
    * @param charset what encoding to use when reading the manifest file
+   * @param version the version of the bag
    * 
    * @return a manifest
    * 
@@ -38,7 +40,7 @@ public enum ManifestReader {;//using enum to enforce singleton
    * @throws InvalidBagitFileFormatException if the manifest is not formatted correctly
    */
   @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-  public static Manifest readManifest(final Path manifestFile, final Path bagRootDir, final Charset charset) throws IOException{
+  public static Manifest readManifest(final Path manifestFile, final Path bagRootDir, final Version version, final Charset charset) throws IOException{
     logger.debug(messages.getString("reading_manifest"), manifestFile);
     final String algorithm = PathUtils.getFilename(manifestFile).split("[-\\.]")[1];
     
@@ -48,7 +50,7 @@ public enum ManifestReader {;//using enum to enforce singleton
       String line = reader.readLine();
       while(line != null){
         final String[] parts = line.split("\\s+", 2);
-        final Path file = TagFileReader.createFileFromManifest(bagRootDir, parts[1]);
+        final Path file = TagFileReader.createFileFromManifest(bagRootDir, parts[1], version, charset);
         final Path relative = bagRootDir.relativize(file);
         final ManifestEntry entry = new ManifestEntry(file, relative, parts[0]);
         manifestBuilder.addEntry(entry);
