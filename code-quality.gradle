@@ -90,7 +90,7 @@ cpdCheck {
 dependencyCheck {
     skipTestGroups=true
     skipConfigurations=['spotbugs','cpd'] //don't look for vulnerabilities in the build plugins
-    outputDirectory="build/reports/OWASP"
+    outputDirectory="$buildDir/reports/OWASP"
 }
 
 pitest {
