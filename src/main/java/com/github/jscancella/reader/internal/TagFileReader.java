@@ -2,7 +2,6 @@ package com.github.jscancella.reader.internal;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -81,7 +80,7 @@ public enum TagFileReader {;//using enum to enforce singleton
   protected static String decodeFilname(final String encoded, final Version version, final Charset charset){
     String decoded = encoded.replaceAll("%0A", "\n").replaceAll("%0D", "\r");
     if(version.isSameOrNewer(Version.VERSION_1_0())) {
-      decoded = URLDecoder.decode(encoded, charset);
+      decoded = decoded.replaceAll("%25", "%");
     }
     logger.debug(messages.getString("percent_encoded"), encoded, decoded);
     return decoded;
