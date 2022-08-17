@@ -61,6 +61,7 @@ spotbugsMain {
 pmd {
   ruleSets = [] //specifically set this to be empty, otherwise gradle includes the defaults in addition to our custom ruleset! 
   ruleSetConfig = resources.text.fromFile("config/pmd/ruleset.xml")
+  toolVersion = "6.48.0"
 }
 
 jacocoTestReport {
@@ -91,6 +92,7 @@ dependencyCheck {
     skipTestGroups=true
     skipConfigurations=['spotbugs','cpd'] //don't look for vulnerabilities in the build plugins
     outputDirectory="$buildDir/reports/OWASP"
+    failBuildOnCVSS=7
 }
 
 pitest {
