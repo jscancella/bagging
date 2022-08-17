@@ -10,6 +10,7 @@ plugins {
   id "com.github.spotbugs" version "5.0.9"
   id 'info.solidsoft.pitest' version '1.7.4'
   id "com.github.ben-manes.versions" version "0.42.0"
+  id "com.dorongold.task-tree" version "2.1.0"
 }
 apply from: 'eclipse.gradle'
 apply from: 'maven-central.gradle'
@@ -59,11 +60,22 @@ task cloneConformanceSuite(){
   File location = file("${project.projectDir}/bagit-conformance-suite")
   outputs.dir(location)
   
-  //TODO figure out how to make sure it always checks it out using unix line endings
-  //otherwise you get checksum errors...
   onlyIf { !location.exists() }
   doLast{
       Grgit.clone(dir: location, 
                   uri: 'https://github.com/libraryofcongress/bagit-conformance-suite.git')
+    }
+}
+
+task updateConformanceSuite(){
+  group "Verification"
+  description "Update the bagit-conformance-suite if needed."
+  File location = file("${project.projectDir}/bagit-conformance-suite")
+  outputs.dir(location)
+  
+  onlyIf { location.exists() }
+  doLast{
+      Grgit grgit = Grgit.open(dir: location)
+      grgit.pull()
     }
 }

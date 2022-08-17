@@ -17,7 +17,7 @@ configurations {
   integrationTestRuntimeOnly.extendsFrom testRuntimeOnly
 }
 
-task integrationTest(type: Test, dependsOn: "cloneConformanceSuite") {
+task integrationTest(type: Test, dependsOn: ["cloneConformanceSuite", "updateConformanceSuite"]) {
   group "Verification"
   description "Runs the integration tests."
   testClassesDirs = sourceSets.integrationTest.output.classesDirs
