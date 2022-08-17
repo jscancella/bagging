@@ -29,6 +29,11 @@ jobs:
           command: ./gradlew check --no-daemon
           environment: 
             GRADLE_OPTS: "-Xmx1024m -Dorg.gradle.jvmargs='-Xmx1024m'"
+      - run:
+          name: upload coverage to coveralls
+          command: ./gradlew coveralls --no-daemon
+          environment: 
+            GRADLE_OPTS: "-Xmx1024m -Dorg.gradle.jvmargs='-Xmx1024m'"
       - store_artifacts:
           path: build/reports
         
