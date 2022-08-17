@@ -16,6 +16,7 @@
         <exclude name="AtLeastOneConstructor"/> <!-- because it seems pointless to have to have an empty default constructor -->
         <exclude name="ShortClassName"/> <!-- because it thinks "Bag" is too short -->
         <exclude name="LongVariable"/> <!-- I would rather have long variable names that are descriptive -->
+        <exclude name="FinalParameterInAbstractMethod" /> <!-- I would rather the implementation ignore it, that is on the person who implemented it -->
     </rule>
     <rule ref="category/java/codestyle.xml/MethodNamingConventions">
         <properties>
