@@ -1,6 +1,5 @@
 package com.github.jscancella.writer.internal;
 
-import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.ResourceBundle;
@@ -37,11 +36,12 @@ public enum RelativePathWriter { ; // enforce singleton
    * @return percent encoded path
    */
   public static String encodeFilename(final Path path, final Version version, final Charset charset) {
-    String encodedPath = URLEncoder.encode(path.toString(), charset).replace("+", "%20").replace("%5C", "/").replace("%2F", "/");
-    if(version.isOlder(Version.VERSION_1_0())) {
-      encodedPath = path.toString().replaceAll("\n", "%0A").replaceAll("\r", "%0D");
+    String encodedPath = path.toString();
+    if(version.isSameOrNewer(Version.VERSION_1_0())) {
+      encodedPath = encodedPath.replaceAll("%", "%25");
     }
-    logger.debug(messages.getString("encoded_path"), path.toString(), encodedPath);
+    encodedPath = encodedPath.replaceAll("\n", "%0A").replaceAll("\r", "%0D");
+    logger.debug(messages.getString("encoded_path"), path, encodedPath);
     return encodedPath;
   }
 

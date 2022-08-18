@@ -1,6 +1,5 @@
 package com.github.jscancella.reader.internal;
 
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -74,7 +73,7 @@ public class TagFileReaderTest {
   @Test
   public void testPercentDecode() throws Exception{
     String percentEncodedPath = "data/foo%0Afile%0Dnon%25sense%09something.txt";
-    String expectedPath = "data/foo\nfile\rnon%sense\tsomething.txt"; //test a newline, carriage return, tab, and the % sign which is used for percent encoding 
+    String expectedPath = "data/foo\nfile\rnon%sense%09something.txt"; //test a newline, carriage return, and the % sign which is used for percent encoding
     String actualPath = TagFileReader.decodeFilname(percentEncodedPath, Version.VERSION_1_0(), StandardCharsets.UTF_8);
     Assertions.assertEquals(expectedPath, actualPath);
   }
