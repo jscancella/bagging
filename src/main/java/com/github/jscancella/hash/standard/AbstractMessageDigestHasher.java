@@ -92,4 +92,11 @@ public abstract class AbstractMessageDigestHasher implements Hasher{
       throw new HasherInitializationException(e);
     }
   }
+
+  /**
+   * @return the message digest name
+   */
+  public String getMessageDigestName() {
+    return messageDigestName;
+  }
 }

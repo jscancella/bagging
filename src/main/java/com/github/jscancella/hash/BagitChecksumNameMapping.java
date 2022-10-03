@@ -89,7 +89,8 @@ public enum BagitChecksumNameMapping {
       hasher.initialize();
       return hasher;
     } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
-      logger.error("Failed instantiating hasher class!", e);
+      final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
+      logger.error(messages.getString("failed_to_init_hasher"), bagitAlgorithmName, e);
       throw new HasherInitializationException(e);
     }
   }
