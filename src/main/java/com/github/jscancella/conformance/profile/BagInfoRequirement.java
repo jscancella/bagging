@@ -55,18 +55,30 @@ public class BagInfoRequirement {
         + repeatable + ", description=" + description + "]";
   }
 
+  /**
+   * @return if the key value pair is required to be present in the bag info file
+   */
   public boolean isRequired(){
     return required;
   }
 
+  /**
+   * @return the list of acceptable values for the bag info key value pair
+   */
   public List<String> getAcceptableValues(){
     return acceptableValues;
   }
 
+  /**
+   * @return if the key value pair is repeatable
+   */
   public boolean isRepeatable(){
     return repeatable;
   }
 
+  /**
+   * @return the description for the key value pair so that users better understand what it is used for.
+   */
   public String getDescription(){
     return description;
   }

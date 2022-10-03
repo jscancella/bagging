@@ -13,6 +13,9 @@ import java.util.Formatter;
 import com.github.jscancella.exceptions.HasherInitializationException;
 import com.github.jscancella.hash.Hasher;
 
+/**
+ * A {@link MessageDigest} based hasher, where all you need to implement are the algorithm to bagit algorithm name mapping
+ */
 public abstract class AbstractMessageDigestHasher implements Hasher{
   private static final int _64_KB = 1024 * 64;
   private static final int CHUNK_SIZE = _64_KB;
@@ -21,6 +24,12 @@ public abstract class AbstractMessageDigestHasher implements Hasher{
   private final String messageDigestName;
   private final String BagitAlgorithmName;
   
+  /**
+   * You must call this constructor before using
+   * 
+   * @param messageDigestName the {@link MessageDigest} name
+   * @param bagitAlgorithmName the bagit algorithm name that matches the messageDigestName
+   */
   protected AbstractMessageDigestHasher(final String messageDigestName, final String bagitAlgorithmName) {
     this.messageDigestName = messageDigestName;
     this.BagitAlgorithmName = bagitAlgorithmName;
@@ -82,9 +91,5 @@ public abstract class AbstractMessageDigestHasher implements Hasher{
     } catch (NoSuchAlgorithmException e) {
       throw new HasherInitializationException(e);
     }
-  }
-
-  protected String getMessageDigestName() {
-    return messageDigestName;
   }
 }

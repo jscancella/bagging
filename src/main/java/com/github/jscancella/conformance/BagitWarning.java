@@ -87,6 +87,9 @@ public enum BagitWarning {
     this.messageBundleKey = reason;
   }
 
+  /**
+   * @return get the human readable reason for while the bag has a warning
+   */
   public String getReason() {
     return messages.getString(messageBundleKey);
   }

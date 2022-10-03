@@ -17,10 +17,18 @@ import com.github.jscancella.internal.PathUtils;
  */
 @SuppressWarnings({"PMD.BeanMembersShouldSerialize"})
 abstract public class AbstractPayloadFileExistsInManifestsVistor extends SimpleFileVisitor<Path> {
-  protected static final Logger logger = LoggerFactory.getLogger(AbstractPayloadFileExistsInManifestsVistor.class);
-  protected static final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
+  private static final Logger logger = LoggerFactory.getLogger(AbstractPayloadFileExistsInManifestsVistor.class);
+  private static final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
+  /**
+   * Should hidden files be ignored
+   */
   protected final boolean ignoreHiddenFiles;
 
+  /**
+   * constructor must be called before using!
+   * 
+   * @param ignoreHiddenFiles Should hidden files be ignored
+   */
   public AbstractPayloadFileExistsInManifestsVistor(final boolean ignoreHiddenFiles) {
     super();
     this.ignoreHiddenFiles = ignoreHiddenFiles;

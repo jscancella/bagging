@@ -11,6 +11,11 @@ package com.github.jscancella.exceptions;
 public class InvalidBagMetadataException extends InvalidBagitFileFormatException {
   private static final long serialVersionUID = 1L;
 
+  /**
+   * Class to represent an error when the bag metadata file does not conform to the bagit spec
+   * 
+   * @param message error message for the user
+   */
   public InvalidBagMetadataException(final String message){
     super(message);
   }

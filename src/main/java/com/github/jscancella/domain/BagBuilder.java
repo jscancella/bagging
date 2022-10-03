@@ -181,6 +181,11 @@ public final class BagBuilder {
     return bag.write(this.rootDir);
   }
 
+  /**
+   * used for unit testing
+   * @return the set of manifests for the bag
+   * @throws IOException if unable to write the tag manifests
+   */
   @SuppressWarnings({"PMD.AvoidInstantiatingObjectsInLoops", "PMD.AvoidProtectedMethodInFinalClassNotExtending"})
   protected Set<Manifest> createTagManifests() throws IOException {
     final Set<Manifest> manifests = new HashSet<>();

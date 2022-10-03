@@ -32,10 +32,16 @@ public class FileCountAndTotalSizeVistor extends SimpleFileVisitor<Path> {
     return FileVisitResult.CONTINUE;
   }
 
+  /**
+   * @return the number of files in the path
+   */
   public long getCount() {
     return count;
   }
 
+  /**
+   * @return the total file size in bytes in the path
+   */
   public long getTotalSize() {
     return totalSize;
   }

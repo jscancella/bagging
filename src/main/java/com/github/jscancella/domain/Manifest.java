@@ -77,6 +77,10 @@ public final class Manifest {
       this.entries = new ArrayList<>();
     }
     
+    /**
+     * because a manifest is immutable, if you want to clone and edit you must return a manifest builder
+     * @param manifestToClone the manifest you wish to clone and optionally change
+     */
     public ManifestBuilder(final Manifest manifestToClone) {
     	this.bagitAlgorithmName(manifestToClone.getBagitAlgorithmName());
     	this.entries = new ArrayList<>(manifestToClone.getEntries());
@@ -137,6 +141,9 @@ public final class Manifest {
       return new Manifest(algorithmName, entries);
     }
 
+    /**
+     * @return the checksum algorithm name
+     */
     public String getAlgorithmName(){
       return algorithmName;
     }
