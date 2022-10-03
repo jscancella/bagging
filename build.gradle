@@ -48,7 +48,7 @@ test {
     events "passed", "skipped", "failed"
   }
   reports {
-    html.enabled = true
+    html.required = true
   }
   //testLogging.showStandardStreams = true
 }
