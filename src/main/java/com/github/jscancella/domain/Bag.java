@@ -90,9 +90,9 @@ public final class Bag {
       final Set<Manifest> tagManifests, final List<FetchItem> itemsToFetch, final Metadata metadata, final Path rootDir){
     this.version = version;
     this.fileEncoding = fileEncoding;
-    this.payLoadManifests = Collections.unmodifiableSet(payloadManifests);
-    this.tagManifests = Collections.unmodifiableSet(tagManifests);
-    this.itemsToFetch = Collections.unmodifiableList(itemsToFetch);
+    this.payLoadManifests = new HashSet<>(payloadManifests);
+    this.tagManifests = new HashSet<>(tagManifests);
+    this.itemsToFetch = new ArrayList<>(itemsToFetch);
     this.metadata = metadata;
     this.rootDir = rootDir;
   }
@@ -123,21 +123,21 @@ public final class Bag {
    * @return the manifests that make up the payload files
    */
   public Set<Manifest> getPayLoadManifests() {
-    return payLoadManifests;
+    return Collections.unmodifiableSet(payLoadManifests);
   }
 
   /**
    * @return the manifests that make up the tag files
    */
   public Set<Manifest> getTagManifests() {
-    return tagManifests;
+    return Collections.unmodifiableSet(tagManifests);
   }
 
   /**
    * @return files to fetch
    */
   public List<FetchItem> getItemsToFetch() {
-    return itemsToFetch;
+    return Collections.unmodifiableList(itemsToFetch);
   }
 
   /**

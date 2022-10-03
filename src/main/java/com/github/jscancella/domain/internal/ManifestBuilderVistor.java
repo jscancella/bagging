@@ -64,7 +64,7 @@ public final class ManifestBuilderVistor extends SimpleFileVisitor<Path> {
   }
 
   public List<ManifestEntry> getEntries(){
-    return entries;
+    return new ArrayList<>(entries);
   }
 
   public Path getStartingPoint(){
