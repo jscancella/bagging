@@ -63,18 +63,30 @@ public final class ManifestBuilderVistor extends SimpleFileVisitor<Path> {
     return FileVisitResult.CONTINUE;
   }
 
+  /**
+   * @return the list of entries
+   */
   public List<ManifestEntry> getEntries(){
     return new ArrayList<>(entries);
   }
 
+  /**
+   * @return the relative point to start at
+   */
   public Path getStartingPoint(){
     return startingPoint;
   }
 
+  /**
+   * @return the specific hasher for this manifest
+   */
   public Hasher getHasher(){
     return hasher;
   }
 
+  /**
+   * @return the relative path to the root of the bag
+   */
   public Path getRelative() {
     return relative;
   }

@@ -6,6 +6,9 @@ import java.nio.file.Path;
 
 import com.github.jscancella.hash.internal.FileCountAndTotalSizeVistor;
 
+/**
+ * a singleton used to generate the payload oxum for a bag
+ */
 public enum PayloadOxumGenerator {;//using enum to enforce singleton
 
   /**

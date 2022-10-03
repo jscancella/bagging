@@ -12,6 +12,9 @@ import com.github.jscancella.domain.Bag;
 import com.github.jscancella.domain.Version;
 import com.github.jscancella.exceptions.InvalidBagitFileFormatException;
 
+/**
+ * verifies that the bagit text file is formatted correctly to the specification
+ */
 public enum BagitTextFileVerifier {; //using to enforce singleton
   private static final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
   private static final String LINE1_REGEX = "(BagIt-Version: )\\d*\\.\\d*";

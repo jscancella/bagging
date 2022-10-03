@@ -28,10 +28,17 @@ public class BagitProfileDeserializer extends StdDeserializer<BagitProfile> {
   private static final Logger logger = LoggerFactory.getLogger(BagitProfileDeserializer.class);
   private static final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
 
+  /**
+   * Deserialize bagit profile json to a {@link BagitProfile} 
+   */
   public BagitProfileDeserializer() {
     this(null);
   }
 
+  /**
+   * Deserialize bagit profile json to a {@link BagitProfile} 
+   * @param valueClass Type of values this deserializer handles
+   */
   public BagitProfileDeserializer(final Class<?> valueClass) {
     super(valueClass);
   }

@@ -27,7 +27,10 @@ import com.github.jscancella.hash.standard.SHA512Hasher;
  * {@code BagitChecksumNameMapping.add("md5", new MyNewMD5Hasher());} 
  */
 public enum BagitChecksumNameMapping {
-  INSTANCE; //using enum to ensure singleton
+  /**
+   * using enum to ensure singleton
+   */
+  INSTANCE;
   
   private static final Logger logger = LoggerFactory.getLogger(BagitChecksumNameMapping.class);
   private final Map<String, Class<? extends Hasher>> map = new ConcurrentHashMap<>();
@@ -39,9 +42,6 @@ public enum BagitChecksumNameMapping {
     map.put(SHA256Hasher.BAGIT_ALGORITHM_NAME, SHA256Hasher.class);
     map.put(SHA384Hasher.BAGIT_ALGORITHM_NAME, SHA384Hasher.class);
     map.put(SHA512Hasher.BAGIT_ALGORITHM_NAME, SHA512Hasher.class);
-    
-//    final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
-//    logger.error(messages.getString("failed_to_init_hasher"), hasher.getBagitAlgorithmName(), e);
   }
   
   /**
@@ -89,7 +89,8 @@ public enum BagitChecksumNameMapping {
       hasher.initialize();
       return hasher;
     } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
-      logger.error("Failed instantiating hasher class!", e);
+      final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
+      logger.error(messages.getString("failed_to_init_hasher"), bagitAlgorithmName, e);
       throw new HasherInitializationException(e);
     }
   }

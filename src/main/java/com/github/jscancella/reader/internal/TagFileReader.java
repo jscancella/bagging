@@ -74,8 +74,13 @@ public enum TagFileReader {;//using enum to enforce singleton
     return path.replaceFirst("\\*", "");
   }
   
-  /*
+  /**
    * as per https://github.com/jkunze/bagitspec/commit/152d42f6298b31a4916ea3f8f644ca4490494070 decode percent encoded filenames
+   * 
+   * @param encoded the encoded filename
+   * @param version the bagit version
+   * @param charset the charset the bag is using
+   * @return the decoded filename
    */
   protected static String decodeFilname(final String encoded, final Version version, final Charset charset){
     String decoded = encoded.replaceAll("%0A", "\n").replaceAll("%0D", "\r");
