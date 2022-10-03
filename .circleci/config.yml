@@ -31,7 +31,7 @@ jobs:
             GRADLE_OPTS: "-Xmx1024m -Dorg.gradle.jvmargs='-Xmx1024m'"
       - run:
           name: upload coverage to coveralls
-          command: ./gradlew coveralls --no-daemon
+          command: ./gradlew coverallsJacoco --no-daemon
           environment: 
             GRADLE_OPTS: "-Xmx1024m -Dorg.gradle.jvmargs='-Xmx1024m'"
       - store_artifacts:
