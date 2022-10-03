@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.HashSet;
 import java.util.ResourceBundle;
 import java.util.Set;
 
@@ -23,7 +24,7 @@ public final class PayloadFileExistsInAtLeastOneManifestVistor extends AbstractP
 
   public PayloadFileExistsInAtLeastOneManifestVistor(final Set<Path> filesListedInManifests, final boolean ignoreHiddenFiles) {
     super(ignoreHiddenFiles);
-    this.filesListedInManifests = filesListedInManifests;
+    this.filesListedInManifests = new HashSet<>(filesListedInManifests);
   }
 
   @Override

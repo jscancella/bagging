@@ -1,7 +1,9 @@
 package com.github.jscancella.conformance.profile;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -65,17 +67,17 @@ public class BagitProfile {
     this.contactName = contactName;
     this.contactEmail = contactEmail;
     this.contactPhone = contactPhone;
-    this.bagInfoRequirements = Collections.unmodifiableMap(bagInfoRequirements);
-    this.manifestTypesRequired = Collections.unmodifiableList(manifestTypesRequired);
-    this.manifestTypesAllowed = Collections.unmodifiableList(manifestTypesAllowed);
+    this.bagInfoRequirements = new HashMap<>(bagInfoRequirements);
+    this.manifestTypesRequired = new ArrayList<>(manifestTypesRequired);
+    this.manifestTypesAllowed = new ArrayList<>(manifestTypesAllowed);
     this.fetchFileAllowed = fetchFileAllowed;
     this.serialization = serialization;
-    this.acceptableMIMESerializationTypes = Collections.unmodifiableList(acceptableMIMESerializationTypes);
-    this.acceptableBagitVersions = Collections.unmodifiableList(acceptableBagitVersions);
-    this.tagManifestTypesRequired = Collections.unmodifiableList(tagManifestTypesRequired);
-    this.tagManifestTypesAllowed = Collections.unmodifiableList(tagManifestTypesAllowed);
-    this.tagFilesRequired = Collections.unmodifiableList(tagFilesRequired);
-    this.tagFilesAllowed = Collections.unmodifiableList(tagFilesAllowed);
+    this.acceptableMIMESerializationTypes = new ArrayList<>(acceptableMIMESerializationTypes);
+    this.acceptableBagitVersions = new ArrayList<>(acceptableBagitVersions);
+    this.tagManifestTypesRequired = new ArrayList<>(tagManifestTypesRequired);
+    this.tagManifestTypesAllowed = new ArrayList<>(tagManifestTypesAllowed);
+    this.tagFilesRequired = new ArrayList<>(tagFilesRequired);
+    this.tagFilesAllowed = new ArrayList<>(tagFilesAllowed);
   }
 
   public URI getBagitProfileIdentifier(){
@@ -111,15 +113,15 @@ public class BagitProfile {
   }
 
   public Map<String, BagInfoRequirement> getBagInfoRequirements(){
-    return bagInfoRequirements;
+    return Collections.unmodifiableMap(bagInfoRequirements);
   }
 
   public List<String> getManifestTypesRequired(){
-    return manifestTypesRequired;
+    return Collections.unmodifiableList(manifestTypesRequired);
   }
 
   public List<String> getManifestTypesAllowed(){
-    return manifestTypesAllowed;
+    return Collections.unmodifiableList(manifestTypesAllowed);
   }
 
   public boolean isFetchFileAllowed(){
@@ -131,27 +133,27 @@ public class BagitProfile {
   }
 
   public List<String> getAcceptableMIMESerializationTypes(){
-    return acceptableMIMESerializationTypes;
+    return Collections.unmodifiableList(acceptableMIMESerializationTypes);
   }
 
   public List<String> getAcceptableBagitVersions(){
-    return acceptableBagitVersions;
+    return Collections.unmodifiableList(acceptableBagitVersions);
   }
 
   public List<String> getTagManifestTypesRequired(){
-    return tagManifestTypesRequired;
+    return Collections.unmodifiableList(tagManifestTypesRequired);
   }
 
   public List<String> getTagManifestTypesAllowed(){
-    return tagManifestTypesAllowed;
+    return Collections.unmodifiableList(tagManifestTypesAllowed);
   }
 
   public List<String> getTagFilesRequired(){
-    return tagFilesRequired;
+    return Collections.unmodifiableList(tagFilesRequired);
   }
 
   public List<String> getTagFilesAllowed(){
-    return tagFilesAllowed;
+    return Collections.unmodifiableList(tagFilesAllowed);
   }
   
   @Override

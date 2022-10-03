@@ -136,7 +136,7 @@ public class BagitProfileBuilder {
   }
 
   public List<String> getManifestTypesRequired(){
-    return manifestTypesRequired;
+    return new ArrayList<>(manifestTypesRequired);
   }
 
   public boolean isFetchAllowed(){
@@ -148,18 +148,18 @@ public class BagitProfileBuilder {
   }
 
   public List<String> getAcceptableMIMETypes(){
-    return acceptableMIMESerializationTypes;
+    return new ArrayList<>(acceptableMIMESerializationTypes);
   }
 
   public List<String> getAcceptableBagitVersions(){
-    return acceptableBagitVersions;
+    return new ArrayList<>(acceptableBagitVersions);
   }
 
   public List<String> getTagManifestTypesRequired(){
-    return tagManifestTypesRequired;
+    return new ArrayList<>(tagManifestTypesRequired);
   }
 
   public List<String> getTagFilesRequired(){
-    return tagFilesRequired;
+    return new ArrayList<>(tagFilesRequired);
   }
 }
