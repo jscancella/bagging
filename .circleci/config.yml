@@ -15,6 +15,7 @@ jobs:
       # Customize the JVM maximum heap limit
       JVM_OPTS: -Xmx1048m
       TERM: dumb
+      COVERALLS_REPO_TOKEN: LxF40bQmNDnhxINN39SOJocewjYmjByvq
     
     steps:
       - checkout #checks out your code to your working directory
