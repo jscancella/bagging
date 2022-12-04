@@ -31,19 +31,19 @@ public enum ManifestVerifier {; //using enum to enforce singleton
   private static final ResourceBundle messages = ResourceBundle.getBundle("MessageBundle");
 
   /**
-   * Verify that all the files in the payload directory are listed in the payload manifest and 
+   * Verify that all the files in the payload directory are listed in the payload manifest and
    * all files listed in all manifests exist.
-   * 
+   *
    * @param bag the bag which contains the manifests to check
    * @param ignoreHiddenFiles to include hidden files when checking
-   * 
+   *
    * @throws IOException if there is an error while reading a file from the filesystem
    * @throws MaliciousPathException if a path is outside the bag
    * @throws InvalidBagitFileFormatException if a manifest is not formatted correctly
    * @throws FileNotInPayloadDirectoryException if a file listed in a manifest is not in the payload directory
    */
   public static void verifyManifests(final Bag bag, final boolean ignoreHiddenFiles)throws IOException{
-    
+
     final Set<Path> allFilesListedInManifests = getAllFilesListedInManifests(bag);
     checkAllFilesListedInManifestExist(allFilesListedInManifests);
 
@@ -54,12 +54,21 @@ public enum ManifestVerifier {; //using enum to enforce singleton
     }
   }
 
+  /**
+   * Returns the path as a String in {{java.text.Normalizer.Form#NFD}} (canonical) normalized form.
+   * @param path the path to normalize
+   * @return String the normalized string
+   */
+  static String toNormalizedString(final Path path) {
+    return Normalizer.normalize(path.toString(), Normalizer.Form.NFD);
+  }
+
   /*
    * get the full path (absolute) of all the files listed in all the manifests
    */
   private static Set<Path> getAllFilesListedInManifests(final Bag bag) throws IOException {
     logger.debug(messages.getString("all_files_in_manifests"));
-    
+
     final Set<Path> filesListedInManifests = new HashSet<>();
 
     try(DirectoryStream<Path> directoryStream = Files.newDirectoryStream(bag.getTagFileDir(), new ManifestFilter())){
@@ -78,7 +87,7 @@ public enum ManifestVerifier {; //using enum to enforce singleton
    */
   private static void checkAllFilesListedInManifestExist(final Set<Path> files) {
     logger.info(messages.getString("check_all_files_in_manifests_exist"));
-    
+
     for (final Path file : files) {
       if(!Files.exists(file)){
         if(existsNormalized(file)){
@@ -91,21 +100,21 @@ public enum ManifestVerifier {; //using enum to enforce singleton
       }
     }
   }
-  
+
   /**
    * if a file is parially normalized or of a different normalization then the manifest specifies it will fail the existence test.
    * This method checks for that by normalizing what is on disk with the normalized filename and see if they match.
-   * 
+   *
    * @return true if the normalized filename matches one on disk in the specified folder
    */
   private static boolean existsNormalized(final Path file){
     boolean existsNormalized = false;
-    final String normalizedFile = Normalizer.normalize(file.toString(), Normalizer.Form.NFD);
+    final String normalizedFile = toNormalizedString(file);
     final Path parent = file.getParent();
     if(parent != null){
       try(DirectoryStream<Path> files = Files.newDirectoryStream(parent)){
         for(final Path fileToCheck : files){
-          final String normalizedFileToCheck = Normalizer.normalize(fileToCheck.toString(), Normalizer.Form.NFD);
+          final String normalizedFileToCheck = toNormalizedString(fileToCheck);
           if(normalizedFile.equals(normalizedFileToCheck)){
             existsNormalized = true;
             break;
@@ -116,7 +125,7 @@ public enum ManifestVerifier {; //using enum to enforce singleton
         logger.error(messages.getString("error_reading_normalized_file"), parent, normalizedFile, e);
       }
     }
-    
+
     return existsNormalized;
   }
 
