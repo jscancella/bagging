@@ -1,5 +1,6 @@
 package com.github.jscancella.verify.internal;
 
+import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -29,7 +30,7 @@ public final class PayloadFileExistsInAllManifestsVistor extends AbstractPayload
 
   /**
    * Implements {@link SimpleFileVisitor} to ensure that the encountered file is in one of the manifests.
-   * 
+   *
    * @param manifests the set of manifests to check
    * @param rootDir the root directory of the bag
    * @param ignoreHiddenFiles if the checker should ignore hidden files or not
@@ -41,7 +42,7 @@ public final class PayloadFileExistsInAllManifestsVistor extends AbstractPayload
   }
 
   @Override
-  public FileVisitResult visitFile(final Path path, final BasicFileAttributes attrs){
+  public FileVisitResult visitFile(final Path path, final BasicFileAttributes attrs) throws IOException {
     if(Files.isRegularFile(path)){
       for(final Manifest manifest : manifests){
         final Set<Path> relativePaths = manifest
@@ -49,8 +50,8 @@ public final class PayloadFileExistsInAllManifestsVistor extends AbstractPayload
                                     .map(entry -> entry.getRelativeLocation())
                                     .collect(Collectors.toSet());
         final Path relativePath = rootDir.relativize(path);
-        
-        if(!relativePaths.contains(relativePath)){
+
+        if(!inManifest(relativePath, relativePaths)){
           final String formattedMessage = messages.getString("file_not_in_manifest_error");
           throw new FileNotInManifestException(MessageFormatter.format(formattedMessage, path, manifest.getBagitAlgorithmName()).getMessage());
         }
@@ -59,4 +60,5 @@ public final class PayloadFileExistsInAllManifestsVistor extends AbstractPayload
     logger.debug(messages.getString("file_in_all_manifests"), path);
     return FileVisitResult.CONTINUE;
   }
+
 }

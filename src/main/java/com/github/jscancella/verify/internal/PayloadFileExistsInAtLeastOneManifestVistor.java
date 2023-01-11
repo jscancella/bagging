@@ -27,7 +27,7 @@ public final class PayloadFileExistsInAtLeastOneManifestVistor extends AbstractP
 
   /**
    * Implements {@link SimpleFileVisitor} to ensure that the encountered file is in one of the manifests.
-   * 
+   *
    * @param filesListedInManifests the set of files listed in all the manifests
    * @param ignoreHiddenFiles if the checker should ignore hidden files or not
    */
@@ -42,7 +42,7 @@ public final class PayloadFileExistsInAtLeastOneManifestVistor extends AbstractP
 	  logger.debug(messages.getString("skipping_hidden_file"), path);
   }
 	else {
-	  if(Files.isRegularFile(path) && !filesListedInManifests.contains(path.toAbsolutePath())){
+	  if(Files.isRegularFile(path) && !inManifest(path.toAbsolutePath(), filesListedInManifests)){
       final String formattedMessage = messages.getString("file_not_in_any_manifest_error");
       throw new FileNotInManifestException(MessageFormatter.format(formattedMessage, path).getMessage());
     }
