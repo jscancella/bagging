@@ -8,20 +8,20 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import com.github.jscancella.conformance.deserialize.AcceptableVersionsNodeDeserializer;
-import com.github.jscancella.conformance.deserialize.AllowedTagFilesNodeDeserializer;
-import com.github.jscancella.conformance.deserialize.AllowedTagmanifestTypesNodeDeserializer;
-import com.github.jscancella.conformance.deserialize.BagInfoNodeDeserializer;
-import com.github.jscancella.conformance.deserialize.BagitProfileNodeDeserializer;
-import com.github.jscancella.conformance.deserialize.DataDirEmptyNodeDeserializer;
-import com.github.jscancella.conformance.deserialize.FetchFileAllowedNodeDeserializer;
-import com.github.jscancella.conformance.deserialize.FetchFileRequiredNodeDeserializer;
-import com.github.jscancella.conformance.deserialize.ManifestTypesAllowedNodeDeserializer;
-import com.github.jscancella.conformance.deserialize.ManifestTypesRequiredNodeDeserializer;
-import com.github.jscancella.conformance.deserialize.RequiredTagFilesNodeDeserializer;
-import com.github.jscancella.conformance.deserialize.RequiredTagManifestNodeDeserializer;
-import com.github.jscancella.conformance.deserialize.SerializationAcceptedNodeDeserializer;
-import com.github.jscancella.conformance.deserialize.SerializationAllowedNodeDeserializer;
+import com.github.jscancella.conformance.profile.deserialize.AcceptableVersionsNodeDeserializer;
+import com.github.jscancella.conformance.profile.deserialize.AllowedTagFilesNodeDeserializer;
+import com.github.jscancella.conformance.profile.deserialize.AllowedTagmanifestTypesNodeDeserializer;
+import com.github.jscancella.conformance.profile.deserialize.BagInfoNodeDeserializer;
+import com.github.jscancella.conformance.profile.deserialize.BagitProfileNodeDeserializer;
+import com.github.jscancella.conformance.profile.deserialize.DataDirEmptyNodeDeserializer;
+import com.github.jscancella.conformance.profile.deserialize.FetchFileAllowedNodeDeserializer;
+import com.github.jscancella.conformance.profile.deserialize.FetchFileRequiredNodeDeserializer;
+import com.github.jscancella.conformance.profile.deserialize.ManifestTypesAllowedNodeDeserializer;
+import com.github.jscancella.conformance.profile.deserialize.ManifestTypesRequiredNodeDeserializer;
+import com.github.jscancella.conformance.profile.deserialize.RequiredTagFilesNodeDeserializer;
+import com.github.jscancella.conformance.profile.deserialize.RequiredTagManifestNodeDeserializer;
+import com.github.jscancella.conformance.profile.deserialize.SerializationAcceptedNodeDeserializer;
+import com.github.jscancella.conformance.profile.deserialize.SerializationAllowedNodeDeserializer;
 
 /**
  * Deserialize bagit profile json to a {@link BagitProfile} 

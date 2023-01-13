@@ -1,4 +1,4 @@
-package com.github.jscancella.conformance.deserialize;
+package com.github.jscancella.conformance.profile.deserialize;
 
 import java.util.ResourceBundle;
 
