@@ -34,6 +34,15 @@ public class BagitProfileDeserializerTest extends AbstractBagitProfileTest{
   }
   
   @Test
+  public void testDeserializeMinimalVersion1_4_0() throws Exception{
+    BagitProfile expectedProfile = createMinimalProfile("1.4.0");
+    
+    BagitProfile profile = mapper.readValue(new File("src/test/resources/bagitProfiles/OnlyRequiredFieldsProfile_v1.4.0.json"), BagitProfile.class);
+    
+    Assertions.assertEquals(expectedProfile, profile);
+  }
+  
+  @Test
   public void testDeserializeAllOptionsVersion1_2_0() throws Exception{
     BagitProfile expectedProfile = createExpectedProfile(new Version(1,2));
     
@@ -47,6 +56,15 @@ public class BagitProfileDeserializerTest extends AbstractBagitProfileTest{
     BagitProfile expectedProfile = createExpectedProfile(new Version(1,3));
     
     BagitProfile profile = mapper.readValue(new File("src/test/resources/bagitProfiles/allOptionalFieldsProfile_v1.3.0.json"), BagitProfile.class);
+    
+    Assertions.assertEquals(expectedProfile, profile);
+  }
+  
+  @Test
+  public void testDeserializeAllOptionsVersion1_4_0() throws Exception{
+    BagitProfile expectedProfile = createExpectedProfile(new Version(1,4));
+    
+    BagitProfile profile = mapper.readValue(new File("src/test/resources/bagitProfiles/allOptionalFieldsProfile_v1.4.0.json"), BagitProfile.class);
     
     Assertions.assertEquals(expectedProfile, profile);
   }

@@ -28,7 +28,9 @@ public class BagitProfile {
   private final Map<String, BagInfoRequirement> bagInfoRequirements;
   private final List<String> manifestTypesRequired;
   private final List<String> manifestTypesAllowed;
-  private final boolean fetchFileAllowed; //defaults to false
+  private final boolean fetchFileAllowed; //defaults to true
+  private final boolean fetchFileRequired; //defaults to false
+  private final boolean dataDirMustBeEmpty; //defaults to false. i.e. only thing allowed is data/.keep
   private final Serialization serialization;
   private final List<String> acceptableMIMESerializationTypes;
   private final List<String> acceptableBagitVersions;
@@ -53,6 +55,8 @@ public class BagitProfile {
    * @param manifestTypesRequired Each manifest type in LIST is required
    * @param manifestTypesAllowed If specified, only the manifest types in LIST are permitted
    * @param fetchFileAllowed A fetch.txt file is allowed within the bag
+   * @param fetchFileRequired a fetch.txt file is required to be within the bag
+   * @param dataDirMustBeEmpty if the data directory must be empty
    * @param serialization Allow, forbid or require serialization of Bags
    * @param acceptableMIMESerializationTypes A list of MIME types acceptable as serialized formats
    * @param acceptableBagitVersions A list of BagIt version numbers that will be accepted
@@ -73,7 +77,9 @@ public class BagitProfile {
       final Map<String, BagInfoRequirement> bagInfoRequirements, 
       final List<String> manifestTypesRequired,
       final List<String> manifestTypesAllowed, 
-      final boolean fetchFileAllowed, 
+      final boolean fetchFileAllowed,
+      final boolean fetchFileRequired,
+      final boolean dataDirMustBeEmpty,
       final Serialization serialization,
       final List<String> acceptableMIMESerializationTypes, 
       final List<String> acceptableBagitVersions,
@@ -82,7 +88,6 @@ public class BagitProfile {
       final List<String> tagFilesRequired,
       final List<String> tagFilesAllowed) {
     
-    super();
     this.bagitProfileIdentifier = bagitProfileIdentifier;
     this.sourceOrganization = sourceOrganization;
     this.externalDescription = externalDescription;
@@ -95,6 +100,8 @@ public class BagitProfile {
     this.manifestTypesRequired = new ArrayList<>(manifestTypesRequired);
     this.manifestTypesAllowed = new ArrayList<>(manifestTypesAllowed);
     this.fetchFileAllowed = fetchFileAllowed;
+    this.fetchFileRequired = fetchFileRequired;
+    this.dataDirMustBeEmpty = dataDirMustBeEmpty;
     this.serialization = serialization;
     this.acceptableMIMESerializationTypes = new ArrayList<>(acceptableMIMESerializationTypes);
     this.acceptableBagitVersions = new ArrayList<>(acceptableBagitVersions);
@@ -191,6 +198,20 @@ public class BagitProfile {
    */
   public boolean isFetchFileAllowed(){
     return fetchFileAllowed;
+  }
+  
+  /**
+   * @return the fetch.txt file is required to be in the bag
+   */
+  public boolean isFetchFileRequired() {
+    return fetchFileRequired;
+  }
+  
+  /**
+   * @return the data directory in the bag must be empty. Default: false
+   */
+  public boolean isDataDirMustBeEmpty() {
+	return dataDirMustBeEmpty;
   }
 
   /**
