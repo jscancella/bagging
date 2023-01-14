@@ -2,7 +2,6 @@ package com.github.jscancella.conformance.profile;
 
 import java.lang.reflect.Field;
 import java.net.URI;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -16,9 +15,45 @@ public class BagitProfileTest extends AbstractBagitProfileTest {
 	
   @Test
   public void testLogicallySameObjectsAreEqual() {
-    BagitProfile profile = createExpectedProfile(new Version(1,2));
-    BagitProfile identicalProfile = createExpectedProfile(new Version(1,2));
+    Version version = new Version(1,4); //needs to always be the latest version
+    BagitProfile profile = createExpectedProfile(version);
+    BagitProfile identicalProfile = createExpectedProfile(version);
     Assertions.assertEquals(profile, identicalProfile);
+    
+    //test individual equals for code coverage
+    Assertions.assertEquals(profile.getBagitProfileVersion(), identicalProfile.getBagitProfileVersion());
+    Assertions.assertEquals(profile.getContactEmail(), identicalProfile.getContactEmail());
+    Assertions.assertEquals(profile.getContactName(), identicalProfile.getContactName());
+    Assertions.assertEquals(profile.getContactPhone(), identicalProfile.getContactPhone());
+    Assertions.assertEquals(profile.getExternalDescription(), identicalProfile.getExternalDescription());
+    Assertions.assertEquals(profile.getSourceOrganization(), identicalProfile.getSourceOrganization());
+    Assertions.assertEquals(profile.getVersion(), identicalProfile.getVersion());
+    Assertions.assertEquals(profile.getAcceptableBagitVersions(), identicalProfile.getAcceptableBagitVersions());
+    Assertions.assertEquals(profile.getAcceptableMIMESerializationTypes(), identicalProfile.getAcceptableMIMESerializationTypes());
+    Assertions.assertEquals(profile.getBagInfoRequirements(), identicalProfile.getBagInfoRequirements());
+    Assertions.assertEquals(profile.getBagitProfileIdentifier(), identicalProfile.getBagitProfileIdentifier());
+    Assertions.assertEquals(profile.getManifestTypesAllowed(), identicalProfile.getManifestTypesAllowed());
+    Assertions.assertEquals(profile.getManifestTypesRequired(), identicalProfile.getManifestTypesRequired());
+    Assertions.assertEquals(profile.getSerialization(), identicalProfile.getSerialization());
+    Assertions.assertEquals(profile.getTagFilesAllowed(), identicalProfile.getTagFilesAllowed());
+    Assertions.assertEquals(profile.getTagFilesRequired(), identicalProfile.getTagFilesRequired());
+    Assertions.assertEquals(profile.getTagManifestTypesAllowed(), identicalProfile.getTagManifestTypesAllowed());
+    Assertions.assertEquals(profile.getTagManifestTypesRequired(), identicalProfile.getTagManifestTypesRequired());
+  }
+  
+  @Test
+  public void testToStringContainsAllFields() {
+    Version version = new Version(1,4); //needs to always be the latest version
+    String sut = createExpectedProfile(version).toString();
+    
+    Class<BagitProfile> testModelClass = BagitProfile.class;
+    Field[] fields = testModelClass.getDeclaredFields();
+    for(Field field : fields) {
+      if(field.getName().equalsIgnoreCase("$jacocoData")) {
+        continue; //skip as this is only applicable during testing time
+      }
+      Assertions.assertTrue(sut.contains(field.getName()), "toString() does not contain field: " + field.getName());
+    }
   }
 
   /*

@@ -187,7 +187,9 @@ public class BagitProfile {
    * @return  If specified, only the manifest types in LIST are permitted. 
    * The list contains the type of manifest (not the complete filename), e.g. ["sha1", "md5"]. 
    * When specified along with Manifests-Required, Manifests-Allowed must include at least all of the manifest types listed in Manifests-Required. 
-   * If not specified, all manifest types are permitted. 
+   * If not specified, all manifest types are permitted.
+   * 
+   *  @since bagitprofile version 1.3.0
    */
   public List<String> getManifestTypesAllowed(){
     return Collections.unmodifiableList(manifestTypesAllowed);
@@ -251,7 +253,9 @@ public class BagitProfile {
    * @return  If specified, only the tag manifest types in LIST are permitted. 
    * The list contains the type of manifest (not the complete filename), e.g. ["sha1", "md5"]. 
    * When specified along with Tag-Manifests-Required, Tag-Manifests-Allowed must include at least all of the tag manifest 
-   * types listed in Tag-Manifests-Required. If not specified, all tag manifest types are permitted. 
+   * types listed in Tag-Manifests-Required. If not specified, all tag manifest types are permitted.
+   * 
+   *  @since bagitprofile version 1.3.0
    */
   public List<String> getTagManifestTypesAllowed(){
     return Collections.unmodifiableList(tagManifestTypesAllowed);
@@ -278,6 +282,8 @@ public class BagitProfile {
    * Tag-Files-Required SHOULD NOT include bag-info.txt (which is always required), nor any required manifest files, 
    * which instead are required by Manifests-Required and Tag-Manifests-Required.
    * At least all the tag files listed in Tag-Files-Required must be in included in Tag-Files-Allowed. 
+   * 
+   * @since bagitprofile version 1.3.0
    */
   public List<String> getTagFilesAllowed(){
     return Collections.unmodifiableList(tagFilesAllowed);
@@ -295,9 +301,6 @@ public class BagitProfile {
   @Override
   public boolean equals(final Object obj) {
     boolean isEqual = false;
-    if (this == obj) {
-      isEqual = true;
-    }
     if (obj instanceof BagitProfile) {
       final BagitProfile other = (BagitProfile) obj;
       isEqual = Objects.equals(acceptableBagitVersions, other.acceptableBagitVersions)
