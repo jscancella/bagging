@@ -13,7 +13,7 @@ It currently supports version 0.93 through 1.0.
 |Documentation|[![javadoc.io](https://img.shields.io/badge/javadoc.io-latest-blue.svg?maxAge=31556926)](http://www.javadoc.io/doc/com.github.jscancella/bagging)|
 
 ## Requirements
-* Java 8
+* minimum Java 8 (currently tested on Java 11 and 17)
 * gradle (for development only)
 
 ## Documentation
