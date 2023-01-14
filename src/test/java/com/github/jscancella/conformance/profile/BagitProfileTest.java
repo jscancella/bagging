@@ -2,6 +2,7 @@ package com.github.jscancella.conformance.profile;
 
 import java.lang.reflect.Field;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -26,8 +27,10 @@ public class BagitProfileTest extends AbstractBagitProfileTest {
    */
   @Test
   public void testEveryVariableIsIncludedInEqualsMethod() throws Exception {
-    BagitProfile sut = createExpectedProfile(new Version(1,2));
-    BagitProfile otherProfile = createExpectedProfile(new Version(1,2));
+    Version version = new Version(1,4); //needs to always be the latest version
+    
+    BagitProfile sut = createExpectedProfile(version);
+    BagitProfile otherProfile = createExpectedProfile(version);
     
     Class<BagitProfile> testModelClass = BagitProfile.class;
     Field[] fields = testModelClass.getDeclaredFields();
@@ -36,21 +39,25 @@ public class BagitProfileTest extends AbstractBagitProfileTest {
       
       if(String.class.isAssignableFrom(field.getType())) {
         field.set(otherProfile, "");
+        Assertions.assertNotEquals(field.get(sut), "", "did you forget to set it in AbstractBagitProfileTest.createExpectedProfile()?"); //make sure the string isn't the same in sut and otherProfile
       }
       else if(Map.class.isAssignableFrom(field.getType())) {
         field.set(otherProfile, Collections.emptyMap());
+        Assertions.assertNotEquals(field.get(sut), Collections.emptyMap(), "did you forget to set it in AbstractBagitProfileTest.createExpectedProfile()?"); //make sure the string isn't the same in sut and otherProfile
       }
       else if(boolean.class.isAssignableFrom(field.getType())) {
         field.set(otherProfile, !field.getBoolean(sut));
       }
       else if(List.class.isAssignableFrom(field.getType())) {
         field.set(otherProfile, Collections.emptyList());
+        Assertions.assertNotEquals(field.get(sut), Collections.emptyList(), "did you forget to set it in AbstractBagitProfileTest.createExpectedProfile()?"); //make sure the string isn't the same in sut and otherProfile
       }
       else if(Serialization.class.isAssignableFrom(field.getType())) {
         field.set(otherProfile, Serialization.optional);
       }
       else if(URI.class.isAssignableFrom(field.getType())) {
         field.set(otherProfile, null);
+        Assertions.assertNotEquals(field.get(sut), null, "did you forget to set it in AbstractBagitProfileTest.createExpectedProfile()?"); //make sure the string isn't the same in sut and otherProfile
       }
       else if(field.getName().equalsIgnoreCase("$jacocoData")) {
         //skip as this is only applicable during testing time
@@ -59,7 +66,9 @@ public class BagitProfileTest extends AbstractBagitProfileTest {
       else {
         Assertions.fail("This test does not account for field type: [" + field.getGenericType() + "] of variable: [" + field.getName() + "]");
       }
-      Assertions.assertNotEquals(sut, otherProfile);
+      Assertions.assertNotEquals(sut, otherProfile, "Equals does not account for " + field.getName());
+      //reset so that all the fields are the same except for the next one we want to test
+      otherProfile = createExpectedProfile(version);
     }
   }
 }
