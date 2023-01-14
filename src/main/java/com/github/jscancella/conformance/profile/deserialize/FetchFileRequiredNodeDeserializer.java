@@ -24,7 +24,7 @@ public enum FetchFileRequiredNodeDeserializer {
   public static void parseFetchFileRequired(final JsonNode node, final BagitProfileBuilder builder) {
     final JsonNode fetchIsRequired = node.get("Fetch.txt-Required");
     if(fetchIsRequired != null && !(fetchIsRequired instanceof NullNode)) {
-      builder.setFetchFileAllowed(fetchIsRequired.asBoolean());
+      builder.setFetchFileRequired(fetchIsRequired.asBoolean());
     }
     logger.debug(messages.getString("fetch_required"), builder.isFetchRequired());
   }

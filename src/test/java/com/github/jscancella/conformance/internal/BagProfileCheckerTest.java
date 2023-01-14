@@ -17,6 +17,8 @@ import com.github.jscancella.conformance.exceptions.RequiredManifestNotPresentEx
 import com.github.jscancella.conformance.exceptions.RequiredMetadataFieldNotPresentException;
 import com.github.jscancella.conformance.exceptions.RequiredTagFileNotPresentException;
 import com.github.jscancella.domain.Bag;
+import com.github.jscancella.exceptions.DataDirectoryMustBeEmptyException;
+import com.github.jscancella.exceptions.FetchFileDoesNotExistException;
 
 public class BagProfileCheckerTest{
   private static final Path profileJson = new File("src/test/resources/bagitProfiles/allOptionalFieldsProfile_v1.2.0.json").toPath();
@@ -38,6 +40,45 @@ public class BagProfileCheckerTest{
     
     try(InputStream inputStream = Files.newInputStream(profileJson, StandardOpenOption.READ)){
       Assertions.assertThrows(FetchFileNotAllowedException.class, 
+          () -> { BagProfileChecker.bagConformsToProfile(inputStream, bag); }); 
+    }
+  }
+  
+  @Test
+  public void testFetchFileDoesNotExistExceptionWhenMissingFetchFile() throws Exception{
+    Path mustHaveFetchFileProfileJson = new File("src/test/resources/bagitProfiles/mustHaveFetchFileProfile_v1.4.0.json").toPath();
+    
+    Path bagRootPath = new File("src/test/resources/bagitProfileTestBags/missingFetchFileWhenRequiredBag").toPath();
+    Bag bag = Bag.read(bagRootPath);
+    
+    try(InputStream inputStream = Files.newInputStream(mustHaveFetchFileProfileJson, StandardOpenOption.READ)){
+      Assertions.assertThrows(FetchFileDoesNotExistException.class, 
+          () -> { BagProfileChecker.bagConformsToProfile(inputStream, bag); }); 
+    }
+  }
+  
+  @Test
+  public void testDataDirectoryMustBeEmptyExceptionWithNonEmptyDataDir() throws Exception{
+    Path mustHaveEmptyDataDirProfileJson = new File("src/test/resources/bagitProfiles/mustHaveEmptyDataDirProfile_v1.4.0.json").toPath();
+    
+    Path bagRootPath = new File("src/test/resources/bagitProfileTestBags/nonEmptyDataDirBag").toPath();
+    Bag bag = Bag.read(bagRootPath);
+    
+    try(InputStream inputStream = Files.newInputStream(mustHaveEmptyDataDirProfileJson, StandardOpenOption.READ)){
+      Assertions.assertThrows(DataDirectoryMustBeEmptyException.class, 
+          () -> { BagProfileChecker.bagConformsToProfile(inputStream, bag); }); 
+    }
+  }
+  
+  @Test
+  public void testDataDirectoryMustBeEmptyExceptionWithMultipleZeroByteFiles() throws Exception{
+    Path mustHaveEmptyDataDirProfileJson = new File("src/test/resources/bagitProfiles/mustHaveEmptyDataDirProfile_v1.4.0.json").toPath();
+    
+    Path bagRootPath = new File("src/test/resources/bagitProfileTestBags/repeatedZeroByteFilesBag").toPath();
+    Bag bag = Bag.read(bagRootPath);
+    
+    try(InputStream inputStream = Files.newInputStream(mustHaveEmptyDataDirProfileJson, StandardOpenOption.READ)){
+      Assertions.assertThrows(DataDirectoryMustBeEmptyException.class, 
           () -> { BagProfileChecker.bagConformsToProfile(inputStream, bag); }); 
     }
   }
