@@ -71,10 +71,8 @@ jacocoTestReport {
   }
   afterEvaluate {
     classDirectories.from = files(classDirectories.files.collect {
-        fileTree(dir: it, exclude: ['com/github/jscancella/domain/**',
-          'com/github/jscancella/exceptions/**',
-          'com/github/jscancella/conformance/exceptions/**',
-          'com/github/jscancella/conformance/profile/**'])
+        fileTree(dir: it, exclude: ['com/github/jscancella/exceptions/**',
+          'com/github/jscancella/conformance/exceptions/**'])
     })
   }
 }

@@ -1,5 +1,7 @@
 package com.github.jscancella.conformance;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -15,6 +17,8 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import com.github.jscancella.conformance.exceptions.FetchFileNotAllowedException;
+import com.github.jscancella.conformance.internal.BagProfileChecker;
 import com.github.jscancella.domain.Bag;
 import com.github.jscancella.hash.BagitChecksumNameMapping;
 import com.github.jscancella.hash.standard.SHA1Hasher;
@@ -162,7 +166,13 @@ public class BagLinterTest {
   }
   
   @Test
-  public void testCheckAgainstProfile() throws Exception{
+  public void testIgnoreCheckForExtraLines() throws Exception{
+    Set<BagitWarning> warnings = BagLinter.lintBag(rootDir.resolve("extraLinesInBagitFile"), Arrays.asList(BagitWarning.EXTRA_LINES_IN_BAGIT_FILES));
+    Assertions.assertFalse(warnings.contains(BagitWarning.EXTRA_LINES_IN_BAGIT_FILES));
+  }
+  
+  @Test
+  public void testCheckAgainstProfileV1_2_0() throws Exception{
     Path profileJson = new File("src/test/resources/bagitProfiles/OnlyRequiredFieldsProfile_v1.2.0.json").toPath();
     Path bagRootPath = new File("src/test/resources/bagitProfileTestBags/profileConformantBag").toPath();
     Bag bag = Bag.read(bagRootPath);
@@ -173,8 +183,24 @@ public class BagLinterTest {
   }
   
   @Test
-  public void testIgnoreCheckForExtraLines() throws Exception{
-    Set<BagitWarning> warnings = BagLinter.lintBag(rootDir.resolve("extraLinesInBagitFile"), Arrays.asList(BagitWarning.EXTRA_LINES_IN_BAGIT_FILES));
-    Assertions.assertFalse(warnings.contains(BagitWarning.EXTRA_LINES_IN_BAGIT_FILES));
+  public void testCheckAgainstProfileV1_3_0() throws Exception{
+    Path profileJson = new File("src/test/resources/bagitProfiles/OnlyRequiredFieldsProfile_v1.3.0.json").toPath();
+    Path bagRootPath = new File("src/test/resources/bagitProfileTestBags/profileConformantBag").toPath();
+    Bag bag = Bag.read(bagRootPath);
+    
+    try(InputStream inputStream = Files.newInputStream(profileJson, StandardOpenOption.READ)){
+      BagLinter.checkAgainstProfile(inputStream, bag);
+    }
+  }
+  
+  @Test
+  public void testCheckAgainstProfileV1_4_0() throws Exception{
+    Path profileJson = new File("src/test/resources/bagitProfiles/OnlyRequiredFieldsProfile_v1.4.0.json").toPath();
+    Path bagRootPath = new File("src/test/resources/bagitProfileTestBags/profileConformantBag").toPath();
+    Bag bag = Bag.read(bagRootPath);
+    
+    try(InputStream inputStream = Files.newInputStream(profileJson, StandardOpenOption.READ)){
+      BagLinter.checkAgainstProfile(inputStream, bag);
+    }
   }
 }

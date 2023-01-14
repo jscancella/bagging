@@ -33,6 +33,8 @@ import com.github.jscancella.domain.Bag;
 import com.github.jscancella.domain.FetchItem;
 import com.github.jscancella.domain.Manifest;
 import com.github.jscancella.domain.Metadata;
+import com.github.jscancella.exceptions.DataDirectoryMustBeEmptyException;
+import com.github.jscancella.exceptions.FetchFileDoesNotExistException;
 
 /**
  * Part of the BagIt conformance suite. 
@@ -55,6 +57,8 @@ public enum BagProfileChecker {;//using enum to enforce singleton
    * @throws JsonParseException if there is a problem parsing the json while mapping to java object
    * 
    * @throws FetchFileNotAllowedException if there is a fetch file when the profile prohibits it
+   * @throws FetchFileDoesNotExistException if there is no fetch file in the bag when the profile requires it
+   * @throws DataDirectoryMustBeEmptyException if the data directory is not empty when the profile prohibits it
    * @throws MetatdataValueIsNotAcceptableException if a metadata value is not in the list of acceptable values
    * @throws MetatdataValueIsNotRepeatableException if a metadata value shows up more than once when not repeatable
    * @throws RequiredMetadataFieldNotPresentException if a metadata field is not present but it should be
@@ -64,14 +68,16 @@ public enum BagProfileChecker {;//using enum to enforce singleton
    */
   public static void bagConformsToProfile(final InputStream jsonProfile, final Bag bag) throws JsonParseException, JsonMappingException, 
   IOException, FetchFileNotAllowedException, RequiredMetadataFieldNotPresentException, MetatdataValueIsNotAcceptableException, 
-  RequiredManifestNotPresentException, BagitVersionIsNotAcceptableException, RequiredTagFileNotPresentException, MetatdataValueIsNotRepeatableException{
+  RequiredManifestNotPresentException, BagitVersionIsNotAcceptableException, RequiredTagFileNotPresentException, MetatdataValueIsNotRepeatableException, FetchFileDoesNotExistException, DataDirectoryMustBeEmptyException{
     
     final BagitProfile profile = parseBagitProfile(jsonProfile);
-    checkFetch(bag.getRootDir(), profile.isFetchFileAllowed(), bag.getItemsToFetch());
+    checkFetchIsAllowed(bag.getRootDir(), profile.isFetchFileAllowed(), bag.getItemsToFetch());
+    checkFetchIsRequired(bag.getRootDir(), profile.isFetchFileRequired(), bag.getItemsToFetch());
     
     checkMetadata(bag.getMetadata(), profile.getBagInfoRequirements());
     
     requiredManifestsExist(bag.getPayLoadManifests(), profile.getManifestTypesRequired(), true);
+    dataDirectoryMustBeEmpty(bag.getDataDir(), profile.isDataDirMustBeEmpty());
 
     requiredManifestsExist(bag.getTagManifests(), profile.getTagManifestTypesRequired(), false);
 
@@ -91,10 +97,17 @@ public enum BagProfileChecker {;//using enum to enforce singleton
     return mapper.readValue(jsonProfile, BagitProfile.class);
   }
   
-  private static void checkFetch(final Path rootDir, final boolean allowFetchFile, final List<FetchItem> itemsToFetch) throws FetchFileNotAllowedException{
+  private static void checkFetchIsAllowed(final Path rootDir, final boolean allowFetchFile, final List<FetchItem> itemsToFetch) throws FetchFileNotAllowedException{
     logger.debug(messages.getString("checking_fetch_file_allowed"), rootDir);
     if(!allowFetchFile && !itemsToFetch.isEmpty()){
       throw new FetchFileNotAllowedException(messages.getString("fetch_file_not_allowed_error"), rootDir);
+    }
+  }
+  
+  private static void checkFetchIsRequired(final Path rootDir, final boolean fetchFileRequired, final List<FetchItem> itemsToFetch) throws FetchFileDoesNotExistException{
+    logger.debug(messages.getString("checking_fetch_file_required"), rootDir);
+    if(fetchFileRequired && itemsToFetch.isEmpty()) {
+      throw new FetchFileDoesNotExistException(messages.getString("fetch_file_required_error"), rootDir);
     }
   }
   
@@ -162,6 +175,31 @@ public enum BagProfileChecker {;//using enum to enforce singleton
         }
           
         throw new RequiredManifestNotPresentException(explaination.toString());
+      }
+    }
+  }
+  
+  //must only contain a single zero byte file in the data directory
+  @SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
+  private static void dataDirectoryMustBeEmpty(final Path rootDir, final boolean dataDirMustBeEmpty) throws IOException, DataDirectoryMustBeEmptyException {
+    logger.debug(messages.getString("checking_data_dir_is_empty"), rootDir);
+    if(dataDirMustBeEmpty) {
+      final DataDirIsEmptyChecker checker = new DataDirIsEmptyChecker();
+      Files.walkFileTree(rootDir, checker);
+      
+      if(checker.getNonZeroByteFiles().size() > 0) {
+        final StringBuilder pathFormatter = new StringBuilder();
+        checker.getNonZeroByteFiles().stream()
+          .forEach(path -> pathFormatter.append('"').append(path.toAbsolutePath().toString()).append("\" "));
+        
+        throw new DataDirectoryMustBeEmptyException(MessageFormatter.format(messages.getString("multiple_non_zero_files_found"), pathFormatter.toString()).getMessage());
+      }
+      if(checker.getZeroByteFiles().size() != 1) {
+        final StringBuilder pathFormatter = new StringBuilder();
+        checker.getZeroByteFiles().stream()
+          .forEach(path -> pathFormatter.append('"').append(path.toAbsolutePath().toString()).append("\" "));
+        
+        throw new DataDirectoryMustBeEmptyException(MessageFormatter.format(messages.getString("multiple_zero_byte_files_found"), pathFormatter.toString()).getMessage());
       }
     }
   }

@@ -28,7 +28,9 @@ public class BagitProfile {
   private final Map<String, BagInfoRequirement> bagInfoRequirements;
   private final List<String> manifestTypesRequired;
   private final List<String> manifestTypesAllowed;
-  private final boolean fetchFileAllowed; //defaults to false
+  private final boolean fetchFileAllowed; //defaults to true
+  private final boolean fetchFileRequired; //defaults to false
+  private final boolean dataDirMustBeEmpty; //defaults to false. i.e. only thing allowed is data/.keep
   private final Serialization serialization;
   private final List<String> acceptableMIMESerializationTypes;
   private final List<String> acceptableBagitVersions;
@@ -53,6 +55,8 @@ public class BagitProfile {
    * @param manifestTypesRequired Each manifest type in LIST is required
    * @param manifestTypesAllowed If specified, only the manifest types in LIST are permitted
    * @param fetchFileAllowed A fetch.txt file is allowed within the bag
+   * @param fetchFileRequired a fetch.txt file is required to be within the bag
+   * @param dataDirMustBeEmpty if the data directory must be empty
    * @param serialization Allow, forbid or require serialization of Bags
    * @param acceptableMIMESerializationTypes A list of MIME types acceptable as serialized formats
    * @param acceptableBagitVersions A list of BagIt version numbers that will be accepted
@@ -73,7 +77,9 @@ public class BagitProfile {
       final Map<String, BagInfoRequirement> bagInfoRequirements, 
       final List<String> manifestTypesRequired,
       final List<String> manifestTypesAllowed, 
-      final boolean fetchFileAllowed, 
+      final boolean fetchFileAllowed,
+      final boolean fetchFileRequired,
+      final boolean dataDirMustBeEmpty,
       final Serialization serialization,
       final List<String> acceptableMIMESerializationTypes, 
       final List<String> acceptableBagitVersions,
@@ -82,7 +88,6 @@ public class BagitProfile {
       final List<String> tagFilesRequired,
       final List<String> tagFilesAllowed) {
     
-    super();
     this.bagitProfileIdentifier = bagitProfileIdentifier;
     this.sourceOrganization = sourceOrganization;
     this.externalDescription = externalDescription;
@@ -95,6 +100,8 @@ public class BagitProfile {
     this.manifestTypesRequired = new ArrayList<>(manifestTypesRequired);
     this.manifestTypesAllowed = new ArrayList<>(manifestTypesAllowed);
     this.fetchFileAllowed = fetchFileAllowed;
+    this.fetchFileRequired = fetchFileRequired;
+    this.dataDirMustBeEmpty = dataDirMustBeEmpty;
     this.serialization = serialization;
     this.acceptableMIMESerializationTypes = new ArrayList<>(acceptableMIMESerializationTypes);
     this.acceptableBagitVersions = new ArrayList<>(acceptableBagitVersions);
@@ -180,7 +187,9 @@ public class BagitProfile {
    * @return  If specified, only the manifest types in LIST are permitted. 
    * The list contains the type of manifest (not the complete filename), e.g. ["sha1", "md5"]. 
    * When specified along with Manifests-Required, Manifests-Allowed must include at least all of the manifest types listed in Manifests-Required. 
-   * If not specified, all manifest types are permitted. 
+   * If not specified, all manifest types are permitted.
+   * 
+   *  @since bagitprofile version 1.3.0
    */
   public List<String> getManifestTypesAllowed(){
     return Collections.unmodifiableList(manifestTypesAllowed);
@@ -191,6 +200,22 @@ public class BagitProfile {
    */
   public boolean isFetchFileAllowed(){
     return fetchFileAllowed;
+  }
+  
+  /**
+   * @return the fetch.txt file is required to be in the bag
+   * @since bagitprofile version 1.4.0
+   */
+  public boolean isFetchFileRequired() {
+    return fetchFileRequired;
+  }
+  
+  /**
+   * @return the data directory in the bag must be empty. Default: false
+   * @since bagitprofile version 1.4.0
+   */
+  public boolean isDataDirMustBeEmpty() {
+	return dataDirMustBeEmpty;
   }
 
   /**
@@ -228,7 +253,9 @@ public class BagitProfile {
    * @return  If specified, only the tag manifest types in LIST are permitted. 
    * The list contains the type of manifest (not the complete filename), e.g. ["sha1", "md5"]. 
    * When specified along with Tag-Manifests-Required, Tag-Manifests-Allowed must include at least all of the tag manifest 
-   * types listed in Tag-Manifests-Required. If not specified, all tag manifest types are permitted. 
+   * types listed in Tag-Manifests-Required. If not specified, all tag manifest types are permitted.
+   * 
+   *  @since bagitprofile version 1.3.0
    */
   public List<String> getTagManifestTypesAllowed(){
     return Collections.unmodifiableList(tagManifestTypesAllowed);
@@ -255,56 +282,61 @@ public class BagitProfile {
    * Tag-Files-Required SHOULD NOT include bag-info.txt (which is always required), nor any required manifest files, 
    * which instead are required by Manifests-Required and Tag-Manifests-Required.
    * At least all the tag files listed in Tag-Files-Required must be in included in Tag-Files-Allowed. 
+   * 
+   * @since bagitprofile version 1.3.0
    */
   public List<String> getTagFilesAllowed(){
     return Collections.unmodifiableList(tagFilesAllowed);
   }
-  
+
   @Override
-  public String toString(){
+  public int hashCode() {
+    return Objects.hash(acceptableBagitVersions, acceptableMIMESerializationTypes, bagInfoRequirements,
+        bagitProfileIdentifier, bagitProfileVersion, contactEmail, contactName, contactPhone, dataDirMustBeEmpty,
+        externalDescription, fetchFileAllowed, fetchFileRequired, manifestTypesAllowed, manifestTypesRequired,
+        serialization, sourceOrganization, tagFilesAllowed, tagFilesRequired, tagManifestTypesAllowed,
+        tagManifestTypesRequired, version);
+  }
+
+  @Override
+  public boolean equals(final Object obj) {
+    boolean isEqual = false;
+    if (obj instanceof BagitProfile) {
+      final BagitProfile other = (BagitProfile) obj;
+      isEqual = Objects.equals(acceptableBagitVersions, other.acceptableBagitVersions)
+          && Objects.equals(acceptableMIMESerializationTypes, other.acceptableMIMESerializationTypes)
+          && Objects.equals(bagInfoRequirements, other.bagInfoRequirements)
+          && Objects.equals(bagitProfileIdentifier, other.bagitProfileIdentifier)
+          && Objects.equals(bagitProfileVersion, other.bagitProfileVersion)
+          && Objects.equals(contactEmail, other.contactEmail) && Objects.equals(contactName, other.contactName)
+          && Objects.equals(contactPhone, other.contactPhone) && dataDirMustBeEmpty == other.dataDirMustBeEmpty
+          && Objects.equals(externalDescription, other.externalDescription) && fetchFileAllowed == other.fetchFileAllowed
+          && fetchFileRequired == other.fetchFileRequired
+          && Objects.equals(manifestTypesAllowed, other.manifestTypesAllowed)
+          && Objects.equals(manifestTypesRequired, other.manifestTypesRequired) && serialization == other.serialization
+          && Objects.equals(sourceOrganization, other.sourceOrganization)
+          && Objects.equals(tagFilesAllowed, other.tagFilesAllowed)
+          && Objects.equals(tagFilesRequired, other.tagFilesRequired)
+          && Objects.equals(tagManifestTypesAllowed, other.tagManifestTypesAllowed)
+          && Objects.equals(tagManifestTypesRequired, other.tagManifestTypesRequired)
+          && Objects.equals(version, other.version);
+    }
+    
+    return isEqual;
+  }
+
+  @Override
+  public String toString() {
     return "BagitProfile [bagitProfileIdentifier=" + bagitProfileIdentifier + ", sourceOrganization="
         + sourceOrganization + ", externalDescription=" + externalDescription + ", version=" + version
         + ", bagitProfileVersion=" + bagitProfileVersion + ", contactName=" + contactName + ", contactEmail="
         + contactEmail + ", contactPhone=" + contactPhone + ", bagInfoRequirements=" + bagInfoRequirements
         + ", manifestTypesRequired=" + manifestTypesRequired + ", manifestTypesAllowed=" + manifestTypesAllowed
-        + ", fetchFileAllowed=" + fetchFileAllowed + ", serialization=" + serialization
+        + ", fetchFileAllowed=" + fetchFileAllowed + ", fetchFileRequired=" + fetchFileRequired
+        + ", dataDirMustBeEmpty=" + dataDirMustBeEmpty + ", serialization=" + serialization
         + ", acceptableMIMESerializationTypes=" + acceptableMIMESerializationTypes + ", acceptableBagitVersions="
         + acceptableBagitVersions + ", tagManifestTypesRequired=" + tagManifestTypesRequired
         + ", tagManifestTypesAllowed=" + tagManifestTypesAllowed + ", tagFilesRequired=" + tagFilesRequired
         + ", tagFilesAllowed=" + tagFilesAllowed + "]";
-  }
-
-  @Override
-  public int hashCode(){
-    return Objects.hash(acceptableBagitVersions, acceptableMIMESerializationTypes, bagInfoRequirements,
-        bagitProfileIdentifier, bagitProfileVersion, contactEmail, contactName, contactPhone, externalDescription,
-        fetchFileAllowed, manifestTypesAllowed, manifestTypesRequired, serialization, sourceOrganization,
-        tagFilesAllowed, tagFilesRequired, tagManifestTypesAllowed, tagManifestTypesRequired, version);
-  }
-
-  @Override
-  public boolean equals(final Object obj){
-    boolean isEqual = false;
-    
-    if(obj instanceof BagitProfile) {
-      final BagitProfile other = (BagitProfile) obj;
-      isEqual = Objects.equals(acceptableBagitVersions, other.acceptableBagitVersions)
-        && Objects.equals(acceptableMIMESerializationTypes, other.acceptableMIMESerializationTypes)
-        && Objects.equals(bagInfoRequirements, other.bagInfoRequirements)
-        && Objects.equals(bagitProfileIdentifier, other.bagitProfileIdentifier)
-        && Objects.equals(bagitProfileVersion, other.bagitProfileVersion)
-        && Objects.equals(contactEmail, other.contactEmail) && Objects.equals(contactName, other.contactName)
-        && Objects.equals(contactPhone, other.contactPhone)
-        && Objects.equals(externalDescription, other.externalDescription) && fetchFileAllowed == other.fetchFileAllowed
-        && Objects.equals(manifestTypesAllowed, other.manifestTypesAllowed)
-        && Objects.equals(manifestTypesRequired, other.manifestTypesRequired) && serialization == other.serialization
-        && Objects.equals(sourceOrganization, other.sourceOrganization)
-        && Objects.equals(tagFilesAllowed, other.tagFilesAllowed)
-        && Objects.equals(tagFilesRequired, other.tagFilesRequired)
-        && Objects.equals(tagManifestTypesAllowed, other.tagManifestTypesAllowed)
-        && Objects.equals(tagManifestTypesRequired, other.tagManifestTypesRequired)
-        && Objects.equals(version, other.version);
-    }
-    return isEqual;
   }
 }

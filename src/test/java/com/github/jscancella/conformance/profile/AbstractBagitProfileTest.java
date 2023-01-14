@@ -56,6 +56,12 @@ public abstract class AbstractBagitProfileTest {
       builder.addBagInfoRequirement("Source-Organization", new BagInfoRequirement(true, Arrays.asList("Simon Fraser University", "York University"), false, ""));
     }
     
+    //starting with version 1.4.0 these were added
+    if(new Version(1,4).isSameOrOlder(version)) {
+      builder.setFetchFileRequired(false)
+      .setDataDirMustBeEmpty(false);
+    }
+    
     return builder.build();
   }
   

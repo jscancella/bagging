@@ -24,7 +24,9 @@ public class BagitProfileBuilder {
   private final Map<String, BagInfoRequirement> bagInfoRequirements = new ConcurrentHashMap<>();
   private final List<String> manifestTypesRequired = new ArrayList<>();
   private final List<String> manifestTypesAllowed = new ArrayList<>();
-  private boolean fetchFileAllowed; //defaults to false
+  private boolean fetchFileAllowed = true; //defaults to true
+  private boolean fetchFileRequired; //defaults to false
+  private boolean dataDirMustBeEmpty; //defaults to false. i.e. only thing allowed is data/.keep
   private Serialization serialization = Serialization.optional;
   private final List<String> acceptableMIMESerializationTypes = new ArrayList<>();
   private final List<String> acceptableBagitVersions = new ArrayList<>();
@@ -38,9 +40,9 @@ public class BagitProfileBuilder {
    */
   public BagitProfile build() {
     return new BagitProfile(bagitProfileIdentifier, sourceOrganization, externalDescription, version, bagitProfileVersion, 
-        contactName, contactEmail, contactPhone, bagInfoRequirements, manifestTypesRequired, manifestTypesAllowed, fetchFileAllowed, 
-        serialization, acceptableMIMESerializationTypes, acceptableBagitVersions, tagManifestTypesRequired, tagManifestTypesAllowed, 
-        tagFilesRequired, tagFilesAllowed);
+        contactName, contactEmail, contactPhone, bagInfoRequirements, manifestTypesRequired, manifestTypesAllowed, fetchFileAllowed,
+        fetchFileRequired, dataDirMustBeEmpty,serialization, acceptableMIMESerializationTypes, acceptableBagitVersions, 
+        tagManifestTypesRequired, tagManifestTypesAllowed, tagFilesRequired, tagFilesAllowed);
   }
   
   /**
@@ -157,6 +159,24 @@ public class BagitProfileBuilder {
   }
   
   /**
+   * @param isRequired is the fetch.txt file required to be within the bag?
+   * @return this builder so that calls can be chained
+   */
+  public BagitProfileBuilder setFetchFileRequired(final boolean isRequired) {
+    this.fetchFileRequired = isRequired;
+    return this;
+  }
+  
+  /**
+   * @param mustBeEmpty the data directory must be empty except for what is required for an archive
+   * @return this builder so that calls can be chained
+   */
+  public BagitProfileBuilder setDataDirMustBeEmpty(final boolean mustBeEmpty) {
+    this.dataDirMustBeEmpty = mustBeEmpty;
+    return this;
+  }
+  
+  /**
    * @param serialization Allow, forbid or require serialization of Bags
    * @return this builder so that calls can be chained
    */
@@ -231,6 +251,20 @@ public class BagitProfileBuilder {
    */
   public boolean isFetchAllowed(){
     return fetchFileAllowed;
+  }
+  
+  /**
+   * @return if fetch files are currently required
+   */
+  public boolean isFetchRequired(){
+    return fetchFileRequired;
+  }
+  
+  /**
+   * @return if data dir is currently required to be empty
+   */
+  public boolean isDataDirEmpty(){
+    return dataDirMustBeEmpty;
   }
 
   /**

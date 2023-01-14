@@ -1,0 +1,55 @@
+{
+  "BagIt-Profile-Info": {
+    "BagIt-Profile-Identifier": "http://canadiana.org/standards/bagit/tdr_ingest.json",
+    "Source-Organization": "Candiana.org",
+    "Contact-Name": "William Wueppelmann",
+    "Contact-Email": "tdr@canadiana.com",
+    "Contact-Phone": "+1 613 907 7040",
+    "External-Description": "BagIt profile for ingesting content into the C.O. TDR loading dock.",
+    "Version": "1.2",
+    "BagIt-Profile-Version": "1.4.0"
+  },
+  "Bag-Info": {
+    "Source-Organization": {
+      "required": true,
+      "values": [
+        "Simon Fraser University",
+        "York University"
+      ],
+      "repeatable": false,
+      "description": "the originator of the bag"
+    }
+  },
+  "Manifests-Required": [
+    "md5"
+  ],
+  "Manifests-Allowed": [
+    "sha1",
+    "md5"
+  ],
+  "Allow-Fetch.txt": false,
+  "Fetch.txt-Required": false,
+  "Data-Empty": true,
+  "Serialization": "forbidden",
+  "Accept-Serialization": [
+    "application/zip"
+  ],
+  "Tag-Manifests-Required": [
+    "md5"
+  ],
+  "Tag-Manifests-Allowed": [
+    "sha1",
+    "md5"
+  ],
+  "Tag-Files-Required": [
+    "DPN/dpnFirstNode.txt",
+    "DPN/dpnRegistry"
+  ],
+  "Tag-Files-Allowed": [
+    "DPN/dpnFirstNode.txt",
+    "DPN/dpnRegistry"
+  ],
+  "Accept-BagIt-Version": [
+    "0.96"
+  ]
+}

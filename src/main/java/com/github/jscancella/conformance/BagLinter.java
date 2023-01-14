@@ -34,6 +34,8 @@ import com.github.jscancella.conformance.internal.VersionChecker;
 import com.github.jscancella.conformance.profile.BagitProfile;
 import com.github.jscancella.domain.Bag;
 import com.github.jscancella.domain.Version;
+import com.github.jscancella.exceptions.DataDirectoryMustBeEmptyException;
+import com.github.jscancella.exceptions.FetchFileDoesNotExistException;
 import com.github.jscancella.exceptions.InvalidBagitFileFormatException;
 import com.github.jscancella.exceptions.MaliciousPathException;
 import com.github.jscancella.exceptions.UnparsableVersionException;
@@ -72,12 +74,14 @@ public enum BagLinter {
    * @throws BagitVersionIsNotAcceptableException if the bag is too old
    * @throws RequiredTagFileNotPresentException if a tag file is missing
    * @throws MetatdataValueIsNotRepeatableException if there is a repeat of metadata in the bag
+   * @throws FetchFileDoesNotExistException if there is no fetch file in the bag when the profile requires it
+   * @throws DataDirectoryMustBeEmptyException if the data directory is not empty when the profile prohibits it
    */
   public static boolean checkAgainstProfile(final InputStream jsonProfile, final Bag bag)
       throws JsonParseException, JsonMappingException, IOException, FetchFileNotAllowedException,
       RequiredMetadataFieldNotPresentException, MetatdataValueIsNotAcceptableException,
       RequiredManifestNotPresentException,
-      BagitVersionIsNotAcceptableException, RequiredTagFileNotPresentException, MetatdataValueIsNotRepeatableException{
+      BagitVersionIsNotAcceptableException, RequiredTagFileNotPresentException, MetatdataValueIsNotRepeatableException, FetchFileDoesNotExistException, DataDirectoryMustBeEmptyException{
     BagProfileChecker.bagConformsToProfile(jsonProfile, bag);
 
     return true;
