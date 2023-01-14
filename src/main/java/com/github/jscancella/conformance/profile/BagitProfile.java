@@ -280,43 +280,32 @@ public class BagitProfile {
   public List<String> getTagFilesAllowed(){
     return Collections.unmodifiableList(tagFilesAllowed);
   }
-  
-  @Override
-  public String toString(){
-    return "BagitProfile [bagitProfileIdentifier=" + bagitProfileIdentifier + ", sourceOrganization="
-        + sourceOrganization + ", externalDescription=" + externalDescription + ", version=" + version
-        + ", bagitProfileVersion=" + bagitProfileVersion + ", contactName=" + contactName + ", contactEmail="
-        + contactEmail + ", contactPhone=" + contactPhone + ", bagInfoRequirements=" + bagInfoRequirements
-        + ", manifestTypesRequired=" + manifestTypesRequired + ", manifestTypesAllowed=" + manifestTypesAllowed
-        + ", fetchFileAllowed=" + fetchFileAllowed + ", serialization=" + serialization
-        + ", acceptableMIMESerializationTypes=" + acceptableMIMESerializationTypes + ", acceptableBagitVersions="
-        + acceptableBagitVersions + ", tagManifestTypesRequired=" + tagManifestTypesRequired
-        + ", tagManifestTypesAllowed=" + tagManifestTypesAllowed + ", tagFilesRequired=" + tagFilesRequired
-        + ", tagFilesAllowed=" + tagFilesAllowed + "]";
-  }
 
   @Override
-  public int hashCode(){
+  public int hashCode() {
     return Objects.hash(acceptableBagitVersions, acceptableMIMESerializationTypes, bagInfoRequirements,
-        bagitProfileIdentifier, bagitProfileVersion, contactEmail, contactName, contactPhone, externalDescription,
-        fetchFileAllowed, manifestTypesAllowed, manifestTypesRequired, serialization, sourceOrganization,
-        tagFilesAllowed, tagFilesRequired, tagManifestTypesAllowed, tagManifestTypesRequired, version);
+        bagitProfileIdentifier, bagitProfileVersion, contactEmail, contactName, contactPhone, dataDirMustBeEmpty,
+        externalDescription, fetchFileAllowed, fetchFileRequired, manifestTypesAllowed, manifestTypesRequired,
+        serialization, sourceOrganization, tagFilesAllowed, tagFilesRequired, tagManifestTypesAllowed,
+        tagManifestTypesRequired, version);
   }
 
   @Override
-  public boolean equals(final Object obj){
-    boolean isEqual = false;
-    
-    if(obj instanceof BagitProfile) {
-      final BagitProfile other = (BagitProfile) obj;
-      isEqual = Objects.equals(acceptableBagitVersions, other.acceptableBagitVersions)
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (!(obj instanceof BagitProfile))
+      return false;
+    BagitProfile other = (BagitProfile) obj;
+    return Objects.equals(acceptableBagitVersions, other.acceptableBagitVersions)
         && Objects.equals(acceptableMIMESerializationTypes, other.acceptableMIMESerializationTypes)
         && Objects.equals(bagInfoRequirements, other.bagInfoRequirements)
         && Objects.equals(bagitProfileIdentifier, other.bagitProfileIdentifier)
         && Objects.equals(bagitProfileVersion, other.bagitProfileVersion)
         && Objects.equals(contactEmail, other.contactEmail) && Objects.equals(contactName, other.contactName)
-        && Objects.equals(contactPhone, other.contactPhone)
+        && Objects.equals(contactPhone, other.contactPhone) && dataDirMustBeEmpty == other.dataDirMustBeEmpty
         && Objects.equals(externalDescription, other.externalDescription) && fetchFileAllowed == other.fetchFileAllowed
+        && fetchFileRequired == other.fetchFileRequired
         && Objects.equals(manifestTypesAllowed, other.manifestTypesAllowed)
         && Objects.equals(manifestTypesRequired, other.manifestTypesRequired) && serialization == other.serialization
         && Objects.equals(sourceOrganization, other.sourceOrganization)
@@ -325,7 +314,20 @@ public class BagitProfile {
         && Objects.equals(tagManifestTypesAllowed, other.tagManifestTypesAllowed)
         && Objects.equals(tagManifestTypesRequired, other.tagManifestTypesRequired)
         && Objects.equals(version, other.version);
-    }
-    return isEqual;
+  }
+
+  @Override
+  public String toString() {
+    return "BagitProfile [bagitProfileIdentifier=" + bagitProfileIdentifier + ", sourceOrganization="
+        + sourceOrganization + ", externalDescription=" + externalDescription + ", version=" + version
+        + ", bagitProfileVersion=" + bagitProfileVersion + ", contactName=" + contactName + ", contactEmail="
+        + contactEmail + ", contactPhone=" + contactPhone + ", bagInfoRequirements=" + bagInfoRequirements
+        + ", manifestTypesRequired=" + manifestTypesRequired + ", manifestTypesAllowed=" + manifestTypesAllowed
+        + ", fetchFileAllowed=" + fetchFileAllowed + ", fetchFileRequired=" + fetchFileRequired
+        + ", dataDirMustBeEmpty=" + dataDirMustBeEmpty + ", serialization=" + serialization
+        + ", acceptableMIMESerializationTypes=" + acceptableMIMESerializationTypes + ", acceptableBagitVersions="
+        + acceptableBagitVersions + ", tagManifestTypesRequired=" + tagManifestTypesRequired
+        + ", tagManifestTypesAllowed=" + tagManifestTypesAllowed + ", tagFilesRequired=" + tagFilesRequired
+        + ", tagFilesAllowed=" + tagFilesAllowed + "]";
   }
 }
