@@ -68,7 +68,10 @@ pmd {
 jacocoTestCoverageVerification {
     violationRules {
         rule {
-        	excludes = ['com.github.jscancella.exceptions.*', 'com.github.jscancella.conformance.exceptions.*', 'com.github.jscancella.hash.standard.SHA384Hasher']
+        	excludes = ['com.github.jscancella.exceptions.*', //because we don't care about coverage in exceptions 
+        		'com.github.jscancella.conformance.exceptions.*',
+        		'com.github.jscancella.internal.PathUtils', //because most of the functions are windows only
+        		'com.github.jscancella.hash.standard.SHA384Hasher'] //because it is exactly the same as the other sha hashers
         	element = 'CLASS'
             limit {
                 minimum = 0.80
