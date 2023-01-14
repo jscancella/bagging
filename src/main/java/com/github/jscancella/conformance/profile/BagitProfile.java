@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import com.github.jscancella.domain.internal.EclipseGenerated;
+
 /**
  * An immutable object for all the bagit profile fields. 
  * A bagit profile is used to ensure the bag contains all required elements and optional elements specified
@@ -289,6 +291,7 @@ public class BagitProfile {
     return Collections.unmodifiableList(tagFilesAllowed);
   }
 
+  @EclipseGenerated
   @Override
   public int hashCode() {
     return Objects.hash(acceptableBagitVersions, acceptableMIMESerializationTypes, bagInfoRequirements,
@@ -298,6 +301,7 @@ public class BagitProfile {
         tagManifestTypesRequired, version);
   }
 
+  @EclipseGenerated
   @Override
   public boolean equals(final Object obj) {
     boolean isEqual = false;
@@ -325,6 +329,7 @@ public class BagitProfile {
     return isEqual;
   }
 
+  @EclipseGenerated
   @Override
   public String toString() {
     return "BagitProfile [bagitProfileIdentifier=" + bagitProfileIdentifier + ", sourceOrganization="

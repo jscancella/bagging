@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.github.jscancella.domain.internal.EclipseGenerated;
+
 /**
  * A class to represent the bag-info.txt (and package-info.txt in older versions)
  */
@@ -30,6 +32,7 @@ public final class Metadata {
     return String.join(",", list.stream().map(o -> o.toString()).collect(Collectors.toList()));
   }
   
+  @EclipseGenerated
   @Override
   public String toString() {
     if(cachedString == null) {
@@ -38,11 +41,13 @@ public final class Metadata {
     return cachedString;
   }
 
+  @EclipseGenerated
   @Override
   public int hashCode() {
     return Objects.hash(list);
   }
 
+  @EclipseGenerated
   @Override
   public boolean equals(final Object obj) {
     boolean isEqual = false;

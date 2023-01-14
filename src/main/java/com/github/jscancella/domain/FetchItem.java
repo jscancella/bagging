@@ -4,6 +4,8 @@ import java.net.URI;
 import java.nio.file.Path;
 import java.util.Objects;
 
+import com.github.jscancella.domain.internal.EclipseGenerated;
+
 /**
  * An individual item to fetch as specified by 
  * <a href="https://tools.ietf.org/html/draft-kunze-bagit-13#section-2.2.3">https://tools.ietf.org/html/draft-kunze-bagit-13#section-2.2.3</a>
@@ -55,6 +57,7 @@ public final class FetchItem {
     return builder.toString();
   }
 
+  @EclipseGenerated
   @Override
   public String toString() {
     if(cachedString == null) {
@@ -84,11 +87,13 @@ public final class FetchItem {
     return path;
   }
   
+  @EclipseGenerated
   @Override
   public int hashCode() {
     return Objects.hash(uri, length, path);
   }
 
+  @EclipseGenerated
   @Override
   public boolean equals(final Object obj) {
     boolean isEqual = false;

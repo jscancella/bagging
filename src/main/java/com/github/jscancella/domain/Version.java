@@ -2,6 +2,8 @@ package com.github.jscancella.domain;
 
 import java.util.Objects;
 
+import com.github.jscancella.domain.internal.EclipseGenerated;
+
 /**
  * The version of the bagit specification used to create the bag.
  */
@@ -47,6 +49,7 @@ public final class Version implements Comparable<Version>{
     return new Version(0, 95);
   }
 
+  @EclipseGenerated
   @Override
   public String toString() {
     if(cachedToString == null) {
@@ -71,11 +74,13 @@ public final class Version implements Comparable<Version>{
     return returnValue;
   }
 
+  @EclipseGenerated
   @Override
   public int hashCode() {
     return Objects.hash(major, minor);
   }
 
+  @EclipseGenerated
   @Override
   public boolean equals(final Object obj) {
     boolean isEqual = false;

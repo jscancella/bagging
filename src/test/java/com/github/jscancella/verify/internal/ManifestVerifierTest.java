@@ -1,6 +1,8 @@
 package com.github.jscancella.verify.internal;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -47,5 +49,19 @@ public class ManifestVerifierTest {
     Bag bag = Bag.read(bagDir);
     Assertions.assertThrows(FileNotInManifestException.class,
         () -> { ManifestVerifier.verifyManifests(bag, true); });
+  }
+  
+  @Test
+  public void testNormalization() throws Exception {
+    //TODO
+    //"\u00e9" == é
+    // "\u0065\u0301" == é
+    
+    Path tempFile = Files.createTempFile("\u00e9", ".txt");
+    String namePart = tempFile.getFileName().toString().substring(1);
+    Path tempFolder = tempFile.getParent();
+    Path fileToCheck = tempFolder.resolve("\u0065\u0301" + namePart);
+    
+    Assertions.assertTrue(ManifestVerifier.existsNormalized(fileToCheck));
   }
 }

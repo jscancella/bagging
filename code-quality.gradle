@@ -35,6 +35,7 @@ jacocoTestReport.dependsOn test //ensure the tests have run before generating a 
 
 check.dependsOn integrationTest //run the integration tests
 check.dependsOn jacocoTestReport //run the code coverage reports
+check.dependsOn jacocoTestCoverageVerification //make sure the minimum coverage is met
 check.dependsOn javadoc //ensure javadocs are generated correctly
 check.dependsOn spotbugsMain //run the spotbugs on the main source code
 check.dependsOn pmdMain //run pmd and cpd on the main source code 
@@ -62,6 +63,18 @@ pmd {
   ruleSets = [] //specifically set this to be empty, otherwise gradle includes the defaults in addition to our custom ruleset! 
   ruleSetConfig = resources.text.fromFile("config/pmd/ruleset.xml")
   toolVersion = "6.48.0"
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+        	excludes = ['com.github.jscancella.exceptions.*', 'com.github.jscancella.conformance.exceptions.*', 'com.github.jscancella.hash.standard.SHA384Hasher']
+        	element = 'CLASS'
+            limit {
+                minimum = 0.80
+            }
+        }
+    }
 }
 
 jacocoTestReport {

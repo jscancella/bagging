@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import com.github.jscancella.domain.internal.EclipseGenerated;
 import com.github.jscancella.domain.internal.ManifestBuilderVistor;
 import com.github.jscancella.hash.BagitChecksumNameMapping;
 import com.github.jscancella.hash.Hasher;
@@ -39,16 +40,19 @@ public final class Manifest {
     return bagitAlgorithmName;
   }
   
+  @EclipseGenerated
   @Override
   public String toString() {
     return "Manifest [algorithm=" + getBagitAlgorithmName() + ", Entries=" + entries + "]";
   }
   
+  @EclipseGenerated
   @Override
   public int hashCode() {
     return Objects.hash(bagitAlgorithmName, entries);
   }
 
+  @EclipseGenerated
   @Override
   public boolean equals(final Object obj) {
     boolean isEqual = false;

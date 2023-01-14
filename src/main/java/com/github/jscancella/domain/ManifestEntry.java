@@ -4,6 +4,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
 
+import com.github.jscancella.domain.internal.EclipseGenerated;
+
 /**
  * A Manifest Entry is a domain object meant to keep track of various parts needed so it can be listed in a manifest properly 
  */
@@ -44,17 +46,20 @@ public final class ManifestEntry {
     return checksum;
   }
 
+  @EclipseGenerated
   @Override
   public String toString(){
     return "ManifestEntry [physicalLocation=" + physicalLocation + ", relativeLocation=" + relativeLocation
         + ", checksum=" + checksum + "]";
   }
 
+  @EclipseGenerated
   @Override
   public int hashCode(){
     return Objects.hash(this.physicalLocation, this.relativeLocation, this.checksum);
   }
 
+  @EclipseGenerated
   @Override
   public boolean equals(final Object obj){
     boolean isEqual = false;

@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.jscancella.domain.Manifest.ManifestBuilder;
 import com.github.jscancella.domain.Metadata.MetadataBuilder;
+import com.github.jscancella.domain.internal.EclipseGenerated;
 import com.github.jscancella.exceptions.CorruptChecksumException;
 import com.github.jscancella.exceptions.FileNotInPayloadDirectoryException;
 import com.github.jscancella.exceptions.InvalidBagitFileFormatException;
@@ -161,6 +162,7 @@ public final class Bag {
     return rootDir;
   }
 
+  @EclipseGenerated
   @Override
   public String toString() {
     final StringBuilder builder = new StringBuilder(95);
@@ -180,11 +182,13 @@ public final class Bag {
     return builder.toString();
   }
 
+  @EclipseGenerated
   @Override
   public int hashCode() {
     return Objects.hash(version, fileEncoding, payLoadManifests, tagManifests, itemsToFetch, metadata);
   }
 
+  @EclipseGenerated
   @Override
   public boolean equals(final Object obj) {
     boolean isEqual = false;

@@ -105,9 +105,10 @@ public enum ManifestVerifier {; //using enum to enforce singleton
    * if a file is parially normalized or of a different normalization then the manifest specifies it will fail the existence test.
    * This method checks for that by normalizing what is on disk with the normalized filename and see if they match.
    *
+   * @param file the file you want to check to see if the normalized version exists
    * @return true if the normalized filename matches one on disk in the specified folder
    */
-  private static boolean existsNormalized(final Path file){
+  protected static boolean existsNormalized(final Path file){
     boolean existsNormalized = false;
     final String normalizedFile = toNormalizedString(file);
     final Path parent = file.getParent();

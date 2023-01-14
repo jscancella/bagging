@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import com.github.jscancella.domain.internal.EclipseGenerated;
+
 /**
  * This class is used to define elements in a bag-info.txt file used by a
  * {@link BagitProfile}. Due to specification in version 1.1.0 all entries are
@@ -31,6 +33,7 @@ public class BagInfoRequirement {
     this.description = description;
   }
 
+  @EclipseGenerated
   @Override
   public boolean equals(final Object other) {
     boolean isEqual = false;
@@ -44,11 +47,13 @@ public class BagInfoRequirement {
     return isEqual;
   }
 
+  @EclipseGenerated
   @Override
   public int hashCode() {
     return Objects.hash(required, acceptableValues, repeatable, description);
   }
 
+  @EclipseGenerated
   @Override
   public String toString(){
     return "BagInfoRequirement [required=" + required + ", acceptableValues=" + acceptableValues + ", repeatable="
