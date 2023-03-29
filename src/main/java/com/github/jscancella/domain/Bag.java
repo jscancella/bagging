@@ -267,7 +267,9 @@ public final class Bag {
     for(final ManifestEntry entry : manifest.getEntries()) {
       if(Files.exists(entry.getPhysicalLocation())) {
         final String hash = hasher.hash(entry.getPhysicalLocation());
-        if (!hash.equals(entry.getChecksum())){
+        //https://www.rfc-editor.org/rfc/rfc8493#section-2.1.3
+        //* The hex-encoded checksum MAY use uppercase and/or lowercase letters.
+        if (!hash.equalsIgnoreCase(entry.getChecksum())){
           throw new CorruptChecksumException("File [{}] is suppose to have a [{}] hash of [{}] but was computed [{}].", entry.getPhysicalLocation(), //entry.getRelativeLocation(),
               manifest.getBagitAlgorithmName(), entry.getChecksum(), hash);
         }
