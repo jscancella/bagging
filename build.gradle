@@ -6,7 +6,7 @@ plugins {
   id "com.github.nbaztec.coveralls-jacoco" version "1.2.16" 
   id "de.aaschmid.cpd" version "3.3"
   id "org.owasp.dependencycheck" version "7.2.1"
-  id "org.ajoberstar.grgit" version "5.0.0"
+  id "org.ajoberstar.grgit" version "5.2.0"
   id "com.github.spotbugs" version "5.0.14"
   id 'info.solidsoft.pitest' version '1.9.11'
   id "com.github.ben-manes.versions" version "0.47.0"
