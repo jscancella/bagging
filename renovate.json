@@ -1,14 +1,12 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:base"],
+  "extends": ["config:base", "default:automergeMinor"],
   "dependencyDashboard": true,
-  {
-    "groupName": "Jackson",
-    "matchDatasource": "gradle",
-    "packageRules": [
-      {
-        "matchPackagePatterns": ["com.fasterxml.jackson.core:jackson-core", "com.fasterxml.jackson.core:jackson-databind"]
-      }
-    ]
-  }
+  "packageRules": [
+    {
+      "groupName": "Jackson",
+      "matchDatasource": "gradle",
+      "matchPackagePatterns": ["com.fasterxml.jackson.core:jackson-core", "com.fasterxml.jackson.core:jackson-databind"]
+    }
+  ]
 }
