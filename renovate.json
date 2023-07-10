@@ -8,6 +8,11 @@
       "matchPackagePrefixes": [
         "com.fasterxml.jackson.core:"
       ]
+    },
+    {
+      "matchUpdateTypes": ["minor", "patch"],
+      "matchCurrentVersion": "!/^0/",
+      "automerge": true
     }
   ]
 }
