@@ -51,6 +51,7 @@ spotbugsTest.enabled = false
 //}
 
 spotbugsMain {
+  excludeFilter = file("config/spotbugs/exclude.xml")
   reports {
     html {
       enabled = true

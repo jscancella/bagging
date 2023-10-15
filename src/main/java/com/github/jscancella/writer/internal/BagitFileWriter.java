@@ -3,6 +3,7 @@ package com.github.jscancella.writer.internal;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -40,7 +41,7 @@ public enum BagitFileWriter {
     final Path bagitPath = outputDir.resolve("bagit.txt");
     logger.debug(messages.getString("write_bagit_file_to_path"), outputDir);
 
-    try(BufferedWriter writer = Files.newBufferedWriter(bagitPath,
+    try(BufferedWriter writer = Files.newBufferedWriter(bagitPath, StandardCharsets.UTF_8, 
         StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE)){
       final String firstLine = "BagIt-Version: " + version + System.lineSeparator();
       logger.debug(messages.getString("writing_line_to_file"), firstLine, bagitPath);
