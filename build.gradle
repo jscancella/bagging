@@ -5,9 +5,9 @@ plugins {
   //https://discuss.gradle.org/t/how-do-i-include-buildscript-block-from-external-gradle-script/7016/2
   id "com.github.nbaztec.coveralls-jacoco" version "1.2.17" 
   id "de.aaschmid.cpd" version "3.3"
-  id "org.owasp.dependencycheck" version "8.4.0"
-  id "org.ajoberstar.grgit" version "5.2.0"
-  id "com.github.spotbugs" version "5.1.5"
+  id "org.owasp.dependencycheck" version "8.4.2"
+  id "org.ajoberstar.grgit" version "5.2.1"
+  id "com.github.spotbugs" version "5.2.1"
   id 'info.solidsoft.pitest' version '1.15.0'
   id "com.dorongold.task-tree" version "2.1.1"
 }
@@ -36,7 +36,7 @@ dependencies {
   implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.3'
     
   testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
-  testImplementation 'org.springframework.boot:spring-boot-starter-logging:3.1.4'
+  testImplementation 'org.springframework.boot:spring-boot-starter-logging:3.1.5'
   testImplementation 'org.bouncycastle:bcprov-jdk15on:1.70'
   testImplementation 'org.kamranzafar:jtar:2.3'
 }
