@@ -103,13 +103,6 @@ cpdCheck {
     }
 }
 
-dependencyCheck {
-    skipTestGroups=true
-    skipConfigurations=['spotbugs','cpd'] //don't look for vulnerabilities in the build plugins
-    outputDirectory="$buildDir/reports/OWASP"
-    failBuildOnCVSS=7
-}
-
 pitest {
 	//turn on to figure out why BagitProfileTest is failing
 	//verbose = true
