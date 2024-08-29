@@ -6,7 +6,7 @@ plugins {
   id "com.github.nbaztec.coveralls-jacoco" version "1.2.20" 
   id "de.aaschmid.cpd" version "3.4"
   id "org.ajoberstar.grgit" version "5.2.2"
-  id "com.github.spotbugs" version "6.0.20"
+  id "com.github.spotbugs" version "6.0.21"
   id 'info.solidsoft.pitest' version '1.15.0'
   id "com.dorongold.task-tree" version "2.1.1"
 }
