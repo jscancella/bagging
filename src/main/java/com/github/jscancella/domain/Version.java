@@ -32,7 +32,7 @@ public final class Version implements Comparable<Version>{
    * @return the latest version of the BagIt specification
    */
   public static Version LATEST_BAGIT_VERSION() {
-    return Version.VERSION_1_0();
+    return VERSION_1_0();
   }
   
   /**

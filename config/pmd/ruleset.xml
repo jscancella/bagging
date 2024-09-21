@@ -12,33 +12,35 @@
       <exclude name="GuardLogStatement"/> <!-- because we pull the logging from the message bundle which triggers this regardless -->
     </rule>
     <rule ref="category/java/codestyle.xml">
-        <exclude name="FieldNamingConventions"/> <!--  because we don't follow the convention for static fields. Since this is merely stylistic there isn't much concern for it be exempted -->
         <exclude name="AtLeastOneConstructor"/> <!-- because it seems pointless to have to have an empty default constructor -->
-        <exclude name="ShortClassName"/> <!-- because it thinks "Bag" is too short -->
-        <exclude name="LongVariable"/> <!-- I would rather have long variable names that are descriptive -->
+        <exclude name="CommentDefaultAccessModifier" /> <!-- annoying to have to comment /*default*/ -->
+        <exclude name="FieldNamingConventions"/> <!--  because we don't follow the convention for static fields. Since this is merely stylistic there isn't much concern for it be exempted -->
         <exclude name="FinalParameterInAbstractMethod" /> <!-- I would rather the implementation ignore it, that is on the person who implemented it -->
+        <exclude name="LambdaCanBeMethodReference" /> <!-- for readability I don't want to be forced to use method reference -->
+        <exclude name="LongVariable"/> <!-- I would rather have long variable names that are descriptive -->
+        <exclude name="ShortClassName"/> <!-- because it thinks "Bag" is too short -->
     </rule>
     <rule ref="category/java/codestyle.xml/MethodNamingConventions">
         <properties>
-            <property name="methodPattern" value="[a-z][a-zA-Z0-9]*" />
-            <property name="staticPattern" value="[a-zA-Z0-9_]*" />
-            <property name="nativePattern" value="[a-z][a-zA-Z0-9]*" />
             <property name="junit3TestPattern" value="test[A-Z0-9][a-zA-Z0-9]*" />
             <property name="junit4TestPattern" value="[a-z][a-zA-Z0-9]*" />
+            <property name="methodPattern" value="[a-z][a-zA-Z0-9]*" />
+            <property name="nativePattern" value="[a-z][a-zA-Z0-9]*" />
+            <property name="staticPattern" value="[a-zA-Z0-9_]*" />
         </properties>
     </rule>
     <rule ref="category/java/design.xml">
-        <exclude name="LawOfDemeter"/> <!-- because we often use other classes directly when they are singletons -->
         <exclude name="DataClass"/> <!-- POJOs are fine -->
-        <exclude name="LoosePackageCoupling"/> <!-- requires configuration to be used correctly -->
         <exclude name="ExcessiveImports"/> <!-- because we want to reuse code sometimes the imports can be high -->
+        <exclude name="LawOfDemeter"/> <!-- because we often use other classes directly when they are singletons -->
+        <exclude name="LoosePackageCoupling"/> <!-- requires configuration to be used correctly -->
     </rule>
     <rule ref="category/java/documentation.xml">
         <exclude name="CommentRequired"/> <!-- TODO configure which ones we actually want -->
         <exclude name="CommentSize"/> <!-- TODO configure to reasonable amounts -->
     </rule>
     <rule ref="category/java/errorprone.xml">
-        <exclude name="DataflowAnomalyAnalysis"/> <!-- Has a bug that doesn't recognize variables created in for-each loops and others that are valid. -->
+        <exclude name="AvoidLiteralsInIfCondition"/> <!-- we only use variables when the string is repeated multiple times and it is worth using a static variable instead -->
         <exclude name="InvalidLogMessageFormat"/> <!-- Doesn't recognize message bundles -->
     </rule>
     <rule ref="category/java/multithreading.xml">

@@ -85,7 +85,7 @@ public enum BagitChecksumNameMapping {
     }
     
     try {
-      final Hasher hasher = (Hasher)INSTANCE.map.get(bagitAlgorithmName).getDeclaredConstructor().newInstance();
+      final Hasher hasher = INSTANCE.map.get(bagitAlgorithmName).getDeclaredConstructor().newInstance();
       hasher.initialize();
       return hasher;
     } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {

@@ -8,7 +8,7 @@ import java.nio.file.Path;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -125,7 +125,7 @@ public enum BagLinter {
    * @throws MaliciousPathException if the bag is trying to be maliciou
    */
   public static Set<BagitWarning> lintBag(final Path bagitDir, final Collection<BagitWarning> warningsToIgnore) throws IOException{
-    final Set<BagitWarning> warnings = new HashSet<>();
+    final Set<BagitWarning> warnings = EnumSet.noneOf(BagitWarning.class);
 
     final Path bagitFile = bagitDir.resolve("bagit.txt");
     checkForExtraLines(bagitFile, warnings, warningsToIgnore);

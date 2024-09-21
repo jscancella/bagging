@@ -167,8 +167,8 @@ public enum BagProfileChecker {;//using enum to enforce singleton
       if(!manifestTypesPresent.contains(requiredManifestType)){
         final StringBuilder explaination = new StringBuilder();
         if(isPayloadManifest){ 
-          explaination.append("tag");
-          explaination.append(MessageFormatter.format(messages.getString("required_tag_manifest_type_not_present"), requiredManifestType).getMessage());
+          explaination.append("tag")
+            .append(MessageFormatter.format(messages.getString("required_tag_manifest_type_not_present"), requiredManifestType).getMessage());
         }
         else{
           explaination.append(MessageFormatter.format(messages.getString("required_manifest_type_not_present"), requiredManifestType).getMessage());
@@ -187,7 +187,7 @@ public enum BagProfileChecker {;//using enum to enforce singleton
       final DataDirIsEmptyChecker checker = new DataDirIsEmptyChecker();
       Files.walkFileTree(rootDir, checker);
       
-      if(checker.getNonZeroByteFiles().size() > 0) {
+      if(!checker.getNonZeroByteFiles().isEmpty()) {
         final StringBuilder pathFormatter = new StringBuilder();
         checker.getNonZeroByteFiles().stream()
           .forEach(path -> pathFormatter.append('"').append(path.toAbsolutePath().toString()).append("\" "));
