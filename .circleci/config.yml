@@ -7,7 +7,7 @@ jobs:
   build-java17:
     docker:
       # specify the version you desire here
-      - image: cimg/openjdk:17.0.12
+      - image: cimg/openjdk:17.0.13
 
     working_directory: ~/repo
 
