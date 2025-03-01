@@ -31,8 +31,8 @@ repositories {
 
 dependencies {
   implementation 'org.slf4j:slf4j-api:2.0.17'
-  implementation 'com.fasterxml.jackson.core:jackson-core:2.18.2'
-  implementation 'com.fasterxml.jackson.core:jackson-databind:2.18.2'
+  implementation 'com.fasterxml.jackson.core:jackson-core:2.18.3'
+  implementation 'com.fasterxml.jackson.core:jackson-databind:2.18.3'
     
   testImplementation 'org.junit.jupiter:junit-jupiter:5.12.0'
   testImplementation 'org.springframework.boot:spring-boot-starter-logging:3.4.3'
