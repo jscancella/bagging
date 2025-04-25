@@ -63,7 +63,7 @@ spotbugsMain {
 pmd {
   ruleSets = [] //specifically set this to be empty, otherwise gradle includes the defaults in addition to our custom ruleset! 
   ruleSetConfig = resources.text.fromFile("config/pmd/ruleset.xml")
-  toolVersion = "7.12.0"
+  toolVersion = "7.13.0"
 }
 
 jacocoTestCoverageVerification {
