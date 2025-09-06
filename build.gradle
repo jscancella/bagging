@@ -5,7 +5,7 @@ plugins {
   //https://discuss.gradle.org/t/how-do-i-include-buildscript-block-from-external-gradle-script/7016/2
   id "com.github.nbaztec.coveralls-jacoco" version "1.2.20" 
   id "de.aaschmid.cpd" version "3.5"
-  id "org.ajoberstar.grgit" version "5.3.2"
+  id "org.ajoberstar.grgit" version "5.3.3"
   id "com.github.spotbugs" version "6.2.6"
   id 'info.solidsoft.pitest' version '1.15.0'
   id "com.dorongold.task-tree" version "4.0.1"
