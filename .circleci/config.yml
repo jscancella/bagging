@@ -35,7 +35,7 @@ jobs:
   build-java21:
     docker:
       # specify the version you desire here
-      - image: cimg/openjdk:21.0
+      - image: cimg/openjdk:21.0.8
 
     working_directory: ~/repo
 
